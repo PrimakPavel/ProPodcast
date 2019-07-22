@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ProPodcast</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+
+    <string name="best_podcast_title">Best</string>
+    <string name="favorite_podcasts_title">Favorite</string>
+    <string name="search_podcasts_title">Search</string>
+</resources>

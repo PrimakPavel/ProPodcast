@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bestPodcastsFragment"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/best_podcast_title" />
+
+    <item
+        android:id="@+id/favoritesPodcastsFragment"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="@string/favorite_podcasts_title" />
+
+    <item
+        android:id="@+id/searchFragment"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/search_podcasts_title" />
+
+</menu>

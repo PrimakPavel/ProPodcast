@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/bestPodcastsFragment">
+
+    <fragment
+        android:id="@+id/bestPodcastsFragment"
+        android:name="com.pavelprymak.propodcast.presentation.screens.BestPodcastsFragment"
+        android:label="@string/best_podcast_title"
+        tools:layout="@layout/fragment_best_podcasts" />
+    <fragment
+        android:id="@+id/favoritesPodcastsFragment"
+        android:name="com.pavelprymak.propodcast.presentation.screens.FavoritesPodcastsFragment"
+        android:label="@string/favorite_podcasts_title"
+        tools:layout="@layout/fragment_favorites_podcasts" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.pavelprymak.propodcast.presentation.screens.SearchFragment"
+        android:label="@string/search_podcasts_title"
+        tools:layout="@layout/fragment_search" />
+</navigation>
