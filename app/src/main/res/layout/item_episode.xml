@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?selectableItemBackground">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivEpisodeLogo"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="16dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="w,1:1"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_play_circle" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.25" />
+
+            <TextView
+                android:id="@+id/tvEpisodeDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/extra_small_margin"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/episodes_count_background"
+                android:padding="2dp"
+                android:textColor="@color/colorTextThirdly"
+                android:textSize="@dimen/standard_text_size"
+                app:layout_constraintEnd_toEndOf="@+id/ivEpisodeLogo"
+                app:layout_constraintStart_toStartOf="@+id/ivEpisodeLogo"
+                app:layout_constraintTop_toBottomOf="@+id/ivEpisodeLogo"
+                tools:text="01:20" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                style="@style/AppTheme.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/standard_margin"
+                android:layout_marginEnd="@dimen/standard_margin"
+                android:layout_marginRight="@dimen/standard_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Episode Title" />
+
+            <TextView
+                android:id="@+id/tvDescription"
+                style="@style/AppTheme.Body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/standard_margin"
+                android:layout_marginRight="@dimen/standard_margin"
+                android:ellipsize="end"
+                android:maxLines="5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+                tools:text="Short description" />
+
+            <TextView
+                android:id="@+id/tvPublishedDate"
+                style="@style/AppTheme.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:layout_marginRight="@dimen/small_margin"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescription"
+                tools:text="Published: 10/02/19" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

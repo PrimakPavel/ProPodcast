@@ -5,13 +5,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".presentation.screens.BestPodcastsFragment">
+        tools:context=".presentation.screens.PodcastDetailsFragment">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerBestPodcasts"
+            android:id="@+id/podcastDataRecycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="@dimen/list_padding_bottom" />
-    </FrameLayout>
+            android:layout_height="match_parent" />
 
+    </FrameLayout>
 </layout>

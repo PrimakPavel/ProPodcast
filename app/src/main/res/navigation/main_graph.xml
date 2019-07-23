@@ -9,15 +9,32 @@
         android:id="@+id/bestPodcastsFragment"
         android:name="com.pavelprymak.propodcast.presentation.screens.BestPodcastsFragment"
         android:label="@string/best_podcast_title"
-        tools:layout="@layout/fragment_best_podcasts" />
+        tools:layout="@layout/fragment_best_podcasts" >
+        <action
+            android:id="@+id/action_bestPodcastsFragment_to_podcastDetailsFragment"
+            app:destination="@id/podcastDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoritesPodcastsFragment"
         android:name="com.pavelprymak.propodcast.presentation.screens.FavoritesPodcastsFragment"
         android:label="@string/favorite_podcasts_title"
-        tools:layout="@layout/fragment_favorites_podcasts" />
+        tools:layout="@layout/fragment_favorites_podcasts" >
+        <action
+            android:id="@+id/action_favoritesPodcastsFragment_to_podcastDetailsFragment"
+            app:destination="@id/podcastDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.pavelprymak.propodcast.presentation.screens.SearchFragment"
         android:label="@string/search_podcasts_title"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_podcastDetailsFragment"
+            app:destination="@id/podcastDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/podcastDetailsFragment"
+        android:name="com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment"
+        android:label="fragment_podcast_details"
+        tools:layout="@layout/fragment_podcast_details" />
 </navigation>
