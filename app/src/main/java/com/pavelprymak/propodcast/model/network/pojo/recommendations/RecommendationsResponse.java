@@ -1,19 +1,21 @@
 package com.pavelprymak.propodcast.model.network.pojo.recommendations;
 
 import java.util.List;
+
+import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem;
 import com.squareup.moshi.Json;
 
 
 public class RecommendationsResponse{
 
 	@Json(name = "recommendations")
-	private List<RecommendationsItem> recommendations;
+	private List<PodcastItem> recommendations;
 
-	public void setRecommendations(List<RecommendationsItem> recommendations){
+	public void setRecommendations(List<PodcastItem> recommendations){
 		this.recommendations = recommendations;
 	}
 
-	public List<RecommendationsItem> getRecommendations(){
+	public List<PodcastItem> getRecommendations(){
 		return recommendations;
 	}
 

@@ -12,31 +12,29 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pavelprymak.propodcast.R;
-import com.pavelprymak.propodcast.databinding.ItemEpisodeBinding;
-import com.pavelprymak.propodcast.databinding.ItemInfoBinding;
-import com.pavelprymak.propodcast.databinding.ItemPodcastBinding;
+import com.pavelprymak.propodcast.databinding.ItemEpisodeMoreBinding;
+import com.pavelprymak.propodcast.databinding.ItemRecommendationBinding;
 import com.pavelprymak.propodcast.model.network.pojo.podcastById.EpisodesItem;
-import com.pavelprymak.propodcast.model.network.pojo.recommendations.RecommendationsItem;
+import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem;
 import com.pavelprymak.propodcast.utils.DateFormatUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.Date;
 import java.util.List;
 
-public class EpisodesDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<EpisodesItem> mEpisodes;
-    private List<RecommendationsItem> mRecommendPodcasts;
-    private EpisodesDataClickListener mClickListener;
+    private List<PodcastItem> mRecommendPodcasts;
+    private PodcastInfoClickListener mClickListener;
     private Context mContext;
     private static final int EPISODES_VH_ID = 1;
-    private static final int INFO_VH_ID = 2;
-    private static final int RECOMMENDATION_VH_ID = 3;
+    private static final int RECOMMENDATION_VH_ID = 2;
 
-    public EpisodesDataAdapter(EpisodesDataClickListener clickListener) {
+    public PodcastInfoAdapter(PodcastInfoClickListener clickListener) {
         this.mClickListener = clickListener;
     }
 
-    public void updateLists(List<EpisodesItem> episodesItems, List<RecommendationsItem> recommendationsItems) {
+    public void updateLists(List<EpisodesItem> episodesItems, List<PodcastItem> recommendationsItems) {
         mEpisodes = episodesItems;
         mRecommendPodcasts = recommendationsItems;
         notifyDataSetChanged();
@@ -49,15 +47,11 @@ public class EpisodesDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         LayoutInflater inflater = LayoutInflater.from(mContext);
         switch (viewType) {
             case EPISODES_VH_ID:
-                ItemEpisodeBinding itemEpisodesBinding = DataBindingUtil.inflate(inflater, R.layout.item_episode, parent, false);
-                return new EpisodeViewHolder(itemEpisodesBinding);
+                ItemEpisodeMoreBinding itemEpisodesMoreBinding = DataBindingUtil.inflate(inflater, R.layout.item_episode_more, parent, false);
+                return new EpisodeViewHolder(itemEpisodesMoreBinding);
             case RECOMMENDATION_VH_ID: {
-                ItemPodcastBinding itemPodcastBinding = DataBindingUtil.inflate(inflater, R.layout.item_podcast, parent, false);
-                return new RecommendationViewHolder(itemPodcastBinding);
-            }
-            case INFO_VH_ID: {
-                ItemInfoBinding itemInfoBinding = DataBindingUtil.inflate(inflater, R.layout.item_info, parent, false);
-                return new InfoViewHolder(itemInfoBinding);
+                ItemRecommendationBinding itemRecommendationBinding = DataBindingUtil.inflate(inflater, R.layout.item_recommendation, parent, false);
+                return new RecommendationViewHolder(itemRecommendationBinding);
             }
             default:
                 throw new IllegalArgumentException();
@@ -73,12 +67,7 @@ public class EpisodesDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             case RECOMMENDATION_VH_ID:
                 RecommendationViewHolder recommendViewHolder = (RecommendationViewHolder) holder;
-                int shift = getShift();
-                recommendViewHolder.bind(position - shift);
-                break;
-            case INFO_VH_ID:
-                InfoViewHolder infoViewHolder = (InfoViewHolder) holder;
-                infoViewHolder.bind();
+                recommendViewHolder.bind(position - getShift());
                 break;
         }
     }
@@ -93,93 +82,98 @@ public class EpisodesDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        if (mEpisodes == null || mEpisodes.isEmpty()) {
-            if (mRecommendPodcasts != null) {
-                return mRecommendPodcasts.size();
-            } else return 0;
-        } else if (mRecommendPodcasts == null || mRecommendPodcasts.isEmpty()) {
-            return mEpisodes.size();
-        } else return mEpisodes.size() + mRecommendPodcasts.size() + 1;
+        int episodesCount = 0;
+        int recommendedCount = 0;
+        if (mEpisodes != null) {
+            episodesCount = mEpisodes.size();
+        }
+        if (mRecommendPodcasts != null) {
+            recommendedCount = mRecommendPodcasts.size();
+        }
+        return episodesCount + recommendedCount;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (mRecommendPodcasts == null || mRecommendPodcasts.isEmpty()) return EPISODES_VH_ID;
-        if (mEpisodes == null || mEpisodes.isEmpty()) return RECOMMENDATION_VH_ID;
-
-        if (position < mEpisodes.size()) return EPISODES_VH_ID;
-        if (position > mEpisodes.size()) return RECOMMENDATION_VH_ID;
-        if (position == mEpisodes.size()) return INFO_VH_ID;
-        else throw new IllegalArgumentException();
+        if (mEpisodes != null && position < mEpisodes.size()) return EPISODES_VH_ID;
+        else return RECOMMENDATION_VH_ID;
     }
 
     class RecommendationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final ItemPodcastBinding binding;
+        private final ItemRecommendationBinding binding;
         private static final String EMPTY = "";
 
-        RecommendationViewHolder(@NonNull ItemPodcastBinding podcastBinding) {
+        RecommendationViewHolder(@NonNull ItemRecommendationBinding podcastBinding) {
             super(podcastBinding.getRoot());
             this.binding = podcastBinding;
             podcastBinding.getRoot().setOnClickListener(this);
         }
 
         void bind(int position) {
-            RecommendationsItem podcastItem = mRecommendPodcasts.get(position);
+            //show first element header
+            if (position == 0) {
+                binding.recommendationLabel.setVisibility(View.VISIBLE);
+            } else {
+                binding.recommendationLabel.setVisibility(View.GONE);
+            }
+
+            PodcastItem podcastItem = mRecommendPodcasts.get(position);
             if (podcastItem != null && mContext != null) {
                 //LOGO
                 if (!TextUtils.isEmpty(podcastItem.getThumbnail())) {
                     Picasso.get()
                             .load(podcastItem.getThumbnail())
                             .placeholder(mContext.getResources().getDrawable(R.drawable.image_placeholder))
-                            .into(binding.ivPodcastLogo);
+                            .into(binding.container.ivPodcastLogo);
                 } else {
-                    binding.ivPodcastLogo.setImageDrawable(null);
+                    binding.container.ivPodcastLogo.setImageDrawable(null);
                 }
 
                 //Episodes Count
                 if ((podcastItem.getTotalEpisodes() > 0)) {
-                    binding.tvEpisodesCount.setText(String.valueOf(podcastItem.getTotalEpisodes()));
-                    binding.tvEpisodesCount.append(" " + mContext.getString(R.string.episodes_label));
+                    binding.container.tvEpisodesCount.setText(String.valueOf(podcastItem.getTotalEpisodes()));
+                    binding.container.tvEpisodesCount.append(" " + mContext.getString(R.string.episodes_label));
 
                 } else {
-                    binding.tvEpisodesCount.setText(EMPTY);
+                    binding.container.tvEpisodesCount.setText(EMPTY);
                 }
                 //Title
                 if (!TextUtils.isEmpty(podcastItem.getTitle())) {
-                    binding.tvTitle.setText(podcastItem.getTitle());
+                    binding.container.tvTitle.setText(podcastItem.getTitle());
                 } else {
-                    binding.tvTitle.setText(EMPTY);
+                    binding.container.tvTitle.setText(EMPTY);
                 }
                 //Publisher
                 if (!TextUtils.isEmpty(podcastItem.getPublisher())) {
-                    binding.tvPublisher.setText(podcastItem.getPublisher());
+                    binding.container.tvPublisher.setText(podcastItem.getPublisher());
                 } else {
-                    binding.tvPublisher.setText(EMPTY);
+                    binding.container.tvPublisher.setText(EMPTY);
                 }
                 //Country(Language)
                 if (!TextUtils.isEmpty(podcastItem.getCountry())) {
-                    binding.tvCountryLanguage.setText(podcastItem.getCountry());
+                    binding.container.tvCountryLanguage.setText(podcastItem.getCountry());
                     if (!TextUtils.isEmpty(podcastItem.getLanguage())) {
-                        binding.tvCountryLanguage.append("(" + podcastItem.getLanguage() + ")");
+                        binding.container.tvCountryLanguage.append("(" + podcastItem.getLanguage() + ")");
                     }
                 } else {
-                    binding.tvCountryLanguage.setText(EMPTY);
+                    binding.container.tvCountryLanguage.setText(EMPTY);
                 }
 
                 if (podcastItem.getLatestPubDateMs() > 0L) {
                     Date publishDate = new Date(podcastItem.getLatestPubDateMs());
-                    binding.tvLastPublishedDate.setText(R.string.last_published_date_label);
-                    binding.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
+                    binding.container.tvLastPublishedDate.setText(R.string.last_published_date_label);
+                    binding.container.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
                 }
 
-                binding.ivMoreOptions.setOnClickListener(v -> mClickListener.onPodcastMoreOptionsClick(podcastItem.getId(), podcastItem.getListennotesUrl(), v));
+                binding.container.ivMoreOptions.setOnClickListener(v -> mClickListener.onPodcastMoreOptionsClick(podcastItem, v));
             }
         }
 
         @Override
         public void onClick(View v) {
-            if (mRecommendPodcasts != null) {
-                RecommendationsItem podcastItem = mRecommendPodcasts.get(getAdapterPosition() - getShift());
+            int position = getAdapterPosition() - getShift();
+            if (mRecommendPodcasts != null && position < mRecommendPodcasts.size()) {
+                PodcastItem podcastItem = mRecommendPodcasts.get(position);
                 if (podcastItem != null) {
                     mClickListener.onRecommendationItemClick(podcastItem.getId());
                 }
@@ -190,43 +184,49 @@ public class EpisodesDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
     class EpisodeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final ItemEpisodeBinding binding;
+        private final ItemEpisodeMoreBinding binding;
         private static final String EMPTY = "";
 
-        EpisodeViewHolder(@NonNull ItemEpisodeBinding podcastBinding) {
+        EpisodeViewHolder(@NonNull ItemEpisodeMoreBinding podcastBinding) {
             super(podcastBinding.getRoot());
             this.binding = podcastBinding;
             podcastBinding.getRoot().setOnClickListener(this);
         }
 
         void bind(int position) {
+            //Show last element footer
+            if (position == mEpisodes.size() - 1) {
+                binding.moreContainer.setVisibility(View.VISIBLE);
+            } else {
+                binding.moreContainer.setVisibility(View.GONE);
+            }
             EpisodesItem episodeItem = mEpisodes.get(position);
             if (episodeItem != null && mContext != null) {
 
                 //Episodes Duration
                 if ((episodeItem.getAudioLengthSec() > 0)) {
-                    binding.tvEpisodeDuration.setText(DateFormatUtil.formatTimeHHmm(episodeItem.getAudioLengthSec()));
+                    binding.container.tvEpisodeDuration.setText(DateFormatUtil.formatTimeHHmm(episodeItem.getAudioLengthSec()));
                 } else {
-                    binding.tvEpisodeDuration.setText(EMPTY);
+                    binding.container.tvEpisodeDuration.setText(EMPTY);
                 }
                 //Title
                 if (!TextUtils.isEmpty(episodeItem.getTitle())) {
-                    binding.tvTitle.setText(episodeItem.getTitle());
+                    binding.container.tvTitle.setText(episodeItem.getTitle());
                 } else {
-                    binding.tvTitle.setText(EMPTY);
+                    binding.container.tvTitle.setText(EMPTY);
                 }
                 //Description
                 if (!TextUtils.isEmpty(episodeItem.getDescription())) {
-                    binding.tvDescription.setText(Html.fromHtml(episodeItem.getDescription()));
+                    binding.container.tvDescription.setText(Html.fromHtml(episodeItem.getDescription()));
                 } else {
-                    binding.tvDescription.setText(EMPTY);
+                    binding.container.tvDescription.setText(EMPTY);
                 }
 
                 //Publish date
                 if (episodeItem.getPubDateMs() > 0L) {
                     Date publishDate = new Date(episodeItem.getPubDateMs());
-                    binding.tvPublishedDate.setText(R.string.published_date_label);
-                    binding.tvPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
+                    binding.container.tvPublishedDate.setText(R.string.published_date_label);
+                    binding.container.tvPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
                 }
             }
         }
@@ -242,17 +242,5 @@ public class EpisodesDataAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    class InfoViewHolder extends RecyclerView.ViewHolder {
-        private final ItemInfoBinding binding;
-
-        public InfoViewHolder(@NonNull ItemInfoBinding infoBinding) {
-            super(infoBinding.getRoot());
-            this.binding = infoBinding;
-        }
-
-        void bind() {
-            binding.tvMore.setOnClickListener(v -> mClickListener.onMoreEpisodeClick());
-        }
-    }
 
 }

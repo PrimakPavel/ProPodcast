@@ -5,10 +5,12 @@
     <color name="colorPrimaryLight">#DCEDC8</color>
     <color name="colorAccent">#FFC107</color>
     <color name="colorTextPrimary">#212121</color>
+    <color name="colorTextToolbar">#FFFFFF</color>
     <color name="colorIcons">#212121</color>
     <color name="colorIconsLight">#777777</color>
     <color name="colorTextSecondary">#757575</color>
-    <color name="colorTextThirdly">#DFDFDF</color>
+    <color name="colorTextThirdly">#F8F8F8</color>
     <color name="colorDivider">#BDBDBD</color>
     <color name="colorPlaceholder">#E0E0E0</color>
+    <color name="colorBackground">#FFFFFF</color>
 </resources>

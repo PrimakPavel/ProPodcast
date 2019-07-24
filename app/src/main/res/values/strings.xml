@@ -13,6 +13,11 @@
     <string name="share_label">Share</string>
     <string name="more_label">More episodes ></string>
     <string name="recommendation_podcasts_label">Recommendations:</string>
+    <string name="web_site_link">Visit website</string>
+    <string name="publisher_label">Publisher: </string>
+    <string name="country_label">Country: </string>
+    <string name="episodes_count_label">EP total count: </string>
+    <string name="empty_favorites_list">Empty favorites list!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

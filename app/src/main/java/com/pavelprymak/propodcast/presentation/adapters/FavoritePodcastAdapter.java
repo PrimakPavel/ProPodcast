@@ -12,62 +12,60 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.ItemPodcastBinding;
-import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem;
-import com.pavelprymak.propodcast.utils.DateFormatUtil;
+import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity;
 import com.squareup.picasso.Picasso;
 
-import java.util.Date;
 import java.util.List;
 
-public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastViewHolder> {
+public class FavoritePodcastAdapter extends RecyclerView.Adapter<FavoritePodcastAdapter.FavoritePodcastViewHolder> {
 
     // Use default locale format
-    private List<PodcastItem> mPodcasts;
-    private final PodcastClickListener clickListener;
+    private List<FavoritePodcastEntity> mFavorites;
+    private final FavoritePodcastClickListener clickListener;
     private Context mContext;
 
 
-    public PodcastAdapter(PodcastClickListener clickListener) {
+    public FavoritePodcastAdapter(FavoritePodcastClickListener clickListener) {
         this.clickListener = clickListener;
     }
 
-    public void updateList(List<PodcastItem> articles) {
-        mPodcasts = articles;
+    public void updateList(List<FavoritePodcastEntity> articles) {
+        mFavorites = articles;
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public PodcastViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FavoritePodcastViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(mContext);
         ItemPodcastBinding itemViewReviewBinding = DataBindingUtil.inflate(inflater, R.layout.item_podcast, parent, false);
-        return new PodcastViewHolder(itemViewReviewBinding);
+        return new FavoritePodcastViewHolder(itemViewReviewBinding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PodcastViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FavoritePodcastViewHolder holder, int position) {
         holder.bind(position);
     }
 
     @Override
     public int getItemCount() {
-        if (mPodcasts == null) return 0;
-        else return mPodcasts.size();
+        if (mFavorites == null) return 0;
+        else return mFavorites.size();
     }
 
-    class PodcastViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class FavoritePodcastViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ItemPodcastBinding binding;
         private static final String EMPTY = "";
 
-        PodcastViewHolder(@NonNull ItemPodcastBinding podcastBinding) {
+        FavoritePodcastViewHolder(@NonNull ItemPodcastBinding podcastBinding) {
             super(podcastBinding.getRoot());
             this.binding = podcastBinding;
             podcastBinding.getRoot().setOnClickListener(this);
         }
 
         void bind(int position) {
-            PodcastItem podcastItem = mPodcasts.get(position);
+            FavoritePodcastEntity podcastItem = mFavorites.get(position);
             if (podcastItem != null && mContext != null) {
                 //LOGO
                 if (!TextUtils.isEmpty(podcastItem.getThumbnail())) {
@@ -77,15 +75,6 @@ public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastV
                             .into(binding.ivPodcastLogo);
                 } else {
                     binding.ivPodcastLogo.setImageDrawable(null);
-                }
-
-                //Episodes Count
-                if ((podcastItem.getTotalEpisodes() > 0)) {
-                    binding.tvEpisodesCount.setText(String.valueOf(podcastItem.getTotalEpisodes()));
-                    binding.tvEpisodesCount.append(" " + mContext.getString(R.string.episodes_label));
-
-                } else {
-                    binding.tvEpisodesCount.setText(EMPTY);
                 }
                 //Title
                 if (!TextUtils.isEmpty(podcastItem.getTitle())) {
@@ -108,26 +97,20 @@ public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastV
                 } else {
                     binding.tvCountryLanguage.setText(EMPTY);
                 }
-
-                if (podcastItem.getLatestPubDateMs() > 0L) {
-                    Date publishDate = new Date(podcastItem.getLatestPubDateMs());
-                    binding.tvLastPublishedDate.setText(R.string.last_published_date_label);
-                    binding.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
-                }
-
-                binding.ivMoreOptions.setOnClickListener(v -> clickListener.onPodcastMoreOptionsClick(podcastItem, v));
+                binding.ivMoreOptions.setOnClickListener(v -> clickListener.onPodcastMoreOptionsClick(podcastItem.getPodcastId(), podcastItem.getListennotesUrl(), v));
             }
         }
 
         @Override
         public void onClick(View v) {
-            if (mPodcasts != null) {
-                PodcastItem podcastItem = mPodcasts.get(getAdapterPosition());
+            if (mFavorites != null) {
+                FavoritePodcastEntity podcastItem = mFavorites.get(getAdapterPosition());
                 if (podcastItem != null) {
-                    clickListener.onPodcastItemClick(podcastItem.getId());
+                    clickListener.onPodcastItemClick(podcastItem.getPodcastId());
                 }
             }
         }
     }
 
 }
+

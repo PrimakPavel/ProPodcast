@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentSearchBinding;
 
@@ -20,6 +21,7 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ((MainActivity) getActivity()).setNavViewVisibility(true);
         // Inflate the layout for this fragment
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false);
         return mBinding.getRoot();

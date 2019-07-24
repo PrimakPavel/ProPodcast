@@ -2,6 +2,7 @@ package com.pavelprymak.propodcast;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -12,15 +13,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
     private NavController mNavController;
+    private BottomNavigationView mNavView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        mNavView = findViewById(R.id.nav_view);
         mNavController = Navigation.findNavController(this, R.id.navHostFragment);
-        NavigationUI.setupWithNavController(navView, mNavController);
-        NavigationUI.setupActionBarWithNavController(this, mNavController);
+        NavigationUI.setupWithNavController(mNavView, mNavController);
+        //NavigationUI.setupActionBarWithNavController(this, mNavController);
     }
 
     @Override
@@ -32,6 +34,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setNavViewVisibility(boolean isVisible) {
+        if (isVisible) {
+            mNavView.setVisibility(View.VISIBLE);
+        } else {
+            mNavView.setVisibility(View.GONE);
+        }
     }
 
 }
