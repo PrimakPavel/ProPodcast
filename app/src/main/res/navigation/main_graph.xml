@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_bestPodcastsFragment_to_podcastDetailsFragment"
             app:destination="@id/podcastDetailsFragment" />
+        <action
+            android:id="@+id/action_bestPodcastsFragment_to_filtersViewPagerFragment"
+            app:destination="@id/filtersViewPagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoritesPodcastsFragment"
@@ -35,6 +38,11 @@
     <fragment
         android:id="@+id/podcastDetailsFragment"
         android:name="com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment"
-        android:label="fragment_podcast_details"
+        android:label="@string/podcast_details_title"
         tools:layout="@layout/fragment_podcast_details" />
+    <fragment
+        android:id="@+id/filtersViewPagerFragment"
+        android:name="com.pavelprymak.propodcast.presentation.screens.filters.FiltersViewPagerFragment"
+        android:label="@string/filters_title"
+        tools:layout="@layout/fragment_filters_view_pager" />
 </navigation>

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -70,6 +71,14 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
             if (favoritePodcastEntities != null) {
                 mFavorites.addAll(favoritePodcastEntities);
             }
+        });
+        mBinding.toolbar.inflateMenu(R.menu.filters_menu);
+        mBinding.toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_filters) {
+                mNavController.navigate(R.id.filtersViewPagerFragment);
+                return true;
+            }
+            return false;
         });
     }
 

@@ -31,8 +31,8 @@ public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastV
         this.clickListener = clickListener;
     }
 
-    public void updateList(List<PodcastItem> articles) {
-        mPodcasts = articles;
+    public void updateList(List<PodcastItem> podcasts) {
+        mPodcasts = podcasts;
         notifyDataSetChanged();
     }
 
@@ -41,8 +41,8 @@ public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastV
     public PodcastViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        ItemPodcastBinding itemViewReviewBinding = DataBindingUtil.inflate(inflater, R.layout.item_podcast, parent, false);
-        return new PodcastViewHolder(itemViewReviewBinding);
+        ItemPodcastBinding itemPodcastBinding = DataBindingUtil.inflate(inflater, R.layout.item_podcast, parent, false);
+        return new PodcastViewHolder(itemPodcastBinding);
     }
 
     @Override

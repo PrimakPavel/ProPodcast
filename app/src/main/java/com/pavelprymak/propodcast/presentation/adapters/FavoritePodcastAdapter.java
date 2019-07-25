@@ -29,8 +29,8 @@ public class FavoritePodcastAdapter extends RecyclerView.Adapter<FavoritePodcast
         this.clickListener = clickListener;
     }
 
-    public void updateList(List<FavoritePodcastEntity> articles) {
-        mFavorites = articles;
+    public void updateList(List<FavoritePodcastEntity> podcasts) {
+        mFavorites = podcasts;
         notifyDataSetChanged();
     }
 
@@ -39,8 +39,8 @@ public class FavoritePodcastAdapter extends RecyclerView.Adapter<FavoritePodcast
     public FavoritePodcastViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        ItemPodcastBinding itemViewReviewBinding = DataBindingUtil.inflate(inflater, R.layout.item_podcast, parent, false);
-        return new FavoritePodcastViewHolder(itemViewReviewBinding);
+        ItemPodcastBinding itemPodcastBinding = DataBindingUtil.inflate(inflater, R.layout.item_podcast, parent, false);
+        return new FavoritePodcastViewHolder(itemPodcastBinding);
     }
 
     @Override

@@ -22,11 +22,12 @@
 
     <style name="AppTheme.TextCollapsingAppBar">
         <item name="android:textSize">@dimen/standard_text_size</item>
-        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textColor">@color/colorTextThirdly</item>
     </style>
 
     <style name="AppTheme.TextCollapsingAppBar.Title">
         <item name="android:textSize">@dimen/standard_title_text_size</item>
+        <item name="android:textColor">@color/colorTextAppBar</item>
         <item name="android:textStyle">bold</item>
 
     </style>
