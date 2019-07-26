@@ -106,7 +106,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         RecommendationViewHolder(@NonNull ItemRecommendationBinding podcastBinding) {
             super(podcastBinding.getRoot());
             this.binding = podcastBinding;
-            podcastBinding.getRoot().setOnClickListener(this);
+            podcastBinding.container.itemContainer.setOnClickListener(this);
         }
 
         void bind(int position) {
@@ -190,7 +190,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         EpisodeViewHolder(@NonNull ItemEpisodeMoreBinding podcastBinding) {
             super(podcastBinding.getRoot());
             this.binding = podcastBinding;
-            podcastBinding.getRoot().setOnClickListener(this);
+            podcastBinding.container.itemContainer.setOnClickListener(this);
         }
 
         void bind(int position) {
@@ -205,7 +205,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 //Episodes Duration
                 if ((episodeItem.getAudioLengthSec() > 0)) {
-                    binding.container.tvEpisodeDuration.setText(DateFormatUtil.formatTimeHHmm(episodeItem.getAudioLengthSec()));
+                    binding.container.tvEpisodeDuration.setText(DateFormatUtil.formatTimeHHmmss(episodeItem.getAudioLengthSec()));
                 } else {
                     binding.container.tvEpisodeDuration.setText(EMPTY);
                 }

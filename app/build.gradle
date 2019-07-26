@@ -91,6 +91,9 @@ dependencies {
     //Timber log
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
+    //Otto event bus
+    implementation 'com.squareup:otto:1.3.8'
+
     //    Picasso
 //    ------------------------------------------------------------
     implementation "com.squareup.picasso:picasso:2.71828"

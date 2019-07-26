@@ -10,6 +10,7 @@ import com.pavelprymak.propodcast.model.db.repo.DbRepo;
 import com.pavelprymak.propodcast.model.db.repo.DbRepoImpl;
 import com.pavelprymak.propodcast.utils.AppExecutors;
 import com.pavelprymak.propodcast.utils.SettingsPreferenceManager;
+import com.squareup.otto.Bus;
 
 import timber.log.Timber;
 
@@ -18,6 +19,7 @@ public class App extends Application {
     public static final String CHANNEL_NAME = "ProPodcast App Channel";
     public static AppExecutors appExecutors;
     public static DbRepo dbRepo;
+    public static Bus eventBus = new Bus();
     public static SettingsPreferenceManager mSettings;
 
     @Override

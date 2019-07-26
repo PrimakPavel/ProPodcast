@@ -162,7 +162,7 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
 
     @Override
     public void onEpisodeItemClick(String episodeId, String mediaUrl) {
-
+        mNavController.navigate(R.id.playerFragment);
     }
 
     @Override

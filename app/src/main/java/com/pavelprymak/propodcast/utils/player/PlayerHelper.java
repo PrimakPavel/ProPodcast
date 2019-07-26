@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
+import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.utils.player.audioFocus.AudioFocusHelper;
 import com.pavelprymak.propodcast.utils.player.audioFocus.ExoAudioFocusListener;
 import com.pavelprymak.propodcast.utils.player.mediaSession.MediaSessionHelper;
@@ -43,8 +44,10 @@ public class PlayerHelper implements Player.EventListener {
     private SimpleExoPlayer mExoPlayer;
     private PlayerView mPlayerView;
     private ProgressBar mProgressBar;
-    private String mVideoDescription;
+    private String mTrackDescription;
     private Context mContext;
+    private String mTrackTitle;
+    private String mTrackImageUrl;
     //AUDIO FOCUS
     private AudioFocusHelper mAudioFocusHelper;
     //MediaSessionHelper
@@ -66,60 +69,86 @@ public class PlayerHelper implements Player.EventListener {
      * @param mediaUri The URI of the sample to play.
      */
 
+
     public void initializePlayer(Uri mediaUri) {
-        if (mExoPlayer == null) {
-            // Create an instance of the ExoPlayer.
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            LoadControl loadControl = new DefaultLoadControl();
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance((mContext), trackSelector, loadControl);
-            mPlayerView.setPlayer(mExoPlayer);
+        if (mContext != null) {
+            if (mExoPlayer == null) {
+                // Create an instance of the ExoPlayer.
+                TrackSelector trackSelector = new DefaultTrackSelector();
+                LoadControl loadControl = new DefaultLoadControl();
+                mExoPlayer = ExoPlayerFactory.newSimpleInstance((mContext), trackSelector, loadControl);
+                if (mPlayerView != null)
+                    mPlayerView.setPlayer(mExoPlayer);
 
-            // Set the ExoPlayer.EventListener to this activity.
-            mExoPlayer.addListener(this);
-        }
-        if (mAudioFocusHelper == null) {
-            //AUDIO FOCUS PREPARE
-            ExoAudioFocusListener audioFocusListener = new ExoAudioFocusListener(mExoPlayer);
-            mAudioFocusHelper = new AudioFocusHelper(mContext, audioFocusListener);
-        }
-        if (mMediaSessionHelper == null) {
-            mMediaSessionHelper = new MediaSessionHelper(mContext, new MySessionCallback());
-        }
-        // Prepare the MediaSource.
-        String userAgent = Util.getUserAgent(mContext, "BakingApp");
-        MediaSource mediaSource = new ProgressiveMediaSource.Factory(buildDataSourceFactory(mContext, userAgent)).createMediaSource(mediaUri);
-        boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
-        if (haveResumePosition) {
-            mExoPlayer.seekTo(resumeWindow, resumePosition);
-        }
-        if (mAudioFocusHelper.requestAudioFocus()) {
-            mExoPlayer.prepare(mediaSource, !haveResumePosition, false);
-        }
-        //start player
-        mExoPlayer.setPlayWhenReady(true);
-    }
-
-    public void stopCurrentVideo() {
-        if (mExoPlayer != null) {
-            mExoPlayer.stop(true);
-            mProgressBar.setVisibility(View.GONE);
-        }
-    }
-
-    public void pauseVideo() {
-        if (mExoPlayer != null) {
-            mExoPlayer.setPlayWhenReady(false);
-        }
-    }
-
-    public void playVideo() {
-        if (mExoPlayer != null) {
+                // Set the ExoPlayer.EventListener to this activity.
+                mExoPlayer.addListener(this);
+            }
+            if (mAudioFocusHelper == null) {
+                //AUDIO FOCUS PREPARE
+                ExoAudioFocusListener audioFocusListener = new ExoAudioFocusListener(mExoPlayer);
+                mAudioFocusHelper = new AudioFocusHelper(mContext, audioFocusListener);
+            }
+            if (mMediaSessionHelper == null) {
+                mMediaSessionHelper = new MediaSessionHelper(mContext, new MySessionCallback());
+            }
+            // Prepare the MediaSource.
+            String userAgent = Util.getUserAgent(mContext, mContext.getString(R.string.app_name));
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(buildDataSourceFactory(mContext, userAgent)).createMediaSource(mediaUri);
+            boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
+            if (haveResumePosition) {
+                mExoPlayer.seekTo(resumeWindow, resumePosition);
+            }
+            if (mAudioFocusHelper.requestAudioFocus()) {
+                mExoPlayer.prepare(mediaSource, !haveResumePosition, false);
+            }
+            //start player
             mExoPlayer.setPlayWhenReady(true);
         }
     }
 
+    public void setTrackTitle(String trackTitle) {
+        mTrackTitle = trackTitle;
+    }
+
+    public String getTrackTitle() {
+        return mTrackTitle;
+    }
+
+    public String getTrackImageUrl() {
+        return mTrackImageUrl;
+    }
+
+    public void setTrackImageUrl(String mTrackImageUrl) {
+        this.mTrackImageUrl = mTrackImageUrl;
+    }
+
+    public void stopCurrentTrack() {
+        if (mExoPlayer != null) {
+            mExoPlayer.stop(true);
+            if (mProgressBar != null)
+                mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    public void pauseTrack() {
+        if (mExoPlayer != null) {
+            mExoPlayer.setPlayWhenReady(false);
+        }
+        if (mAudioFocusHelper != null) {
+            mAudioFocusHelper.abandonAudioFocus();
+        }
+    }
+
+    public void playTrack() {
+        if (mExoPlayer != null) {
+            mExoPlayer.setPlayWhenReady(true);
+        }
+        if (mAudioFocusHelper != null)
+            mAudioFocusHelper.requestAudioFocus();
+    }
+
     public void setMediaDescriptionText(String mediaDescriptionsText) {
-        mVideoDescription = mediaDescriptionsText;
+        mTrackDescription = mediaDescriptionsText;
     }
 
     /**
@@ -140,6 +169,11 @@ public class PlayerHelper implements Player.EventListener {
             mMediaSessionHelper.release();
             mMediaSessionHelper = null;
         }
+    }
+
+    public void seekToPosition(long position) {
+        resumePosition = position;
+        mExoPlayer.seekTo(resumeWindow, resumePosition);
     }
 
     public void clearResumePosition() {
@@ -170,6 +204,42 @@ public class PlayerHelper implements Player.EventListener {
         return resumePosition;
     }
 
+    public long getCurrentTrackDuration() {
+        long duration = 0L;
+        if (mExoPlayer != null) {
+            duration = mExoPlayer.getDuration();
+        }
+        return duration;
+    }
+
+    public boolean isPlayerLoading() {
+        if (mExoPlayer != null) {
+            return (mExoPlayer.getPlayWhenReady() && mExoPlayer.isLoading());
+        }
+        return false;
+    }
+
+    public boolean isPlayerReadyAndPlay() {
+        if (mExoPlayer != null) {
+            return (mExoPlayer.getPlayWhenReady() && mExoPlayer.getPlaybackState() == Player.STATE_READY);
+        }
+        return false;
+    }
+
+    public boolean isPlayerReadyAndPause() {
+        if (mExoPlayer != null) {
+            return (!mExoPlayer.getPlayWhenReady() && mExoPlayer.getPlaybackState() == Player.STATE_READY);
+        }
+        return false;
+    }
+
+    public boolean isPlayerEnded() {
+        if (mExoPlayer != null) {
+            return (mExoPlayer.getPlaybackState() == Player.STATE_ENDED);
+        }
+        return false;
+    }
+
 
     /**
      * Media Session Callbacks, where all external clients control the player.
@@ -179,13 +249,17 @@ public class PlayerHelper implements Player.EventListener {
         public void onPlay() {
             if (mExoPlayer != null)
                 mExoPlayer.setPlayWhenReady(true);
+            if (mAudioFocusHelper != null)
+                mAudioFocusHelper.requestAudioFocus();
         }
 
         @Override
         public void onPause() {
-
             if (mExoPlayer != null)
                 mExoPlayer.setPlayWhenReady(false);
+            if (mAudioFocusHelper != null) {
+                mAudioFocusHelper.abandonAudioFocus();
+            }
         }
 
         @Override
@@ -298,7 +372,7 @@ public class PlayerHelper implements Player.EventListener {
 
         //SHOW NOTIFICATION
         if (mMediaSessionHelper != null) {
-            mMediaSessionHelper.showNotification(mVideoDescription);
+            mMediaSessionHelper.showNotification(mTrackDescription);
         }
     }
 

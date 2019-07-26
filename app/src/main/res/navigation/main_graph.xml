@@ -45,4 +45,9 @@
         android:name="com.pavelprymak.propodcast.presentation.screens.filters.FiltersViewPagerFragment"
         android:label="@string/filters_title"
         tools:layout="@layout/fragment_filters_view_pager" />
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.pavelprymak.propodcast.presentation.screens.PlayerFragment"
+        android:label="fragment_player"
+        tools:layout="@layout/fragment_player" />
 </navigation>
