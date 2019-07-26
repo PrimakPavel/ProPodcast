@@ -28,4 +28,13 @@
 
     <!-- Empty list errors-->
     <string name="empty_favorites_list">Empty favorites list!</string>
+
+    <!--Player -->
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="restart">Restart</string>
+    <string name="rewind">Rewind</string>
+    <string name="fast_forward">Fast Forward</string>
+    <string name="error_video_url">Sorry, video URL is Empty</string>
+    <string name="error_connection">Connection error!</string>
 </resources>
