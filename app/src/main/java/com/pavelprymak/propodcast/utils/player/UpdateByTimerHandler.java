@@ -30,6 +30,7 @@ public abstract class UpdateByTimerHandler {
 
     public void startHandler() {
         // start
+        mHandler.removeCallbacks(mRunnable);
         mStopHandler = false;
         mHandler.post(mRunnable);
     }
@@ -38,6 +39,10 @@ public abstract class UpdateByTimerHandler {
         //stop
         mStopHandler = true;
         mHandler.removeCallbacks(mRunnable);
+    }
+
+    public boolean isStopHandler() {
+        return mStopHandler;
     }
 
     public abstract void doOperation();

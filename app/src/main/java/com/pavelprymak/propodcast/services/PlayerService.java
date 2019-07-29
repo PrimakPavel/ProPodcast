@@ -1,7 +1,6 @@
 package com.pavelprymak.propodcast.services;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,11 +8,8 @@ import android.os.IBinder;
 import android.os.PowerManager;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.pavelprymak.propodcast.App;
-import com.pavelprymak.propodcast.MainActivity;
-import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.utils.otto.EventUpdateDurationAndCurrentPos;
 import com.pavelprymak.propodcast.utils.otto.EventUpdateLoading;
 import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayPauseBtn;
@@ -25,8 +21,6 @@ import com.pavelprymak.propodcast.utils.player.UpdateByTimerHandler;
 import com.squareup.otto.Bus;
 
 import timber.log.Timber;
-
-import static com.pavelprymak.propodcast.App.CHANNEL_ID;
 
 public class PlayerService extends Service implements PlayerStateListener {
     private PowerManager.WakeLock wakeLock;
@@ -48,6 +42,7 @@ public class PlayerService extends Service implements PlayerStateListener {
     public static final String COMMAND_UPDATE_UI = "commandUpdateUI";
 
     private PlayerHelper mPlayerHelper;
+    private boolean mIsStartTrack = false;
     private UpdateByTimerHandler mUpdateUIPositionHandler;
     private Bus eventBus = App.eventBus;
 
@@ -62,18 +57,6 @@ public class PlayerService extends Service implements PlayerStateListener {
                 "ExampleApp:Wakelock");
         wakeLock.acquire();
         Timber.d("Wakelock acquired");
-
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                0, notificationIntent, 0);
-
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Example PlayerService")
-                .setContentText("Running...")
-                .setSmallIcon(R.drawable.ic_baseline_play)
-                .setContentIntent(pendingIntent)
-                .build();
-        startForeground(NOTIFICATION_FOREGROUND_ID, notification);
         mPlayerHelper = new PlayerHelper(getApplicationContext(), this);
         mUpdateUIPositionHandler = new UpdateByTimerHandler() {
             @Override
@@ -98,8 +81,11 @@ public class PlayerService extends Service implements PlayerStateListener {
             mUpdateUIPositionHandler.stopHandler();
             mUpdateUIPositionHandler = null;
         }
+        mIsStartTrack = false;
         Timber.d("onDestroy");
-        wakeLock.release();
+        if (wakeLock.isHeld()) {
+            wakeLock.release();
+        }
         Timber.d("Wakelock released");
     }
 
@@ -109,7 +95,6 @@ public class PlayerService extends Service implements PlayerStateListener {
         String input = intent.getStringExtra(EXTRA_COMMAND_PLAYER);
         Timber.d("onStartCommand");
         Timber.d(input);
-
         switch (input) {
             case COMMAND_START_TRACK: {
                 String trackTitle = intent.getStringExtra(EXTRA_TRACK_TITLE);
@@ -136,41 +121,47 @@ public class PlayerService extends Service implements PlayerStateListener {
                     if (eventBus != null)
                         eventBus.post(new EventUpdateTrackImageAndTitle(trackTitle, trackImage));
                 }
+                mIsStartTrack = true;
                 break;
             }
             case COMMAND_PAUSE: {
-                if (mPlayerHelper != null) {
-                    mPlayerHelper.pauseTrack();
-                }
-                if (mUpdateUIPositionHandler != null) {
-                    mUpdateUIPositionHandler.stopHandler();
+                if (mIsStartTrack) {
+                    if (mPlayerHelper != null) {
+                        mPlayerHelper.pauseTrack();
+                    }
+                    if (mUpdateUIPositionHandler != null) {
+                        mUpdateUIPositionHandler.stopHandler();
+                    }
                 }
                 break;
             }
             case COMMAND_PLAY: {
-                if (mPlayerHelper != null) {
-                    mPlayerHelper.playTrack();
-                }
-                if (mUpdateUIPositionHandler != null) {
-                    mUpdateUIPositionHandler.startHandler();
+                if (mIsStartTrack) {
+                    if (mPlayerHelper != null) {
+                        mPlayerHelper.playTrack();
+                    }
+                    if (mUpdateUIPositionHandler != null) {
+                        mUpdateUIPositionHandler.startHandler();
+                    }
                 }
                 break;
             }
             case COMMAND_SEEK_TO_POSITION: {
-                float progressInPercents = intent.getFloatExtra(EXTRA_TRACK_SEEK_PROGRESS_IN_PERSENTS, 0f);
-                if (mPlayerHelper != null) {
-                    mPlayerHelper.seekToPosition(progressInPercents);
+                if (mIsStartTrack) {
+                    float progressInPercents = intent.getFloatExtra(EXTRA_TRACK_SEEK_PROGRESS_IN_PERSENTS, 0f);
+                    if (mPlayerHelper != null) {
+                        mPlayerHelper.seekToPosition(progressInPercents);
+                    }
                 }
                 break;
             }
             case COMMAND_UPDATE_UI: {
-                if (mPlayerHelper != null && eventBus != null) {
+                if (mPlayerHelper != null && eventBus != null && mIsStartTrack) {
                     eventBus.post(getDataAboutPlayer());
                 }
                 break;
             }
         }
-
         return START_STICKY;
     }
 
@@ -216,6 +207,9 @@ public class PlayerService extends Service implements PlayerStateListener {
         if (eventBus != null) {
             eventBus.post(new EventUpdateLoading(false));
             eventBus.post(new EventUpdatePlayPauseBtn(true));
+        }
+        if (mUpdateUIPositionHandler != null && mUpdateUIPositionHandler.isStopHandler()) {
+            mUpdateUIPositionHandler.startHandler();
         }
     }
 

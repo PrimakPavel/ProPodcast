@@ -370,11 +370,6 @@ public class PlayerHelper implements Player.EventListener {
         }
         if (mPlayerStateListener != null)
             mPlayerStateListener.stateChanged();
-
-       /* //SHOW NOTIFICATION
-        if (mMediaSessionHelper != null) {
-            mMediaSessionHelper.showNotification(mTrackDescription);
-        }*/
     }
 
     @Override

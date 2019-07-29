@@ -17,6 +17,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
+                app:title="@string/favorite_podcasts_title"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             </androidx.appcompat.widget.Toolbar>
