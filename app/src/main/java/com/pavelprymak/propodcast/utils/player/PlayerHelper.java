@@ -4,8 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 
@@ -24,7 +22,6 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -39,28 +36,27 @@ import com.pavelprymak.propodcast.utils.player.audioFocus.ExoAudioFocusListener;
 import com.pavelprymak.propodcast.utils.player.mediaSession.MediaSessionHelper;
 
 public class PlayerHelper implements Player.EventListener {
-    public static final int DEFAULT_RESUME_WINDOW = C.INDEX_UNSET;
-    public static final long DEFAULT_RESUME_POSITION = C.TIME_UNSET;
+    private static final int DEFAULT_RESUME_WINDOW = C.INDEX_UNSET;
+    private static final long DEFAULT_RESUME_POSITION = C.TIME_UNSET;
+    private static final float MAX_PERCENT = 100f;
     private SimpleExoPlayer mExoPlayer;
-    private PlayerView mPlayerView;
-    private ProgressBar mProgressBar;
-    private String mTrackDescription;
     private Context mContext;
     private String mTrackTitle;
+    private String mTrackAuthor;
     private String mTrackImageUrl;
     //AUDIO FOCUS
     private AudioFocusHelper mAudioFocusHelper;
     //MediaSessionHelper
     private MediaSessionHelper mMediaSessionHelper;
+    private PlayerStateListener mPlayerStateListener;
 
 
     private int resumeWindow = DEFAULT_RESUME_WINDOW;
     private long resumePosition = DEFAULT_RESUME_POSITION;
 
-    public PlayerHelper(Context context, PlayerView mPlayerView, ProgressBar progressBar) {
+    public PlayerHelper(Context context, PlayerStateListener playerStateListener) {
         mContext = context;
-        this.mPlayerView = mPlayerView;
-        mProgressBar = progressBar;
+        mPlayerStateListener = playerStateListener;
     }
 
     /**
@@ -77,9 +73,6 @@ public class PlayerHelper implements Player.EventListener {
                 TrackSelector trackSelector = new DefaultTrackSelector();
                 LoadControl loadControl = new DefaultLoadControl();
                 mExoPlayer = ExoPlayerFactory.newSimpleInstance((mContext), trackSelector, loadControl);
-                if (mPlayerView != null)
-                    mPlayerView.setPlayer(mExoPlayer);
-
                 // Set the ExoPlayer.EventListener to this activity.
                 mExoPlayer.addListener(this);
             }
@@ -122,11 +115,19 @@ public class PlayerHelper implements Player.EventListener {
         this.mTrackImageUrl = mTrackImageUrl;
     }
 
+    public String getTrackAuthor() {
+        return mTrackAuthor;
+    }
+
+    public void setTrackAuthor(String mTrackAuthor) {
+        this.mTrackAuthor = mTrackAuthor;
+    }
+
     public void stopCurrentTrack() {
         if (mExoPlayer != null) {
             mExoPlayer.stop(true);
-            if (mProgressBar != null)
-                mProgressBar.setVisibility(View.GONE);
+            if (mPlayerStateListener != null)
+                mPlayerStateListener.isEnded();
         }
     }
 
@@ -145,10 +146,6 @@ public class PlayerHelper implements Player.EventListener {
         }
         if (mAudioFocusHelper != null)
             mAudioFocusHelper.requestAudioFocus();
-    }
-
-    public void setMediaDescriptionText(String mediaDescriptionsText) {
-        mTrackDescription = mediaDescriptionsText;
     }
 
     /**
@@ -171,9 +168,9 @@ public class PlayerHelper implements Player.EventListener {
         }
     }
 
-    public void seekToPosition(long position) {
-        resumePosition = position;
-        mExoPlayer.seekTo(resumeWindow, resumePosition);
+    public void seekToPosition(float progressInPercents) {
+        long seekPosition = (long) (progressInPercents * getCurrentTrackDuration() / MAX_PERCENT);
+        mExoPlayer.seekTo(mExoPlayer.getCurrentWindowIndex(), seekPosition);
     }
 
     public void clearResumePosition() {
@@ -238,6 +235,10 @@ public class PlayerHelper implements Player.EventListener {
             return (mExoPlayer.getPlaybackState() == Player.STATE_ENDED);
         }
         return false;
+    }
+
+    public MediaSessionHelper getMediaSessionHelper() {
+        return mMediaSessionHelper;
     }
 
 
@@ -336,17 +337,22 @@ public class PlayerHelper implements Player.EventListener {
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == Player.STATE_BUFFERING) {
-            if (mProgressBar != null)
-                mProgressBar.setVisibility(View.VISIBLE);
+            if (mPlayerStateListener != null)
+                mPlayerStateListener.isBuffed();
         }
         if (playbackState == Player.STATE_ENDED) {
-            if (mPlayerView != null)
-                mPlayerView.showController();
-            if (mProgressBar != null)
-                mProgressBar.setVisibility(View.GONE);
+            if (mPlayerStateListener != null)
+                mPlayerStateListener.isEnded();
             if (mAudioFocusHelper != null) {
                 mAudioFocusHelper.abandonAudioFocus();
             }
+        }
+        if ((playbackState == Player.STATE_READY) && playWhenReady) {
+            if (mPlayerStateListener != null)
+                mPlayerStateListener.isReadyAndPlay();
+        } else if (playbackState == Player.STATE_READY) {
+            if (mPlayerStateListener != null)
+                mPlayerStateListener.isReadyAndPause();
         }
 
         if (mMediaSessionHelper != null
@@ -356,24 +362,19 @@ public class PlayerHelper implements Player.EventListener {
             if ((playbackState == Player.STATE_READY) && playWhenReady) {
                 mMediaSessionHelper.getStateBuilder().setState(PlaybackStateCompat.STATE_PLAYING,
                         mExoPlayer.getCurrentPosition(), 1f);
-                if (mProgressBar != null)
-                    mProgressBar.setVisibility(View.GONE);
             } else if ((playbackState == Player.STATE_READY)) {
                 mMediaSessionHelper.getStateBuilder().setState(PlaybackStateCompat.STATE_PAUSED,
                         mExoPlayer.getCurrentPosition(), 1f);
-                if (mProgressBar != null)
-                    mProgressBar.setVisibility(View.GONE);
             }
             mMediaSessionHelper.getMediaSession().setPlaybackState(mMediaSessionHelper.getStateBuilder().build());
-        } else if ((playbackState == Player.STATE_READY)) {
-            if (mProgressBar != null)
-                mProgressBar.setVisibility(View.GONE);
         }
+        if (mPlayerStateListener != null)
+            mPlayerStateListener.stateChanged();
 
-        //SHOW NOTIFICATION
+       /* //SHOW NOTIFICATION
         if (mMediaSessionHelper != null) {
             mMediaSessionHelper.showNotification(mTrackDescription);
-        }
+        }*/
     }
 
     @Override

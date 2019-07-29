@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class DateFormatUtil {
-    public static final int MS_AT_SEC =1000;
+    public static final int MS_AT_SEC = 1000;
     public static final SimpleDateFormat PUBLISH_DATE_FORMAT = new SimpleDateFormat("yy.MM.dd", Locale.ENGLISH);
 
     public static String formatTimeHHmmss(int sec) {
@@ -19,6 +19,6 @@ public class DateFormatUtil {
             return String.format("00:%02d:%02d", min, second, Locale.ENGLISH);
         }
 
-        return String.format("%02d sec", second, Locale.ENGLISH);
+        return String.format("00:00:%02d", second, Locale.ENGLISH);
     }
 }

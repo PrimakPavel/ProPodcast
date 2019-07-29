@@ -1,5 +1,6 @@
 package com.pavelprymak.propodcast.utils.player.mediaSession.notifications;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,7 +10,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
-
 
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
@@ -67,6 +67,47 @@ public class MediaSessionNotificationsManager {
 
         mNotificationManager = (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.notify(0, builder.build());
+    }
+
+    public Notification getNotification(PlaybackStateCompat state, MediaSessionCompat.Token mediaSessionToken, String trackTitle, String trackAuthor) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID);
+
+        int icon;
+        String play_pause;
+        if (state.getState() == PlaybackStateCompat.STATE_PLAYING) {
+            icon = R.drawable.exo_controls_pause;
+            play_pause = mContext.getString(R.string.pause);
+        } else {
+            icon = R.drawable.exo_controls_play;
+            play_pause = mContext.getString(R.string.play);
+        }
+
+
+        NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
+                icon, play_pause,
+                MediaButtonReceiver.buildMediaButtonPendingIntent(mContext,
+                        PlaybackStateCompat.ACTION_PLAY_PAUSE));
+
+        NotificationCompat.Action restartAction = new NotificationCompat
+                .Action(R.drawable.exo_controls_previous, mContext.getString(R.string.restart),
+                MediaButtonReceiver.buildMediaButtonPendingIntent
+                        (mContext, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
+
+        PendingIntent contentPendingIntent = PendingIntent.getActivity
+                (mContext, 0, new Intent(mContext, MainActivity.class), 0);
+
+        builder.setContentTitle(trackAuthor)
+                .setContentText(trackTitle)
+                .setContentIntent(contentPendingIntent)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .addAction(restartAction)
+                .addAction(playPauseAction)
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                        .setMediaSession(mediaSessionToken)
+                        .setShowActionsInCompactView(0, 1));
+
+        return builder.build();
     }
 
     public void release() {

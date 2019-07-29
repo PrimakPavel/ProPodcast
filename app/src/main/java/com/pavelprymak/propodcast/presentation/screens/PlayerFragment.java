@@ -3,11 +3,11 @@ package com.pavelprymak.propodcast.presentation.screens;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,14 +20,18 @@ import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentPlayerBinding;
 import com.pavelprymak.propodcast.services.PlayerService;
 import com.pavelprymak.propodcast.services.PlayerUI;
-import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerView;
+import com.pavelprymak.propodcast.utils.otto.EventUpdateDurationAndCurrentPos;
+import com.pavelprymak.propodcast.utils.otto.EventUpdateLoading;
 import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayPauseBtn;
+import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerView;
+import com.pavelprymak.propodcast.utils.otto.EventUpdateTrackImageAndTitle;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_COMMAND_PLAYER;
+import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_TRACK_AUTHOR;
 import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_TRACK_IMAGE_URL;
-import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_TRACK_SEEK_POSITION;
+import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_TRACK_SEEK_PROGRESS_IN_PERSENTS;
 import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_TRACK_TITLE;
 import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_TRACK_URL;
 import static com.pavelprymak.propodcast.utils.DateFormatUtil.MS_AT_SEC;
@@ -38,6 +42,9 @@ public class PlayerFragment extends Fragment implements PlayerUI {
     private static final String TAG_PAUSE = "tagPause";
     private static final String TAG_PLAY = "tagPlay";
     private static final String EMPTY_TITLE = "";
+    private static int SEEK_BAR_MAX_PROGRESS = 10000;
+    private static float MAX_PERCENT = 100f;
+    private boolean mIsSeekBarTouch = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,12 +64,7 @@ public class PlayerFragment extends Fragment implements PlayerUI {
     public void onResume() {
         super.onResume();
         App.eventBus.register(this);
-
-        //TODO start track other way
-        startTrackAction("The Monday show",
-                "https://cdn-images-1.listennotes.com/podcasts/my-life-in-the-mosh-of-ghosts-1Bk3nRY9Dgp.300x300.jpg",
-                "https://www.listennotes.com/e/p/11b34041e804491b9704d11f283c74de/");
-        new Handler().postDelayed(this::updateUiAction, 5000);
+        updateUiAction();
     }
 
     @Override
@@ -81,8 +83,34 @@ public class PlayerFragment extends Fragment implements PlayerUI {
                 playAction();
             }
         });
-
         mBinding.stopBtn.setOnClickListener(v -> stopAction());
+        mBinding.playerSeekBar.setMax(SEEK_BAR_MAX_PROGRESS);
+        mBinding.playerSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    float progressInPercents = progress * MAX_PERCENT / SEEK_BAR_MAX_PROGRESS;
+                    seekToPositionAction(progressInPercents);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                mIsSeekBarTouch = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mIsSeekBarTouch = false;
+
+            }
+        });
+        //TODO start track other way
+        startTrackAction("https://www.listennotes.com/e/p/11b34041e804491b9704d11f283c74de/",
+                "The Monday show",
+                "https://cdn-images-1.listennotes.com/podcasts/my-life-in-the-mosh-of-ghosts-1Bk3nRY9Dgp.300x300.jpg",
+                "Author Name"
+        );
     }
 
     @Subscribe
@@ -98,6 +126,23 @@ public class PlayerFragment extends Fragment implements PlayerUI {
     @Subscribe
     public void onUpdatePlayPauseBtn(EventUpdatePlayPauseBtn playPauseBtnUpdate) {
         setPlayStatus(playPauseBtnUpdate.isPlay());
+    }
+
+    @Subscribe
+    public void onUpdateLoading(EventUpdateLoading eventUpdateLoading) {
+        setLoadingStatus(eventUpdateLoading.isLoading());
+    }
+
+    @Subscribe
+    public void onUpdateTrackImageAndTitle(EventUpdateTrackImageAndTitle eventUpdateTrackImageAndTitle) {
+        setTrackImage(eventUpdateTrackImageAndTitle.getImageUrl());
+        setTrackTitle(eventUpdateTrackImageAndTitle.getTitle());
+    }
+
+    @Subscribe
+    public void onUpdateDurationAndCurrentPosition(EventUpdateDurationAndCurrentPos eventUpdateDurationAndCurrentPos) {
+        setPlaybackDuration(eventUpdateDurationAndCurrentPos.getTrackDuration());
+        setPlaybackCurrentPosition(eventUpdateDurationAndCurrentPos.getTrackCurrentPosition(), eventUpdateDurationAndCurrentPos.getTrackDuration());
     }
 
     @Override
@@ -127,12 +172,13 @@ public class PlayerFragment extends Fragment implements PlayerUI {
     }
 
     @Override
-    public void startTrackAction(String trackTitle, String imageUrl, String trackLink) {
+    public void startTrackAction(String trackLink, String trackTitle, String imageUrl, String trackAuthor) {
         if (getContext() != null) {
             Intent serviceIntent = new Intent(getContext(), PlayerService.class);
             serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_START_TRACK);
             serviceIntent.putExtra(EXTRA_TRACK_URL, trackLink);
             serviceIntent.putExtra(EXTRA_TRACK_TITLE, trackTitle);
+            serviceIntent.putExtra(EXTRA_TRACK_AUTHOR, trackAuthor);
             serviceIntent.putExtra(EXTRA_TRACK_IMAGE_URL, imageUrl);
             ContextCompat.startForegroundService(getContext(), serviceIntent);
         }
@@ -148,11 +194,11 @@ public class PlayerFragment extends Fragment implements PlayerUI {
     }
 
     @Override
-    public void seekToPositionAction(long seekPosition) {
+    public void seekToPositionAction(float progressInPercents) {
         if (getContext() != null) {
             Intent serviceIntent = new Intent(getContext(), PlayerService.class);
             serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_SEEK_TO_POSITION);
-            serviceIntent.putExtra(EXTRA_TRACK_SEEK_POSITION, seekPosition);
+            serviceIntent.putExtra(EXTRA_TRACK_SEEK_PROGRESS_IN_PERSENTS, progressInPercents);
             ContextCompat.startForegroundService(getContext(), serviceIntent);
         }
     }
@@ -190,13 +236,15 @@ public class PlayerFragment extends Fragment implements PlayerUI {
 
     @Override
     public void setPlaybackCurrentPosition(long currentPosition, long duration) {
-        if (currentPosition > 0 && duration > 0) {
-            int percent = (int) (currentPosition * 100 / duration);
-            mBinding.playerSeekBar.setProgress(percent);
-            mBinding.tvCurrentPosition.setText(formatTimeHHmmss((int) (currentPosition / MS_AT_SEC)));
-        } else {
-            mBinding.playerSeekBar.setProgress(0);
+        if (!mIsSeekBarTouch) {
+            if (currentPosition > 0 && duration > 0) {
+                int progress = (int) (currentPosition * SEEK_BAR_MAX_PROGRESS / duration);
+                mBinding.playerSeekBar.setProgress(progress);
+            } else {
+                mBinding.playerSeekBar.setProgress(0);
+            }
         }
+        mBinding.tvCurrentPosition.setText(formatTimeHHmmss((int) (currentPosition / MS_AT_SEC)));
     }
 
     @Override

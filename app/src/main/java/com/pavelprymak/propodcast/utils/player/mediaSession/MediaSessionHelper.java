@@ -1,12 +1,15 @@
 package com.pavelprymak.propodcast.utils.player.mediaSession;
 
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+
 import androidx.media.session.MediaButtonReceiver;
+
 import com.pavelprymak.propodcast.utils.player.PlayerHelper;
 import com.pavelprymak.propodcast.utils.player.mediaSession.notifications.MediaSessionNotificationsManager;
 
@@ -69,11 +72,18 @@ public class MediaSessionHelper {
         context.registerReceiver(mMediaReceiver, filter1);
     }
 
-    public void showNotification(String recipeDescription) {
+    public void showNotification(String trackTitle) {
         //SHOW NOTIFICATION
         if (mMediaSessionNotificationsManager != null && mMediaSession != null && mStateBuilder != null) {
-            mMediaSessionNotificationsManager.showNotification(mStateBuilder.build(), mMediaSession.getSessionToken(), recipeDescription);
+            mMediaSessionNotificationsManager.showNotification(mStateBuilder.build(), mMediaSession.getSessionToken(), trackTitle);
         }
+    }
+
+    public Notification getNotification(String trackTitle, String trackAuthor) {
+        //SHOW NOTIFICATION
+        if (mMediaSessionNotificationsManager != null && mMediaSession != null && mStateBuilder != null) {
+            return mMediaSessionNotificationsManager.getNotification(mStateBuilder.build(), mMediaSession.getSessionToken(), trackTitle, trackAuthor);
+        } else return null;
     }
 
     public MediaSessionCompat getMediaSession() {

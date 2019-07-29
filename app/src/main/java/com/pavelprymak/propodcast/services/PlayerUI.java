@@ -8,11 +8,11 @@ public interface PlayerUI {
 
     void stopAction();
 
-    void startTrackAction(String trackTitle, String imageUrl, String trackLink);
+    void startTrackAction(String trackLink, String trackTitle, String imageUrl,String trackAuthor);
 
     void updateUiAction();
 
-    void seekToPositionAction(long seekPosition);
+    void seekToPositionAction(float percentSeekPosition);
 
 
     // UI preparing
