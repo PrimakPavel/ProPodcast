@@ -18,4 +18,7 @@
     <dimen name="small_text_size">12sp</dimen>
     <dimen name="extra_small_text_size">10sp</dimen>
 
+    <!-- Player UI-->
+    <item name="image_percent" format="float" type="dimen">0.21</item>
+
 </resources>

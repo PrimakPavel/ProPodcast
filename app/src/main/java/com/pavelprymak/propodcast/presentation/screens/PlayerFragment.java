@@ -20,10 +20,12 @@ import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentPlayerBinding;
 import com.pavelprymak.propodcast.services.PlayerService;
 import com.pavelprymak.propodcast.services.PlayerUI;
+import com.pavelprymak.propodcast.utils.otto.EventStartTack;
 import com.pavelprymak.propodcast.utils.otto.EventUpdateDurationAndCurrentPos;
 import com.pavelprymak.propodcast.utils.otto.EventUpdateLoading;
 import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayPauseBtn;
 import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerView;
+import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerVisibility;
 import com.pavelprymak.propodcast.utils.otto.EventUpdateTrackImageAndTitle;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -105,12 +107,6 @@ public class PlayerFragment extends Fragment implements PlayerUI {
 
             }
         });
-        //TODO start track other way
-        startTrackAction("https://www.listennotes.com/e/p/11b34041e804491b9704d11f283c74de/",
-                "The Monday show",
-                "https://cdn-images-1.listennotes.com/podcasts/my-life-in-the-mosh-of-ghosts-1Bk3nRY9Dgp.300x300.jpg",
-                "Author Name"
-        );
     }
 
     @Subscribe
@@ -145,6 +141,11 @@ public class PlayerFragment extends Fragment implements PlayerUI {
         setPlaybackCurrentPosition(eventUpdateDurationAndCurrentPos.getTrackCurrentPosition(), eventUpdateDurationAndCurrentPos.getTrackDuration());
     }
 
+    @Subscribe
+    public void onStartTrack(EventStartTack eventStartTack) {
+        startTrackAction(eventStartTack.getTrackLink(), eventStartTack.getTrackTitle(), eventStartTack.getImageUrl(), eventStartTack.getTrackAuthor());
+    }
+
     @Override
     public void playAction() {
         if (getContext() != null) {
@@ -169,6 +170,7 @@ public class PlayerFragment extends Fragment implements PlayerUI {
             Intent serviceIntent = new Intent(getContext(), PlayerService.class);
             getContext().stopService(serviceIntent);
         }
+        App.eventBus.post(new EventUpdatePlayerVisibility(false));
     }
 
     @Override

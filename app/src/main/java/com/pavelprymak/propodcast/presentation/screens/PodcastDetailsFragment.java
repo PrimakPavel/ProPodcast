@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.pavelprymak.propodcast.App;
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentPodcastDetailsBinding;
@@ -30,10 +31,14 @@ import com.pavelprymak.propodcast.presentation.adapters.PodcastInfoAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.PodcastInfoClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModel;
+import com.pavelprymak.propodcast.utils.DateFormatUtil;
 import com.pavelprymak.propodcast.utils.ShareUtil;
+import com.pavelprymak.propodcast.utils.otto.EventStartTack;
+import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerVisibility;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.pavelprymak.propodcast.utils.PodcastItemToFavoritePodcastConverter.createFavorite;
@@ -161,8 +166,10 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     }
 
     @Override
-    public void onEpisodeItemClick(String episodeId, String mediaUrl) {
-        mNavController.navigate(R.id.playerFragment);
+    public void onEpisodeItemClick(EpisodesItem episodesItem) {
+        Date publishDate = new Date(episodesItem.getPubDateMs());
+        App.eventBus.post(new EventStartTack(episodesItem.getAudio(), episodesItem.getTitle(), episodesItem.getThumbnail(), DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate)));
+        App.eventBus.post(new EventUpdatePlayerVisibility(true));
     }
 
     @Override

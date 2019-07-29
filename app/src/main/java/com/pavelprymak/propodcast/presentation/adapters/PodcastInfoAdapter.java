@@ -236,7 +236,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (mEpisodes != null) {
                 EpisodesItem episodeItem = mEpisodes.get(getAdapterPosition());
                 if (episodeItem != null) {
-                    mClickListener.onEpisodeItemClick(episodeItem.getId(), episodeItem.getAudio());
+                    mClickListener.onEpisodeItemClick(episodeItem);
                 }
             }
         }
