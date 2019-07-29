@@ -27,6 +27,8 @@
                 android:layout_gravity="end"
                 android:layout_margin="@dimen/small_margin"
                 android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="end"
                 android:padding="@dimen/small_margin"
                 android:text="@string/more_label"

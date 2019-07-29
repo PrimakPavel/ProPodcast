@@ -8,6 +8,31 @@
         android:layout_height="match_parent"
         android:background="@color/colorBackground">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/podcastDataRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/standard_margin"
+            android:paddingBottom="@dimen/list_padding_bottom"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="-28dp"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:layout_marginEnd="@dimen/fab_margin"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:clickable="true"
+            android:elevation="2dp"
+            android:focusable="true"
+            android:translationZ="6dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:srcCompat="@drawable/ic_baseline_favorite_border" />
+
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
@@ -91,7 +116,7 @@
                         android:layout_height="0dp"
                         android:layout_margin="@dimen/standard_margin"
                         android:layout_marginTop="@dimen/small_margin"
-                        android:layout_marginBottom="@dimen/small_margin"
+                        android:layout_marginBottom="@dimen/standard_margin"
                         android:ellipsize="end"
                         android:maxLines="8"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -124,26 +149,9 @@
         </com.google.android.material.appbar.AppBarLayout>
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabFavorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            android:clickable="true"
-            android:elevation="2dp"
-            android:focusable="true"
-            android:translationZ="6dp"
-            app:srcCompat="@drawable/ic_baseline_favorite_border" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/podcastDataRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingTop="@dimen/standard_margin"
-            android:paddingBottom="@dimen/list_padding_bottom"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
