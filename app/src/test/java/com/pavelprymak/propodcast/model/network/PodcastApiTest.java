@@ -6,6 +6,7 @@ import com.pavelprymak.propodcast.model.network.pojo.podcastById.PodcastResponse
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.BestPodcastsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.recommendations.RecommendationsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.regions.RegionsResponse;
+import com.pavelprymak.propodcast.model.network.pojo.search.SearchPodcastResponse;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +56,14 @@ public class PodcastApiTest {
         Response<RecommendationsResponse> response = api.getPodcastRecommendationsById(BuildConfig.API_KEY, "2623fce10ba346a79c1656705d46492c").execute();
         RecommendationsResponse podcastRecommendationsResponse = response.body();
         assertNotNull(podcastRecommendationsResponse);
+    }
+
+    @Test
+    public void getPodcastSearch() throws Exception {
+        int[] genres = new int[0];
+        Response<SearchPodcastResponse> response = api.searchPodcast(BuildConfig.API_KEY, "star wars",Constants.SearchType.SEARCH_PODCASTS,0, genres,"English").execute();
+        SearchPodcastResponse search = response.body();
+        assertNotNull(search);
     }
 
 

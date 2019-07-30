@@ -8,6 +8,7 @@ public class Constants {
     static final String PATH_REGIONS = "regions";
     static final String PATH_BEST_PODCASTS = "best_podcasts";
     static final String PATH_PODCASTS = "podcasts/";
+    static final String PATH_SEARCH = "search";
     static final String PATH_RECOMMENDATIONS = "/recommendations";
 
     static final String QUERY_GENRE_ID = "genre_id";
@@ -16,10 +17,19 @@ public class Constants {
     static final String QUERY_SAFE_MODE = "safe_mode";
     static final String QUERY_NEXT_EPISODE_PUB_DATE = "next_episode_pub_date";
     static final String QUERY_SORT = "sort";
+    static final String QUERY_Q = "q";
+    static final String QUERY_TYPE = "type";
+    static final String QUERY_OFFSET = "offset";
+    static final String QUERY_GENDER_IDS = "genre_ids";
+    static final String QUERY_LANGUAGE = "language";
 
     public class SortType {
         public static final String SORT_RESENT_FIRST = "recent_first";
         public static final String SORT_OLDEST_FIRST = "oldest_first";
+    }
+    public class SearchType{
+        public static final String SEARCH_PODCASTS = "podcast";
+        public static final String SEARCH_EPISODE = "episode";
     }
 
 }

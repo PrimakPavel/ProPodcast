@@ -28,6 +28,9 @@
 
     <!-- Empty list errors-->
     <string name="empty_favorites_list">Empty favorites list!</string>
+    <string name="empty_search_message">Empty search list!</string>
+
+    <string name="retry_btn">Connection Error! Retry</string>
 
     <!--Player -->
     <string name="play">Play</string>

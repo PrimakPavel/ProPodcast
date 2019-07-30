@@ -5,6 +5,7 @@ import com.pavelprymak.propodcast.model.network.pojo.podcastById.PodcastResponse
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.BestPodcastsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.recommendations.RecommendationsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.regions.RegionsResponse;
+import com.pavelprymak.propodcast.model.network.pojo.search.SearchPodcastResponse;
 
 import io.reactivex.Single;
 import retrofit2.Call;
@@ -58,4 +59,20 @@ public interface PodcastApi {
     @GET(Constants.PATH_PODCASTS + "{id}" + Constants.PATH_RECOMMENDATIONS)
     Single<RecommendationsResponse> getPodcastRecommendationsByIdRx(@Header(Constants.AUTH_HEADER) String apiKey,
                                                                     @Path("id") String podcastId);
+
+    @GET(Constants.PATH_SEARCH)
+    Call<SearchPodcastResponse> searchPodcast(@Header(Constants.AUTH_HEADER) String apiKey,
+                                                @Query(Constants.QUERY_Q) String searchQuery,
+                                                @Query(Constants.QUERY_TYPE) String type,
+                                                @Query(Constants.QUERY_OFFSET) int offset,
+                                                @Query(Constants.QUERY_GENDER_IDS) int[] genreIds,
+                                                @Query(Constants.QUERY_LANGUAGE) String language);
+
+    @GET(Constants.PATH_SEARCH)
+    Single<SearchPodcastResponse> searchPodcastRx(@Header(Constants.AUTH_HEADER) String apiKey,
+                                                  @Query(Constants.QUERY_Q) String searchQuery,
+                                                  @Query(Constants.QUERY_TYPE) String type,
+                                                  @Query(Constants.QUERY_OFFSET) int offset,
+                                                  @Query(Constants.QUERY_GENDER_IDS) int[] genreIds,
+                                                  @Query(Constants.QUERY_LANGUAGE) String language);
 }

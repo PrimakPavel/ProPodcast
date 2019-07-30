@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
+import com.facebook.stetho.Stetho;
 import com.pavelprymak.propodcast.model.db.AppDatabase;
 import com.pavelprymak.propodcast.model.db.repo.DbRepo;
 import com.pavelprymak.propodcast.model.db.repo.DbRepoImpl;
@@ -29,7 +30,7 @@ public class App extends Application {
             Timber.plant(new Timber.DebugTree());
         }
         createNotificationChannel();
-
+        Stetho.initializeWithDefaults(this);
         appExecutors = new AppExecutors();
         dbRepo = new DbRepoImpl(AppDatabase.getInstance(getApplicationContext()), appExecutors.diskIO());
         mSettings = new SettingsPreferenceManager(getApplicationContext());

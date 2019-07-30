@@ -5,6 +5,7 @@ import com.pavelprymak.propodcast.model.network.pojo.podcastById.PodcastResponse
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.BestPodcastsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.recommendations.RecommendationsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.regions.RegionsResponse;
+import com.pavelprymak.propodcast.model.network.pojo.search.SearchPodcastResponse;
 
 import io.reactivex.Single;
 
@@ -19,5 +20,7 @@ public interface PodcastRepoRx {
     Single<PodcastResponse> getPodcastById(String podcastId, long nextEpisodesPubDate);
 
     Single<RecommendationsResponse> getPodcastRecommendations(String podcastId);
+
+    Single<SearchPodcastResponse> getSearchData(String q, int offset, String language);
 
 }

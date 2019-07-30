@@ -8,6 +8,7 @@ import com.pavelprymak.propodcast.model.network.pojo.podcastById.PodcastResponse
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.BestPodcastsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.recommendations.RecommendationsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.regions.RegionsResponse;
+import com.pavelprymak.propodcast.model.network.pojo.search.SearchPodcastResponse;
 
 import io.reactivex.Single;
 
@@ -42,5 +43,11 @@ public class PodcastRepoImpl implements PodcastRepoRx {
     @Override
     public Single<RecommendationsResponse> getPodcastRecommendations(String podcastId) {
         return mApi.getPodcastRecommendationsByIdRx(API_KEY, podcastId);
+    }
+
+    @Override
+    public Single<SearchPodcastResponse> getSearchData(String q, int offset, String language) {
+        int[] genres = new int[0];
+        return mApi.searchPodcastRx(API_KEY, q, Constants.SearchType.SEARCH_PODCASTS, offset, genres, language);
     }
 }
