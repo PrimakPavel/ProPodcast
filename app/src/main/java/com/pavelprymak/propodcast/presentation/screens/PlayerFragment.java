@@ -20,13 +20,14 @@ import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentPlayerBinding;
 import com.pavelprymak.propodcast.services.PlayerService;
 import com.pavelprymak.propodcast.services.PlayerUI;
-import com.pavelprymak.propodcast.utils.otto.EventStartTack;
-import com.pavelprymak.propodcast.utils.otto.EventUpdateDurationAndCurrentPos;
-import com.pavelprymak.propodcast.utils.otto.EventUpdateLoading;
-import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayPauseBtn;
-import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerView;
-import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerVisibility;
-import com.pavelprymak.propodcast.utils.otto.EventUpdateTrackImageAndTitle;
+import com.pavelprymak.propodcast.utils.otto.player.EventPlayerError;
+import com.pavelprymak.propodcast.utils.otto.player.EventStartTack;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdateDurationAndCurrentPos;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdateLoading;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayPauseBtn;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerView;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdateTrackImageAndTitle;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
@@ -143,7 +144,13 @@ public class PlayerFragment extends Fragment implements PlayerUI {
 
     @Subscribe
     public void onStartTrack(EventStartTack eventStartTack) {
+        mBinding.playerErrorLayout.setVisibility(View.GONE);
         startTrackAction(eventStartTack.getTrackLink(), eventStartTack.getTrackTitle(), eventStartTack.getImageUrl(), eventStartTack.getTrackAuthor());
+    }
+
+    @Subscribe
+    public void onPlayerError(EventPlayerError eventPlayerError) {
+        mBinding.playerErrorLayout.setVisibility(View.VISIBLE);
     }
 
     @Override

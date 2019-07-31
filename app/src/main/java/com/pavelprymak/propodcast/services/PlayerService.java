@@ -4,17 +4,22 @@ import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.pavelprymak.propodcast.App;
-import com.pavelprymak.propodcast.utils.otto.EventUpdateDurationAndCurrentPos;
-import com.pavelprymak.propodcast.utils.otto.EventUpdateLoading;
-import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayPauseBtn;
-import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerView;
-import com.pavelprymak.propodcast.utils.otto.EventUpdateTrackImageAndTitle;
+import com.pavelprymak.propodcast.R;
+import com.pavelprymak.propodcast.utils.otto.player.EventPlayerError;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdateDurationAndCurrentPos;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdateLoading;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayPauseBtn;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerView;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdateTrackImageAndTitle;
+import com.pavelprymak.propodcast.utils.player.PlayerErrorsListener;
 import com.pavelprymak.propodcast.utils.player.PlayerHelper;
 import com.pavelprymak.propodcast.utils.player.PlayerStateListener;
 import com.pavelprymak.propodcast.utils.player.UpdateByTimerHandler;
@@ -22,7 +27,9 @@ import com.squareup.otto.Bus;
 
 import timber.log.Timber;
 
-public class PlayerService extends Service implements PlayerStateListener {
+import static com.pavelprymak.propodcast.App.CHANNEL_ID;
+
+public class PlayerService extends Service implements PlayerStateListener, PlayerErrorsListener {
     private PowerManager.WakeLock wakeLock;
     public static final String EXTRA_COMMAND_PLAYER = "extraCommandToPlayerService";
     private static final int NOTIFICATION_FOREGROUND_ID = 123;
@@ -51,13 +58,21 @@ public class PlayerService extends Service implements PlayerStateListener {
     public void onCreate() {
         super.onCreate();
         Timber.d("onCreate");
-
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "ExampleApp:Wakelock");
         wakeLock.acquire();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText("Running...")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .build();
+
+            startForeground(NOTIFICATION_FOREGROUND_ID, notification);
+        }
         Timber.d("Wakelock acquired");
-        mPlayerHelper = new PlayerHelper(getApplicationContext(), this);
+        mPlayerHelper = new PlayerHelper(getApplicationContext(), this, this);
         mUpdateUIPositionHandler = new UpdateByTimerHandler() {
             @Override
             public void doOperation() {
@@ -225,6 +240,13 @@ public class PlayerService extends Service implements PlayerStateListener {
     public void isEnded() {
         if (eventBus != null) {
             eventBus.post(new EventUpdateLoading(false));
+        }
+    }
+
+    @Override
+    public void onPlayerError(int errorCode) {
+        if (eventBus != null) {
+            eventBus.post(new EventPlayerError(errorCode));
         }
     }
 }

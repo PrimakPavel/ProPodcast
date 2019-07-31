@@ -33,8 +33,8 @@ import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewMo
 import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModel;
 import com.pavelprymak.propodcast.utils.DateFormatUtil;
 import com.pavelprymak.propodcast.utils.ShareUtil;
-import com.pavelprymak.propodcast.utils.otto.EventStartTack;
-import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerVisibility;
+import com.pavelprymak.propodcast.utils.otto.player.EventStartTack;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

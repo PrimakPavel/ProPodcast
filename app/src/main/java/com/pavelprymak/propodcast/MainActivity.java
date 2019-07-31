@@ -11,8 +11,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.pavelprymak.propodcast.databinding.ActivityMainBinding;
-import com.pavelprymak.propodcast.utils.otto.EventUpdateDurationAndCurrentPos;
-import com.pavelprymak.propodcast.utils.otto.EventUpdatePlayerVisibility;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdateDurationAndCurrentPos;
+import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility;
 import com.squareup.otto.Subscribe;
 
 public class MainActivity extends AppCompatActivity {

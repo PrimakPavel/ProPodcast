@@ -49,14 +49,16 @@ public class PlayerHelper implements Player.EventListener {
     //MediaSessionHelper
     private MediaSessionHelper mMediaSessionHelper;
     private PlayerStateListener mPlayerStateListener;
+    private PlayerErrorsListener mPlayerErrorsListener;
 
 
     private int resumeWindow = DEFAULT_RESUME_WINDOW;
     private long resumePosition = DEFAULT_RESUME_POSITION;
 
-    public PlayerHelper(Context context, PlayerStateListener playerStateListener) {
+    public PlayerHelper(Context context, PlayerStateListener playerStateListener, PlayerErrorsListener playerErrorsListener) {
         mContext = context;
         mPlayerStateListener = playerStateListener;
+        mPlayerErrorsListener = playerErrorsListener;
     }
 
     /**
@@ -384,7 +386,9 @@ public class PlayerHelper implements Player.EventListener {
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-
+        if (mPlayerErrorsListener != null) {
+            mPlayerErrorsListener.onPlayerError(error.type);
+        }
     }
 
     @Override

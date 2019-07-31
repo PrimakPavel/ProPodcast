@@ -1,4 +1,4 @@
-package com.pavelprymak.propodcast.utils.otto;
+package com.pavelprymak.propodcast.utils.otto.player;
 
 public class EventUpdateDurationAndCurrentPos {
     private long trackCurrentPosition;
