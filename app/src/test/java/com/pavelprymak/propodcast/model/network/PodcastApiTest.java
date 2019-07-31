@@ -39,7 +39,7 @@ public class PodcastApiTest {
 
     @Test
     public void getBestPodcasts() throws Exception {
-        Response<BestPodcastsResponse> response = api.getBestPodcasts(BuildConfig.API_KEY, 93, 3, "us").execute();
+        Response<BestPodcastsResponse> response = api.getBestPodcasts(BuildConfig.API_KEY, 93, 26, "us").execute();
         BestPodcastsResponse bestPodcastsResponse = response.body();
         assertNotNull(bestPodcastsResponse);
     }

@@ -32,7 +32,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int RECOMMENDATION_VH_ID = 2;
 
     public PodcastInfoAdapter(PodcastInfoClickListener clickListener) {
-        this.mClickListener = clickListener;
+        mClickListener = clickListener;
     }
 
     public void updateLists(List<EpisodesItem> episodesItems, List<PodcastItem> recommendationsItems) {

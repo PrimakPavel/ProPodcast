@@ -2,6 +2,7 @@ package com.pavelprymak.propodcast.presentation.screens;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,7 +11,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -18,8 +18,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.pavelprymak.propodcast.App;
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentBestPodcastsBinding;
@@ -29,6 +29,7 @@ import com.pavelprymak.propodcast.presentation.adapters.PodcastAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.PodcastClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.BestPodcastsViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel;
+import com.pavelprymak.propodcast.utils.SettingsPreferenceManager;
 import com.pavelprymak.propodcast.utils.ShareUtil;
 
 import java.util.ArrayList;
@@ -45,6 +46,9 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
     private List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
     private PodcastAdapter mAdapter;
     private NavController mNavController;
+    private Handler mDelayHandler = new Handler();
+    private SettingsPreferenceManager mSettings = App.mSettings;
+    private static final long SCROLL_DELAY = 500L;
 
 
     @Override
@@ -62,10 +66,22 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
         super.onViewCreated(view, savedInstanceState);
         mNavController = Navigation.findNavController(view);
         prepareRecycler();
-        mBestPodcastsViewModel.getBestPodcasts().observe(this, podcastItems -> {
-            if (podcastItems != null && podcastItems.size() > 0) {
-                mAdapter.updateList(podcastItems);
+        mBestPodcastsViewModel.prepareBestPodcasts(mSettings.getFilterGenre(), mSettings.getFilterRegion());
+        mBestPodcastsViewModel.getBestPodcastsObserver().observe(this, podcastItems -> {
+            mBinding.retryBtn.setVisibility(View.GONE);
+            mAdapter = new PodcastAdapter(this);
+            mBinding.recyclerBestPodcasts.setAdapter(mAdapter);
+            mAdapter.submitList(podcastItems);
+        });
+        mBestPodcastsViewModel.getLoadData().observe(this, this::showProgressBar);
+        mBestPodcastsViewModel.getErrorData().observe(this, throwable -> {
+            if (throwable != null) {
+                mBinding.retryBtn.setVisibility(View.VISIBLE);
             }
+        });
+        mBinding.retryBtn.setOnClickListener(v -> {
+            int size = mBestPodcastsViewModel.retryAfterErrorAndPrevLoadingListSize();
+            mDelayHandler.postDelayed(() -> mBinding.recyclerBestPodcasts.scrollToPosition(size - 1), SCROLL_DELAY);
         });
         mFavoritePodcastsViewModel.getFavorites().observe(this, favoritePodcastEntities -> {
             mFavorites.clear();
@@ -83,11 +99,19 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
         });
     }
 
+    private void showProgressBar(Boolean isShow) {
+        if (isShow != null && isShow) {
+            mBinding.progressBar.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.progressBar.setVisibility(View.GONE);
+        }
+    }
+
+
     private void prepareRecycler() {
         mAdapter = new PodcastAdapter(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         mBinding.recyclerBestPodcasts.setLayoutManager(layoutManager);
-        mBinding.recyclerBestPodcasts.setHasFixedSize(true);
         mBinding.recyclerBestPodcasts.setAdapter(mAdapter);
     }
 

@@ -21,13 +21,13 @@ import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.INVALID
 public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionViewHolder> {
     // Use default locale format
     private List<RegionItem> mRegions;
-    private final RegionClickListener clickListener;
+    private final RegionClickListener mClickListener;
     private Context mContext;
     private String mSelectedRegionShortName = INVALID_REGION;
 
 
     public RegionAdapter(RegionClickListener clickListener) {
-        this.clickListener = clickListener;
+        mClickListener = clickListener;
     }
 
     public void updateList(List<RegionItem> regionItems, String selectedRegionShortName) {
@@ -93,7 +93,8 @@ public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionView
                     mSelectedRegionShortName = regionItem.getRegionShortName();
                     notifyItemChanged(previousPosition);
                     notifyItemChanged(getAdapterPosition());
-                    clickListener.onRegionItemClick(regionItem.getRegionShortName());
+                    if (mClickListener != null)
+                        mClickListener.onRegionItemClick(regionItem.getRegionShortName());
                 }
             }
         }

@@ -10,7 +10,8 @@
     <dimen name="list_padding_bottom">50dp</dimen>
     <!-- podcast details-->
     <dimen name="detail_expanded_title_margin_start">100dp</dimen>
-    <dimen name="detail_photo_height">320dp</dimen>
+    <dimen name="detail_expanded_layout_height">320dp</dimen>
+    <dimen name="detail_expanded_photo_size">100dp</dimen>
 
     <dimen name="standard_text_size">14sp</dimen>
     <dimen name="standard_title_text_size">17sp</dimen>

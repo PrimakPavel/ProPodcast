@@ -19,14 +19,13 @@ import java.util.List;
 
 public class FavoritePodcastAdapter extends RecyclerView.Adapter<FavoritePodcastAdapter.FavoritePodcastViewHolder> {
 
-    // Use default locale format
     private List<FavoritePodcastEntity> mFavorites;
-    private final FavoritePodcastClickListener clickListener;
+    private final FavoritePodcastClickListener mClickListener;
     private Context mContext;
 
 
     public FavoritePodcastAdapter(FavoritePodcastClickListener clickListener) {
-        this.clickListener = clickListener;
+        this.mClickListener = clickListener;
     }
 
     public void updateList(List<FavoritePodcastEntity> podcasts) {
@@ -97,7 +96,10 @@ public class FavoritePodcastAdapter extends RecyclerView.Adapter<FavoritePodcast
                 } else {
                     binding.tvCountryLanguage.setText(EMPTY);
                 }
-                binding.ivMoreOptions.setOnClickListener(v -> clickListener.onPodcastMoreOptionsClick(podcastItem.getId(), podcastItem.getListennotesUrl(), v));
+                binding.ivMoreOptions.setOnClickListener(v -> {
+                    if (mClickListener != null)
+                        mClickListener.onPodcastMoreOptionsClick(podcastItem.getId(), podcastItem.getListennotesUrl(), v);
+                });
             }
         }
 
@@ -105,8 +107,8 @@ public class FavoritePodcastAdapter extends RecyclerView.Adapter<FavoritePodcast
         public void onClick(View v) {
             if (mFavorites != null) {
                 FavoritePodcastEntity podcastItem = mFavorites.get(getAdapterPosition());
-                if (podcastItem != null) {
-                    clickListener.onPodcastItemClick(podcastItem.getId());
+                if (podcastItem != null && mClickListener != null) {
+                    mClickListener.onPodcastItemClick(podcastItem.getId());
                 }
             }
         }

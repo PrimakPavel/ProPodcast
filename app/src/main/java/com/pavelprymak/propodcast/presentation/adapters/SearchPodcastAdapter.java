@@ -21,7 +21,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Date;
 
 public class SearchPodcastAdapter extends PagedListAdapter<ResultsItem, SearchPodcastAdapter.PodcastViewHolder> {
-    private final SearchPodcastClickListener clickListener;
+    private final SearchPodcastClickListener mClickListener;
     private Context mContext;
 
     private static final DiffUtil.ItemCallback<ResultsItem> diffUtilCallback = new DiffUtil.ItemCallback<ResultsItem>() {
@@ -39,7 +39,7 @@ public class SearchPodcastAdapter extends PagedListAdapter<ResultsItem, SearchPo
 
     public SearchPodcastAdapter(SearchPodcastClickListener clickListener) {
         super(diffUtilCallback);
-        this.clickListener = clickListener;
+        mClickListener = clickListener;
     }
 
     @NonNull
@@ -108,15 +108,18 @@ public class SearchPodcastAdapter extends PagedListAdapter<ResultsItem, SearchPo
                     binding.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
                 }
 
-                binding.ivMoreOptions.setOnClickListener(v -> clickListener.onPodcastMoreOptionsClick(podcastItem, v));
+                binding.ivMoreOptions.setOnClickListener(v -> {
+                    if (mClickListener != null)
+                        mClickListener.onPodcastMoreOptionsClick(podcastItem, v);
+                });
             }
         }
 
         @Override
         public void onClick(View v) {
             ResultsItem podcastItem = getItem(getAdapterPosition());
-            if (podcastItem != null) {
-                clickListener.onPodcastItemClick(podcastItem.getId());
+            if (podcastItem != null && mClickListener != null) {
+                mClickListener.onPodcastItemClick(podcastItem.getId());
             }
 
         }

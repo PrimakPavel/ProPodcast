@@ -8,7 +8,6 @@ import com.pavelprymak.propodcast.model.network.pojo.search.ResultsItem;
 import com.pavelprymak.propodcast.model.network.pojo.search.SearchPodcastResponse;
 import com.pavelprymak.propodcast.model.network.repo.PodcastRepoRx;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.SingleObserver;
@@ -26,7 +25,7 @@ public class SearchDataSource extends PositionalDataSource<ResultsItem> {
     private String mLanguage;
     private List<ResultsItem> mPrevLoadingList;
 
-    public SearchDataSource(PodcastRepoRx podcastRepo,
+    SearchDataSource(PodcastRepoRx podcastRepo,
                             MutableLiveData<Boolean> mLoadingData,
                             MutableLiveData<Throwable> mErrorData,
                             @NonNull String searchQuery,
@@ -79,7 +78,6 @@ public class SearchDataSource extends PositionalDataSource<ResultsItem> {
     public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<ResultsItem> callback) {
         //if offset out of pages scope
         if (mCurrentOffset > mTotalCount) {
-            callback.onResult(new ArrayList<>());
             return;
         }
         mErrorData.postValue(null);

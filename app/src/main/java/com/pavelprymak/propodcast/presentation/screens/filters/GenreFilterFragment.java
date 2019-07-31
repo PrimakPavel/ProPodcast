@@ -21,7 +21,7 @@ import com.pavelprymak.propodcast.presentation.adapters.GenreAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.GenreClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.GenreViewModel;
 
-import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.INVALID_GENRE;
+import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.ALL_GENRE;
 
 
 public class GenreFilterFragment extends Fragment implements GenreClickListener {
@@ -57,7 +57,7 @@ public class GenreFilterFragment extends Fragment implements GenreClickListener 
             if (genresItems != null) {
                 int selectedGenreId = App.mSettings.getFilterGenre();
                 mAdapter.updateList(genresItems, selectedGenreId);
-                if (selectedGenreId != INVALID_GENRE) {
+                if (selectedGenreId != ALL_GENRE) {
                     int selectedItemPosition = mAdapter.getPositionByGenreId(selectedGenreId);
                     mBinding.recyclerGenres.smoothScrollToPosition(selectedItemPosition);
                 }

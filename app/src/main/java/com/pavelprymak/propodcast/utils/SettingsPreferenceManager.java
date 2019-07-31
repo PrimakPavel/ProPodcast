@@ -8,7 +8,7 @@ public class SettingsPreferenceManager {
     private static final String APP_PREFERENCES_GENRE = "settingsGenre";
     private static final String APP_PREFERENCES_REGION = "settingsRegion";
 
-    public static final int INVALID_GENRE = -1;
+    public static final int ALL_GENRE = 0;
     public static final String INVALID_REGION = "";
 
     private SharedPreferences mSettings;
@@ -28,8 +28,8 @@ public class SettingsPreferenceManager {
     }
 
     public int getFilterGenre() {
-        if (mSettings == null) return INVALID_GENRE;
-        return mSettings.getInt(APP_PREFERENCES_GENRE, INVALID_GENRE);
+        if (mSettings == null) return ALL_GENRE;
+        return mSettings.getInt(APP_PREFERENCES_GENRE, ALL_GENRE);
     }
 
     public void saveFilterRegion(String region) {

@@ -14,7 +14,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingTop="@dimen/standard_margin"
-            android:paddingBottom="@dimen/list_padding_bottom"
+            android:paddingBottom="@dimen/standard_margin"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -37,7 +37,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/detail_photo_height"
+            android:layout_height="@dimen/detail_expanded_layout_height"
             android:background="?colorPrimary">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -56,8 +56,8 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/photo"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="@dimen/detail_expanded_photo_size"
+                        android:layout_height="@dimen/detail_expanded_photo_size"
                         android:layout_marginStart="@dimen/standard_margin"
                         android:layout_marginLeft="@dimen/standard_margin"
                         android:layout_marginTop="?actionBarSize"
@@ -140,8 +140,8 @@
                         android:id="@+id/tvTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/standard_margin"
                         android:layout_marginEnd="@dimen/standard_margin"
+                        android:layout_marginRight="@dimen/standard_margin"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="@color/colorTextToolbar"

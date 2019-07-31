@@ -1,15 +1,12 @@
 package com.pavelprymak.propodcast.presentation.screens;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,6 +47,7 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
     private NavController mNavController;
     private List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
     private Handler mDelayHandler = new Handler();
+    private static final long SCROLL_DELAY = 500L;
     private static final String SEARCH_LANGUAGE = "English";
 
 
@@ -90,13 +88,12 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
         mSearchViewModel.getErrorData().observe(this, throwable -> {
             if (throwable != null) {
                 mBinding.retryBtn.setVisibility(View.VISIBLE);
-                Toast.makeText(getContext(), R.string.error_connection, Toast.LENGTH_LONG).show();
             }
         });
 
         mBinding.retryBtn.setOnClickListener(v -> {
             int size = mSearchViewModel.retryAfterErrorAndPrevLoadingListSize();
-            mDelayHandler.postDelayed(() -> mBinding.searchRecycler.scrollToPosition(size - 1), 500);
+            mDelayHandler.postDelayed(() -> mBinding.searchRecycler.scrollToPosition(size - 1), SCROLL_DELAY);
         });
 
         mBinding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -114,7 +111,7 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
         });
         SearchView.SearchAutoComplete searchText = mBinding.searchView.findViewById(R.id.search_src_text);
         searchText.requestFocus();
-        showInputMethod(getContext(),searchText);
+        showInputMethod(getContext(), searchText);
     }
 
 

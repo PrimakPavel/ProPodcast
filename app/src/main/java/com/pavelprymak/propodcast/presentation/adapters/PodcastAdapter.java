@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pavelprymak.propodcast.R;
@@ -17,23 +19,27 @@ import com.pavelprymak.propodcast.utils.DateFormatUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.Date;
-import java.util.List;
 
-public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastViewHolder> {
-
-    // Use default locale format
-    private List<PodcastItem> mPodcasts;
-    private final PodcastClickListener clickListener;
+public class PodcastAdapter extends PagedListAdapter<PodcastItem, PodcastAdapter.PodcastViewHolder> {
+    private final PodcastClickListener mClickListener;
     private Context mContext;
+
+    private static final DiffUtil.ItemCallback<PodcastItem> diffUtilCallback = new DiffUtil.ItemCallback<PodcastItem>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull PodcastItem oldItem, @NonNull PodcastItem newItem) {
+            return oldItem.getId().equals(newItem.getId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull PodcastItem oldItem, @NonNull PodcastItem newItem) {
+            return oldItem.getId().equals(newItem.getId());
+        }
+    };
 
 
     public PodcastAdapter(PodcastClickListener clickListener) {
-        this.clickListener = clickListener;
-    }
-
-    public void updateList(List<PodcastItem> podcasts) {
-        mPodcasts = podcasts;
-        notifyDataSetChanged();
+        super(diffUtilCallback);
+        mClickListener = clickListener;
     }
 
     @NonNull
@@ -50,11 +56,6 @@ public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastV
         holder.bind(position);
     }
 
-    @Override
-    public int getItemCount() {
-        if (mPodcasts == null) return 0;
-        else return mPodcasts.size();
-    }
 
     class PodcastViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ItemPodcastBinding binding;
@@ -67,7 +68,7 @@ public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastV
         }
 
         void bind(int position) {
-            PodcastItem podcastItem = mPodcasts.get(position);
+            PodcastItem podcastItem = getItem(position);
             if (podcastItem != null && mContext != null) {
                 //LOGO
                 if (!TextUtils.isEmpty(podcastItem.getThumbnail())) {
@@ -115,18 +116,20 @@ public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastV
                     binding.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
                 }
 
-                binding.ivMoreOptions.setOnClickListener(v -> clickListener.onPodcastMoreOptionsClick(podcastItem, v));
+                binding.ivMoreOptions.setOnClickListener(v -> {
+                    if (mClickListener != null)
+                        mClickListener.onPodcastMoreOptionsClick(podcastItem, v);
+                });
             }
         }
 
         @Override
         public void onClick(View v) {
-            if (mPodcasts != null) {
-                PodcastItem podcastItem = mPodcasts.get(getAdapterPosition());
-                if (podcastItem != null) {
-                    clickListener.onPodcastItemClick(podcastItem.getId());
-                }
+            PodcastItem podcastItem = getItem(getAdapterPosition());
+            if (podcastItem != null && mClickListener != null) {
+                mClickListener.onPodcastItemClick(podcastItem.getId());
             }
+
         }
     }
 
