@@ -89,21 +89,21 @@ public class PodcastAdapter extends RecyclerView.Adapter<PodcastAdapter.PodcastV
                 }
                 //Title
                 if (!TextUtils.isEmpty(podcastItem.getTitle())) {
-                    binding.tvTitle.setText(podcastItem.getTitle());
+                    binding.tvTitle.setText(podcastItem.getTitle().trim());
                 } else {
                     binding.tvTitle.setText(EMPTY);
                 }
                 //Publisher
                 if (!TextUtils.isEmpty(podcastItem.getPublisher())) {
-                    binding.tvPublisher.setText(podcastItem.getPublisher());
+                    binding.tvPublisher.setText(podcastItem.getPublisher().trim());
                 } else {
                     binding.tvPublisher.setText(EMPTY);
                 }
                 //Country(Language)
                 if (!TextUtils.isEmpty(podcastItem.getCountry())) {
-                    binding.tvCountryLanguage.setText(podcastItem.getCountry());
+                    binding.tvCountryLanguage.setText(podcastItem.getCountry().trim());
                     if (!TextUtils.isEmpty(podcastItem.getLanguage())) {
-                        binding.tvCountryLanguage.append("(" + podcastItem.getLanguage() + ")");
+                        binding.tvCountryLanguage.append("(" + podcastItem.getLanguage().trim() + ")");
                     }
                 } else {
                     binding.tvCountryLanguage.setText(EMPTY);

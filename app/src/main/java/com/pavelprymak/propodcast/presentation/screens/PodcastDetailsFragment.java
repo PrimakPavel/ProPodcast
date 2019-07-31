@@ -20,17 +20,20 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.pavelprymak.propodcast.App;
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentPodcastDetailsBinding;
 import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity;
 import com.pavelprymak.propodcast.model.network.pojo.podcastById.EpisodesItem;
+import com.pavelprymak.propodcast.model.network.pojo.podcastById.PodcastResponse;
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem;
 import com.pavelprymak.propodcast.presentation.adapters.PodcastInfoAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.PodcastInfoClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModel;
+import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModelFactory;
 import com.pavelprymak.propodcast.utils.DateFormatUtil;
 import com.pavelprymak.propodcast.utils.ShareUtil;
 import com.pavelprymak.propodcast.utils.otto.player.EventStartTack;
@@ -58,14 +61,6 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     private List<PodcastItem> mRecommendations = new ArrayList<>();
 
 
-    public static PodcastDetailsFragment newInstance(String podcastId) {
-        PodcastDetailsFragment fragment = new PodcastDetailsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PODCAST_ID, podcastId);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,8 +72,12 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mFavoritePodcastsViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
-        mPodcastDataViewModel = ViewModelProviders.of(this).get(PodcastInfoViewModel.class);
+        if (mPodcastId != null) {
+            PodcastInfoViewModelFactory factory = new PodcastInfoViewModelFactory(mPodcastId);
+            mPodcastDataViewModel = ViewModelProviders.of(this, factory).get(PodcastInfoViewModel.class);
+        }
+        if (getActivity() != null)
+            mFavoritePodcastsViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_podcast_details, container, false);
         ((MainActivity) getActivity()).setNavViewVisibility(false);
         return mBinding.getRoot();
@@ -88,62 +87,31 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mNavController = Navigation.findNavController(view);
+        mBinding.appBarLayout.setExpanded(false);
         prepareRecycler();
-        mPodcastDataViewModel.getPodcastData().observe(this, podcastResponse -> {
-            if (podcastResponse != null) {
-                //Title
-                if (!TextUtils.isEmpty(podcastResponse.getTitle()))
-                    mBinding.tvTitle.setText(podcastResponse.getTitle());
-                //Publisher
-                if (!TextUtils.isEmpty(podcastResponse.getPublisher())) {
-                    mBinding.tvPublisher.setText(R.string.publisher_label);
-                    mBinding.tvPublisher.append(podcastResponse.getPublisher());
+        if (mPodcastDataViewModel != null) {
+            mPodcastDataViewModel.preparePodcastInfoData();
+            mPodcastDataViewModel.getPodcastDataBatch().getData().observe(this, this::showData);
+            mPodcastDataViewModel.getPodcastDataBatch().getLoading().observe(this, isLoading -> {
+                if (isLoading != null) {
+                    progressBarVisibility(isLoading);
                 }
-                //Country
-                if (!TextUtils.isEmpty(podcastResponse.getCountry())) {
-                    mBinding.tvCountry.setText(R.string.country_label);
-                    mBinding.tvCountry.append(podcastResponse.getCountry());
+            });
+            mPodcastDataViewModel.getPodcastDataBatch().getError().observe(this, throwable -> {
+                if (throwable != null) {
+                    Snackbar snackbar = Snackbar.make(view, R.string.error_connection, Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    mBinding.appBarLayout.setExpanded(false);
                 }
-                //Total episodes count
-                mBinding.tvTotalEpisodes.setText(R.string.episodes_count_label);
-                mBinding.tvTotalEpisodes.append(String.valueOf(podcastResponse.getTotalEpisodes()));
-                //Set photo
-                if (!TextUtils.isEmpty(podcastResponse.getImage()))
-                    Picasso.get()
-                            .load(podcastResponse.getImage())
-                            .into(mBinding.photo);
-                if (!TextUtils.isEmpty(podcastResponse.getDescription())) {
-                    mBinding.tvDescription.setText(Html.fromHtml(podcastResponse.getDescription()));
-                }
-                //Add episodes
-                if (podcastResponse.getEpisodes() != null) {
-                    mEpisodes.clear();
-                    mEpisodes.addAll(podcastResponse.getEpisodes());
+            });
+            mPodcastDataViewModel.getRecommendData().observe(this, recommendationsItems -> {
+                if (recommendationsItems != null) {
+                    mRecommendations.clear();
+                    mRecommendations.addAll(recommendationsItems);
                     mAdapter.updateLists(mEpisodes, mRecommendations);
                 }
-                mFavoritePodcastsViewModel.getFavoriteById(mPodcastId).removeObservers(this);
-                mFavoritePodcastsViewModel.getFavoriteById(mPodcastId).observe(this, podcastEntity -> {
-                    if (podcastEntity == null) {
-                        mBinding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_border);
-                        mBinding.fabFavorite.setOnClickListener(v -> {
-                            mFavoritePodcastsViewModel.addToFavorite(createFavorite(podcastResponse));
-                        });
-                    } else {
-                        mBinding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite);
-                        mBinding.fabFavorite.setOnClickListener(v -> {
-                            mFavoritePodcastsViewModel.removeFromFavorite(podcastEntity.getId());
-                        });
-                    }
-                });
-            }
-        });
-        mPodcastDataViewModel.getRecommendData().observe(this, recommendationsItems -> {
-            if (recommendationsItems != null) {
-                mRecommendations.clear();
-                mRecommendations.addAll(recommendationsItems);
-                mAdapter.updateLists(mEpisodes, mRecommendations);
-            }
-        });
+            });
+        }
         mBinding.appBar.setNavigationOnClickListener(v -> {
             if (getActivity() != null)
                 getActivity().onBackPressed();
@@ -155,6 +123,15 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
                 mFavorites.addAll(favoritePodcastEntities);
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mPodcastDataViewModel != null) {
+            mPodcastDataViewModel.removePodcastDataBatchObservers(this);
+            mPodcastDataViewModel.getRecommendData().removeObservers(this);
+        }
     }
 
     private void prepareRecycler() {
@@ -174,7 +151,9 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
 
     @Override
     public void onMoreEpisodeClick() {
-
+        if (mPodcastDataViewModel != null) {
+            mPodcastDataViewModel.loadMoreEpisoded();
+        }
     }
 
     @Override
@@ -187,6 +166,65 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     @Override
     public void onPodcastMoreOptionsClick(PodcastItem podcastItem, View v) {
         showPopupMenu(v, podcastItem);
+    }
+
+    private void progressBarVisibility(boolean isVisible) {
+        if (isVisible) {
+            mBinding.progressBar.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void showData(PodcastResponse podcastResponse) {
+        if (podcastResponse != null) {
+
+            //Title
+            if (!TextUtils.isEmpty(podcastResponse.getTitle()))
+                mBinding.tvTitle.setText(podcastResponse.getTitle());
+            //Publisher
+            if (!TextUtils.isEmpty(podcastResponse.getPublisher())) {
+                mBinding.tvPublisher.setText(R.string.publisher_label);
+                mBinding.tvPublisher.append(podcastResponse.getPublisher());
+            }
+            //Country
+            if (!TextUtils.isEmpty(podcastResponse.getCountry())) {
+                mBinding.tvCountry.setText(R.string.country_label);
+                mBinding.tvCountry.append(podcastResponse.getCountry());
+            }
+            //Total episodes count
+            mBinding.tvTotalEpisodes.setText(R.string.episodes_count_label);
+            mBinding.tvTotalEpisodes.append(String.valueOf(podcastResponse.getTotalEpisodes()));
+            //Set photo
+            if (!TextUtils.isEmpty(podcastResponse.getImage()))
+                Picasso.get()
+                        .load(podcastResponse.getImage())
+                        .into(mBinding.photo);
+            if (!TextUtils.isEmpty(podcastResponse.getDescription())) {
+                mBinding.tvDescription.setText(Html.fromHtml(podcastResponse.getDescription()));
+            }
+            //Add episodes
+            if (podcastResponse.getEpisodes() != null) {
+                mEpisodes.clear();
+                mEpisodes.addAll(podcastResponse.getEpisodes());
+                mAdapter.updateLists(mEpisodes, mRecommendations);
+                mAdapter.setMaxEpisodesCount(podcastResponse.getTotalEpisodes());
+            }
+            mFavoritePodcastsViewModel.getFavoriteById(mPodcastId).removeObservers(this);
+            mFavoritePodcastsViewModel.getFavoriteById(mPodcastId).observe(this, podcastEntity -> {
+                if (podcastEntity == null) {
+                    mBinding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_border);
+                    mBinding.fabFavorite.setOnClickListener(v -> {
+                        mFavoritePodcastsViewModel.addToFavorite(createFavorite(podcastResponse));
+                    });
+                } else {
+                    mBinding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite);
+                    mBinding.fabFavorite.setOnClickListener(v -> {
+                        mFavoritePodcastsViewModel.removeFromFavorite(podcastEntity.getId());
+                    });
+                }
+            });
+        }
     }
 
     private void showPopupMenu(View v, PodcastItem podcastItem) {
@@ -222,4 +260,6 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
 
         popupMenu.show();
     }
+
+
 }

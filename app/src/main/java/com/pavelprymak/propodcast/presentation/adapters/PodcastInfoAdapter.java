@@ -24,6 +24,7 @@ import java.util.List;
 
 public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<EpisodesItem> mEpisodes;
+    private int mMaxEpisodesCount;
     private List<PodcastItem> mRecommendPodcasts;
     private PodcastInfoClickListener mClickListener;
     private Context mContext;
@@ -38,6 +39,10 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         mEpisodes = episodesItems;
         mRecommendPodcasts = recommendationsItems;
         notifyDataSetChanged();
+    }
+
+    public void setMaxEpisodesCount(int maxEpisodesCount) {
+        mMaxEpisodesCount = maxEpisodesCount;
     }
 
     @NonNull
@@ -139,19 +144,19 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
                 //Title
                 if (!TextUtils.isEmpty(podcastItem.getTitle())) {
-                    binding.container.tvTitle.setText(podcastItem.getTitle());
+                    binding.container.tvTitle.setText(podcastItem.getTitle().trim());
                 } else {
                     binding.container.tvTitle.setText(EMPTY);
                 }
                 //Publisher
                 if (!TextUtils.isEmpty(podcastItem.getPublisher())) {
-                    binding.container.tvPublisher.setText(podcastItem.getPublisher());
+                    binding.container.tvPublisher.setText(podcastItem.getPublisher().trim());
                 } else {
                     binding.container.tvPublisher.setText(EMPTY);
                 }
                 //Country(Language)
                 if (!TextUtils.isEmpty(podcastItem.getCountry())) {
-                    binding.container.tvCountryLanguage.setText(podcastItem.getCountry());
+                    binding.container.tvCountryLanguage.setText(podcastItem.getCountry().trim());
                     if (!TextUtils.isEmpty(podcastItem.getLanguage())) {
                         binding.container.tvCountryLanguage.append("(" + podcastItem.getLanguage() + ")");
                     }
@@ -165,7 +170,10 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     binding.container.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
                 }
 
-                binding.container.ivMoreOptions.setOnClickListener(v -> mClickListener.onPodcastMoreOptionsClick(podcastItem, v));
+                binding.container.ivMoreOptions.setOnClickListener(v -> {
+                    if (mClickListener != null)
+                        mClickListener.onPodcastMoreOptionsClick(podcastItem, v);
+                });
             }
         }
 
@@ -175,11 +183,11 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (mRecommendPodcasts != null && position < mRecommendPodcasts.size()) {
                 PodcastItem podcastItem = mRecommendPodcasts.get(position);
                 if (podcastItem != null) {
-                    mClickListener.onRecommendationItemClick(podcastItem.getId());
+                    if (mClickListener != null)
+                        mClickListener.onRecommendationItemClick(podcastItem.getId());
                 }
             }
         }
-
     }
 
 
@@ -195,8 +203,16 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         void bind(int position) {
             //Show last element footer
-            if (position == mEpisodes.size() - 1) {
-                binding.moreContainer.setVisibility(View.VISIBLE);
+            if (mMaxEpisodesCount > mEpisodes.size()) {
+                if (position == mEpisodes.size() - 1) {
+                    binding.moreContainer.setVisibility(View.VISIBLE);
+                } else {
+                    binding.moreContainer.setVisibility(View.GONE);
+                }
+                binding.tvMore.setOnClickListener(v -> {
+                    if (mClickListener != null)
+                        mClickListener.onMoreEpisodeClick();
+                });
             } else {
                 binding.moreContainer.setVisibility(View.GONE);
             }
@@ -211,13 +227,13 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
                 //Title
                 if (!TextUtils.isEmpty(episodeItem.getTitle())) {
-                    binding.container.tvTitle.setText(episodeItem.getTitle());
+                    binding.container.tvTitle.setText(episodeItem.getTitle().trim());
                 } else {
                     binding.container.tvTitle.setText(EMPTY);
                 }
                 //Description
                 if (!TextUtils.isEmpty(episodeItem.getDescription())) {
-                    binding.container.tvDescription.setText(Html.fromHtml(episodeItem.getDescription()));
+                    binding.container.tvDescription.setText(Html.fromHtml(episodeItem.getDescription().trim()));
                 } else {
                     binding.container.tvDescription.setText(EMPTY);
                 }
@@ -235,7 +251,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public void onClick(View v) {
             if (mEpisodes != null) {
                 EpisodesItem episodeItem = mEpisodes.get(getAdapterPosition());
-                if (episodeItem != null) {
+                if (episodeItem != null && mClickListener != null) {
                     mClickListener.onEpisodeItemClick(episodeItem);
                 }
             }

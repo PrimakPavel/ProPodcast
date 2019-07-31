@@ -21,4 +21,16 @@ public class StatesBatch<T> {
     public void postLoading(boolean loading) {
         mLoading.postValue(loading);
     }
+
+    public MutableLiveData<T> getData() {
+        return mData;
+    }
+
+    public MutableLiveData<Throwable> getError() {
+        return mError;
+    }
+
+    public MutableLiveData<Boolean> getLoading() {
+        return mLoading;
+    }
 }

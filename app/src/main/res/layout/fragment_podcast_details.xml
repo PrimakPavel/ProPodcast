@@ -23,8 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
             android:layout_marginTop="-28dp"
-            android:layout_marginRight="@dimen/fab_margin"
             android:layout_marginEnd="@dimen/fab_margin"
+            android:layout_marginRight="@dimen/fab_margin"
             android:layout_marginBottom="@dimen/fab_margin"
             android:clickable="true"
             android:elevation="2dp"
@@ -32,6 +32,7 @@
             android:translationZ="6dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:srcCompat="@drawable/ic_baseline_favorite_border" />
+
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
@@ -134,10 +135,15 @@
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:layout_collapseMode="pin"
                     app:navigationIcon="@drawable/ic_baseline_arrow_back">
+
                     <TextView
                         android:id="@+id/tvTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/standard_margin"
+                        android:layout_marginEnd="@dimen/standard_margin"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textColor="@color/colorTextToolbar"
                         android:textSize="@dimen/standard_title_text_size"
                         android:textStyle="bold"
@@ -148,10 +154,13 @@
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-
-
-
-
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
