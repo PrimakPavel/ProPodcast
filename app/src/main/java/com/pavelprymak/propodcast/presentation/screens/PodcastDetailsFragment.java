@@ -131,7 +131,7 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
                     } else {
                         mBinding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite);
                         mBinding.fabFavorite.setOnClickListener(v -> {
-                            mFavoritePodcastsViewModel.removeFromFavorite(podcastEntity.getPodcastId());
+                            mFavoritePodcastsViewModel.removeFromFavorite(podcastEntity.getId());
                         });
                     }
                 });

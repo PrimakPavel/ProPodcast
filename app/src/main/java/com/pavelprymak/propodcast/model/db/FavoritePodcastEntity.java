@@ -1,5 +1,6 @@
 package com.pavelprymak.propodcast.model.db;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,8 +9,10 @@ import java.util.List;
 
 @Entity(tableName = "favorite_podcasts")
 public class FavoritePodcastEntity {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+
+    @PrimaryKey
+    @NonNull
+    private String id;
 
     @ColumnInfo(name = "image")
     private String image;
@@ -59,17 +62,14 @@ public class FavoritePodcastEntity {
     @ColumnInfo(name = "latest_pub_date_ms")
     private long latestPubDateMs;
 
-    @ColumnInfo(name = "podcast_id")
-    private String podcastId;
-
     @ColumnInfo(name = "email")
     private String email;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String  id) {
         this.id = id;
     }
 
@@ -199,14 +199,6 @@ public class FavoritePodcastEntity {
 
     public void setLatestPubDateMs(long latestPubDateMs) {
         this.latestPubDateMs = latestPubDateMs;
-    }
-
-    public String getPodcastId() {
-        return podcastId;
-    }
-
-    public void setPodcastId(String podcastId) {
-        this.podcastId = podcastId;
     }
 
     public String getEmail() {

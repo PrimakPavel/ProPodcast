@@ -97,7 +97,7 @@ public class FavoritePodcastAdapter extends RecyclerView.Adapter<FavoritePodcast
                 } else {
                     binding.tvCountryLanguage.setText(EMPTY);
                 }
-                binding.ivMoreOptions.setOnClickListener(v -> clickListener.onPodcastMoreOptionsClick(podcastItem.getPodcastId(), podcastItem.getListennotesUrl(), v));
+                binding.ivMoreOptions.setOnClickListener(v -> clickListener.onPodcastMoreOptionsClick(podcastItem.getId(), podcastItem.getListennotesUrl(), v));
             }
         }
 
@@ -106,7 +106,7 @@ public class FavoritePodcastAdapter extends RecyclerView.Adapter<FavoritePodcast
             if (mFavorites != null) {
                 FavoritePodcastEntity podcastItem = mFavorites.get(getAdapterPosition());
                 if (podcastItem != null) {
-                    clickListener.onPodcastItemClick(podcastItem.getPodcastId());
+                    clickListener.onPodcastItemClick(podcastItem.getId());
                 }
             }
         }

@@ -35,7 +35,7 @@ public class FavoritePodcastsViewModel extends ViewModel {
     public boolean isFavorite(List<FavoritePodcastEntity> favorites, String podcastId) {
         if (favorites != null && !favorites.isEmpty()) {
             for (FavoritePodcastEntity favoritePodcastEntity : favorites) {
-                if (favoritePodcastEntity.getPodcastId().equals(podcastId)) return true;
+                if (favoritePodcastEntity.getId().equals(podcastId)) return true;
             }
         }
         return false;

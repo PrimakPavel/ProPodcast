@@ -16,7 +16,7 @@ public interface FavoritePodcastDao {
     @Query("SELECT * FROM favorite_podcasts")
     LiveData<List<FavoritePodcastEntity>> loadAllPodcasts();
 
-    @Query("SELECT* FROM favorite_podcasts WHERE podcast_id = :podcastId")
+    @Query("SELECT* FROM favorite_podcasts WHERE id = :podcastId")
     LiveData<FavoritePodcastEntity> loadPodcastById(String podcastId);
 
     @Query("SELECT COUNT(id) FROM favorite_podcasts")
@@ -31,6 +31,6 @@ public interface FavoritePodcastDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updatePodcast(FavoritePodcastEntity podcastEntity);
 
-    @Query("DELETE FROM favorite_podcasts WHERE podcast_id = :podcastId")
+    @Query("DELETE FROM favorite_podcasts WHERE id = :podcastId")
     void deletePodcast(String podcastId);
 }

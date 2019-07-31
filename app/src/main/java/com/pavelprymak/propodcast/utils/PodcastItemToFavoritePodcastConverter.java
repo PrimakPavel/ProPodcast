@@ -8,7 +8,7 @@ import com.pavelprymak.propodcast.model.network.pojo.search.ResultsItem;
 public class PodcastItemToFavoritePodcastConverter {
     public static FavoritePodcastEntity createFavorite(PodcastItem podcastItem) {
         FavoritePodcastEntity favoritePodcastEntity = new FavoritePodcastEntity();
-        favoritePodcastEntity.setPodcastId(podcastItem.getId());
+        favoritePodcastEntity.setId(podcastItem.getId());
         favoritePodcastEntity.setImage(podcastItem.getImage());
         favoritePodcastEntity.setCountry(podcastItem.getCountry());
         favoritePodcastEntity.setDescription(podcastItem.getDescription());
@@ -30,7 +30,7 @@ public class PodcastItemToFavoritePodcastConverter {
 
     public static FavoritePodcastEntity createFavorite(PodcastResponse podcastItem) {
         FavoritePodcastEntity favoritePodcastEntity = new FavoritePodcastEntity();
-        favoritePodcastEntity.setPodcastId(podcastItem.getId());
+        favoritePodcastEntity.setId(podcastItem.getId());
         favoritePodcastEntity.setImage(podcastItem.getImage());
         favoritePodcastEntity.setCountry(podcastItem.getCountry());
         favoritePodcastEntity.setDescription(podcastItem.getDescription());
@@ -52,7 +52,7 @@ public class PodcastItemToFavoritePodcastConverter {
 
     public static FavoritePodcastEntity createFavorite(ResultsItem podcastItem) {
         FavoritePodcastEntity favoritePodcastEntity = new FavoritePodcastEntity();
-        favoritePodcastEntity.setPodcastId(podcastItem.getId());
+        favoritePodcastEntity.setId(podcastItem.getId());
         favoritePodcastEntity.setImage(podcastItem.getImage());
         favoritePodcastEntity.setDescription(podcastItem.getDescriptionOriginal());
         favoritePodcastEntity.setPublisher(podcastItem.getPublisherOriginal());
