@@ -1,6 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
+
+
+
+    signingConfigs {
+        releaseConf {
+            storeFile file("$rootDir/keystore.jks")
+            storePassword 'password'
+            keyAlias = 'podcast'
+            keyPassword 'password'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.pavelprymak.propodcast"
@@ -11,9 +22,11 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         try {
-            buildConfigField("String", "API_KEY", API_KEY)
+            def props = new Properties()
+            file("api.properties").withInputStream { props.load(it) }
+            buildConfigField("String", "API_KEY", props.getProperty("API_KEY"))
         } catch (Exception exception) {
-            throw new InvalidUserDataException("You should define API_KEY in gradle.properties!!!\n" + exception.getMessage())
+            throw new InvalidUserDataException("You should define API_KEY in (app/api.properties)\n" + exception.getMessage())
         }
     }
     dataBinding {
@@ -27,6 +40,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConf
         }
     }
 }

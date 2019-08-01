@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.pavelprymak.propodcast.App;
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentSearchBinding;
@@ -47,8 +48,7 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
     private NavController mNavController;
     private List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
     private Handler mDelayHandler = new Handler();
-    private static final long SCROLL_DELAY = 500L;
-    private static final String SEARCH_LANGUAGE = "English";
+    private static final long SCROLL_DELAY = 300L;
 
 
     @Override
@@ -78,11 +78,6 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
             mAdapter = new SearchPodcastAdapter(this);
             mBinding.searchRecycler.setAdapter(mAdapter);
             mAdapter.submitList(resultsItems);
-            if (resultsItems == null) {
-                mBinding.tvEmptySearch.setVisibility(View.VISIBLE);
-            } else {
-                mBinding.tvEmptySearch.setVisibility(View.GONE);
-            }
         });
         mSearchViewModel.getLoadData().observe(this, this::showProgressBar);
         mSearchViewModel.getErrorData().observe(this, throwable -> {
@@ -90,6 +85,7 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
                 mBinding.retryBtn.setVisibility(View.VISIBLE);
             }
         });
+        mSearchViewModel.getIsEmptyListData().observe(this, this::showEmptyList);
 
         mBinding.retryBtn.setOnClickListener(v -> {
             int size = mSearchViewModel.retryAfterErrorAndPrevLoadingListSize();
@@ -99,7 +95,7 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
         mBinding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mSearchViewModel.prepareSearchRequest(query, SEARCH_LANGUAGE);
+                mSearchViewModel.prepareSearchRequest(query, App.mSettings.getFilterLanguage());
                 KeyboardUtil.hideKeyboard(getActivity());
                 return true;
             }
@@ -109,20 +105,32 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
                 return false;
             }
         });
+        mBinding.fabFilter.setOnClickListener(v -> {
+            KeyboardUtil.hideKeyboard(getActivity());
+            mNavController.navigate(R.id.languageFilterFragment);
+        });
+        searchViewShowKeyboard();
+    }
+
+    private void searchViewShowKeyboard() {
         SearchView.SearchAutoComplete searchText = mBinding.searchView.findViewById(R.id.search_src_text);
         searchText.requestFocus();
         showInputMethod(getContext(), searchText);
     }
 
+    private void showEmptyList(boolean isEmpty) {
+        if (isEmpty) {
+            mBinding.tvEmptySearch.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.tvEmptySearch.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mFavoritePodcastsViewModel.getFavorites().removeObservers(this);
-        mSearchViewModel.getErrorData().removeObservers(this);
-        mSearchViewModel.getLoadData().removeObservers(this);
-        mSearchViewModel.getSearchResultsObserver().removeObservers(this);
-
+        mSearchViewModel.removeObservers(this);
     }
 
     private void prepareRecycler() {
@@ -139,7 +147,6 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
             mBinding.progressBar.setVisibility(View.GONE);
         }
     }
-
 
     @Override
     public void onPodcastItemClick(String podcastId) {

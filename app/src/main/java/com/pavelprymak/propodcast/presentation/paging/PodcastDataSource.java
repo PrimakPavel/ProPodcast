@@ -1,12 +1,12 @@
 package com.pavelprymak.propodcast.presentation.paging;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PositionalDataSource;
 
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.BestPodcastsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem;
 import com.pavelprymak.propodcast.model.network.repo.PodcastRepoRx;
+import com.pavelprymak.propodcast.presentation.common.PagingStateBatch;
 
 import java.util.List;
 
@@ -18,8 +18,7 @@ import io.reactivex.schedulers.Schedulers;
 public class PodcastDataSource extends PositionalDataSource<PodcastItem> {
     public static final int ITEMS_ON_PAGE = 20;
     private static final int INVALID_PAGE_NUMBER = -1;
-    private MutableLiveData<Boolean> mLoadingData;
-    private MutableLiveData<Throwable> mErrorData;
+    private PagingStateBatch mPagingStateBatch;
     private PodcastRepoRx mRepoRx;
     private int mCurrentPage = 1;
     private int mGenreId;
@@ -27,13 +26,11 @@ public class PodcastDataSource extends PositionalDataSource<PodcastItem> {
     private List<PodcastItem> mPrevLoadingList;
 
     PodcastDataSource(PodcastRepoRx podcastRepo,
-                      MutableLiveData<Boolean> loadingData,
-                      MutableLiveData<Throwable> errorData,
+                      PagingStateBatch pagingStateBatch,
                       int genreId,
                       String region,
                       List<PodcastItem> prevLoadingList) {
-        mLoadingData = loadingData;
-        mErrorData = errorData;
+        mPagingStateBatch = pagingStateBatch;
         mRepoRx = podcastRepo;
         mGenreId = genreId;
         mRegion = region;
@@ -47,8 +44,9 @@ public class PodcastDataSource extends PositionalDataSource<PodcastItem> {
             callback.onResult(mPrevLoadingList, 0);
             return;
         }
-        mErrorData.postValue(null);
-        mLoadingData.postValue(true);
+        mPagingStateBatch.postError(null);
+        mPagingStateBatch.postLoading(true);
+        mPagingStateBatch.postIsEmptyList(false);
         mRepoRx.getBestPodcasts(mGenreId, mRegion, mCurrentPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -61,20 +59,22 @@ public class PodcastDataSource extends PositionalDataSource<PodcastItem> {
                     @Override
                     public void onSuccess(BestPodcastsResponse podcastResponse) {
                         if (podcastResponse != null) {
-                            mLoadingData.setValue(false);
+                            mPagingStateBatch.postLoading(false);
                             if (podcastResponse.isHasNext()) {
                                 mCurrentPage = podcastResponse.getNextPageNumber();
                             } else {
                                 mCurrentPage = INVALID_PAGE_NUMBER;
                             }
+                            mPagingStateBatch.postIsEmptyList(podcastResponse.getTotal() == 0);
                             callback.onResult(podcastResponse.getPodcasts(), 0);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mLoadingData.setValue(false);
-                        mErrorData.setValue(e);
+                        mPagingStateBatch.postLoading(false);
+                        mPagingStateBatch.postIsEmptyList(true);
+                        mPagingStateBatch.postError(e);
                     }
                 });
     }
@@ -84,8 +84,9 @@ public class PodcastDataSource extends PositionalDataSource<PodcastItem> {
         if (mCurrentPage == INVALID_PAGE_NUMBER) {
             return;
         }
-        mErrorData.postValue(null);
-        mLoadingData.postValue(true);
+        mPagingStateBatch.postError(null);
+        mPagingStateBatch.postLoading(true);
+        mPagingStateBatch.postIsEmptyList(false);
         mRepoRx.getBestPodcasts(mGenreId, mRegion, mCurrentPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -98,7 +99,7 @@ public class PodcastDataSource extends PositionalDataSource<PodcastItem> {
                     @Override
                     public void onSuccess(BestPodcastsResponse podcastResponse) {
                         if (podcastResponse != null) {
-                            mLoadingData.setValue(false);
+                            mPagingStateBatch.postLoading(false);
                             if (podcastResponse.isHasNext()) {
                                 mCurrentPage = podcastResponse.getNextPageNumber();
                             } else {
@@ -110,8 +111,8 @@ public class PodcastDataSource extends PositionalDataSource<PodcastItem> {
 
                     @Override
                     public void onError(Throwable e) {
-                        mLoadingData.setValue(false);
-                        mErrorData.setValue(e);
+                        mPagingStateBatch.postLoading(false);
+                        mPagingStateBatch.postError(e);
                     }
                 });
     }

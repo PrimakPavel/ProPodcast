@@ -79,6 +79,13 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
                 mBinding.retryBtn.setVisibility(View.VISIBLE);
             }
         });
+        mBestPodcastsViewModel.getIsEmptyListData().observe(this, isEmptyList -> {
+            if (isEmptyList) {
+                mBinding.errorMessage.setVisibility(View.VISIBLE);
+            } else {
+                mBinding.errorMessage.setVisibility(View.GONE);
+            }
+        });
         mBinding.retryBtn.setOnClickListener(v -> {
             int size = mBestPodcastsViewModel.retryAfterErrorAndPrevLoadingListSize();
             mDelayHandler.postDelayed(() -> mBinding.recyclerBestPodcasts.scrollToPosition(size - 1), SCROLL_DELAY);
@@ -97,6 +104,13 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
             }
             return false;
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mBestPodcastsViewModel.removeObservers(this);
+        mFavoritePodcastsViewModel.getFavorites().removeObservers(this);
     }
 
     private void showProgressBar(Boolean isShow) {

@@ -2,11 +2,9 @@ package com.pavelprymak.propodcast.presentation.viewModels;
 
 import android.text.TextUtils;
 
-import androidx.arch.core.util.Function;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
@@ -16,34 +14,36 @@ import com.pavelprymak.propodcast.model.network.PodcastApiController;
 import com.pavelprymak.propodcast.model.network.pojo.search.ResultsItem;
 import com.pavelprymak.propodcast.model.network.repo.PodcastRepoImpl;
 import com.pavelprymak.propodcast.model.network.repo.PodcastRepoRx;
+import com.pavelprymak.propodcast.presentation.common.PagingStateBatch;
 import com.pavelprymak.propodcast.presentation.paging.SearchDataSourceFactory;
 
 import java.util.List;
 
 public class SearchViewModel extends ViewModel {
-    private LiveData<PagedList<ResultsItem>> mSearchPagingLiveData;
     private static final int RESULTS_ON_PAGE = 10;
+
+    private LiveData<PagedList<ResultsItem>> mSearchPagingLiveData;
     private MediatorLiveData<PagedList<ResultsItem>> mSearchData = new MediatorLiveData<>();
-    private MutableLiveData<Boolean> mLoadData = new MutableLiveData<>();
-    private MutableLiveData<Throwable> mErrorData = new MutableLiveData<>();
+    private PagingStateBatch mPagingStateBatch = new PagingStateBatch();
     private PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
     private String mSearchQuery;
     private String mLanguage;
+    private PagedList.Config mPagedListConfig = new PagedList.Config.Builder().setEnablePlaceholders(false)
+            .setPageSize(RESULTS_ON_PAGE / 2)
+            .build();
 
     public void prepareSearchRequest(String searchQuery, String language) {
         mSearchQuery = searchQuery;
         mLanguage = language;
-        mLoadData.postValue(false);
-        mErrorData.postValue(null);
-        SearchDataSourceFactory searchDataSourceFactory = new SearchDataSourceFactory(mLoadData, mErrorData, mRepo, searchQuery, language);
-        PagedList.Config pagedListConfig = new PagedList.Config.Builder().setEnablePlaceholders(false)
-                .setPageSize(RESULTS_ON_PAGE)
-                .build();
+        mPagingStateBatch.postLoading(false);
+        mPagingStateBatch.postError(null);
+        mPagingStateBatch.postIsEmptyList(false);
+        SearchDataSourceFactory searchDataSourceFactory = new SearchDataSourceFactory(mPagingStateBatch, mRepo, searchQuery, language);
 
         if (mSearchPagingLiveData != null) {
             mSearchData.removeSource(mSearchPagingLiveData);
         }
-        mSearchPagingLiveData = new LivePagedListBuilder<>(searchDataSourceFactory, pagedListConfig)
+        mSearchPagingLiveData = new LivePagedListBuilder<>(searchDataSourceFactory, mPagedListConfig)
                 .setFetchExecutor(App.appExecutors.networkIO())
                 .build();
 
@@ -53,22 +53,18 @@ public class SearchViewModel extends ViewModel {
     public int retryAfterErrorAndPrevLoadingListSize() {
         if (TextUtils.isEmpty(mSearchQuery) || TextUtils.isEmpty(mLanguage)) return 0;
 
-        mLoadData.postValue(false);
-        mErrorData.postValue(null);
+        mPagingStateBatch.postLoading(false);
+        mPagingStateBatch.postError(null);
+        mPagingStateBatch.postIsEmptyList(false);
         List<ResultsItem> prevLoadingList = null;
         if (mSearchData.getValue() != null) {
             prevLoadingList = mSearchData.getValue().subList(0, mSearchData.getValue().size());
         }
-
-        SearchDataSourceFactory searchDataSourceFactory = new SearchDataSourceFactory(mLoadData, mErrorData, mRepo, mSearchQuery, mLanguage, prevLoadingList);
-        PagedList.Config pagedListConfig = new PagedList.Config.Builder().setEnablePlaceholders(false)
-                .setPageSize(RESULTS_ON_PAGE)
-                .build();
-
+        SearchDataSourceFactory searchDataSourceFactory = new SearchDataSourceFactory(mPagingStateBatch, mRepo, mSearchQuery, mLanguage, prevLoadingList);
         if (mSearchPagingLiveData != null) {
             mSearchData.removeSource(mSearchPagingLiveData);
         }
-        mSearchPagingLiveData = new LivePagedListBuilder<>(searchDataSourceFactory, pagedListConfig)
+        mSearchPagingLiveData = new LivePagedListBuilder<>(searchDataSourceFactory, mPagedListConfig)
                 .setFetchExecutor(App.appExecutors.networkIO())
                 .build();
 
@@ -83,10 +79,21 @@ public class SearchViewModel extends ViewModel {
     }
 
     public LiveData<Boolean> getLoadData() {
-        return mLoadData;
+        return mPagingStateBatch.getLoading();
     }
 
     public LiveData<Throwable> getErrorData() {
-        return mErrorData;
+        return mPagingStateBatch.getError();
+    }
+
+    public LiveData<Boolean> getIsEmptyListData() {
+        return mPagingStateBatch.getIsEmptyListData();
+    }
+
+    public void removeObservers(LifecycleOwner lifecycleOwner){
+        mPagingStateBatch.getError().removeObservers(lifecycleOwner);
+        mPagingStateBatch.getLoading().removeObservers(lifecycleOwner);
+        mPagingStateBatch.getIsEmptyListData().removeObservers(lifecycleOwner);
+        mSearchData.removeObservers(lifecycleOwner);
     }
 }

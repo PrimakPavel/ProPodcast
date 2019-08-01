@@ -16,14 +16,14 @@ import com.pavelprymak.propodcast.model.network.pojo.regions.RegionItem;
 
 import java.util.List;
 
-import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.INVALID_REGION;
+import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.ALL_REGIONS;
 
 public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionViewHolder> {
     // Use default locale format
     private List<RegionItem> mRegions;
     private final RegionClickListener mClickListener;
     private Context mContext;
-    private String mSelectedRegionShortName = INVALID_REGION;
+    private String mSelectedRegionShortName = ALL_REGIONS;
 
 
     public RegionAdapter(RegionClickListener clickListener) {
@@ -101,7 +101,7 @@ public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionView
     }
 
     public int getPositionByRegionShortName(String regShortName) {
-        if (mRegions != null && !mSelectedRegionShortName.equals(INVALID_REGION)) {
+        if (mRegions != null && !mSelectedRegionShortName.equals(ALL_REGIONS)) {
             for (int i = 0; i < mRegions.size(); i++) {
                 RegionItem region = mRegions.get(i);
                 if (region.getRegionShortName().equals(regShortName)) {

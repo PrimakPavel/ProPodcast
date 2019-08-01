@@ -1,12 +1,12 @@
 package com.pavelprymak.propodcast.presentation.paging;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PositionalDataSource;
 
 import com.pavelprymak.propodcast.model.network.pojo.search.ResultsItem;
 import com.pavelprymak.propodcast.model.network.pojo.search.SearchPodcastResponse;
 import com.pavelprymak.propodcast.model.network.repo.PodcastRepoRx;
+import com.pavelprymak.propodcast.presentation.common.PagingStateBatch;
 
 import java.util.List;
 
@@ -16,8 +16,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class SearchDataSource extends PositionalDataSource<ResultsItem> {
-    private MutableLiveData<Boolean> mLoadingData;
-    private MutableLiveData<Throwable> mErrorData;
+    private PagingStateBatch mPagingStateBatch;
     private PodcastRepoRx mRepoRx;
     private int mCurrentOffset = 0;
     private int mTotalCount;
@@ -26,13 +25,11 @@ public class SearchDataSource extends PositionalDataSource<ResultsItem> {
     private List<ResultsItem> mPrevLoadingList;
 
     SearchDataSource(PodcastRepoRx podcastRepo,
-                            MutableLiveData<Boolean> mLoadingData,
-                            MutableLiveData<Throwable> mErrorData,
-                            @NonNull String searchQuery,
-                            String language,
-                            List<ResultsItem> prevLoadingList) {
-        this.mLoadingData = mLoadingData;
-        this.mErrorData = mErrorData;
+                     PagingStateBatch pagingStateBatch,
+                     @NonNull String searchQuery,
+                     String language,
+                     List<ResultsItem> prevLoadingList) {
+        mPagingStateBatch = pagingStateBatch;
         mRepoRx = podcastRepo;
         mSearchQuery = searchQuery;
         mLanguage = language;
@@ -47,8 +44,9 @@ public class SearchDataSource extends PositionalDataSource<ResultsItem> {
             mTotalCount = mPrevLoadingList.size();
             return;
         }
-        mErrorData.postValue(null);
-        mLoadingData.postValue(true);
+        mPagingStateBatch.postError(null);
+        mPagingStateBatch.postLoading(true);
+        mPagingStateBatch.postIsEmptyList(false);
         mRepoRx.getSearchData(mSearchQuery, mCurrentOffset, mLanguage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -60,16 +58,18 @@ public class SearchDataSource extends PositionalDataSource<ResultsItem> {
 
                     @Override
                     public void onSuccess(SearchPodcastResponse searchPodcastResponse) {
-                        mLoadingData.setValue(false);
+                        mPagingStateBatch.postLoading(false);
                         mCurrentOffset = searchPodcastResponse.getNextOffset();
                         mTotalCount = searchPodcastResponse.getTotal();
+                        mPagingStateBatch.postIsEmptyList(searchPodcastResponse.getResults().isEmpty());
                         callback.onResult(searchPodcastResponse.getResults(), 0);
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mLoadingData.setValue(false);
-                        mErrorData.setValue(e);
+                        mPagingStateBatch.postLoading(false);
+                        mPagingStateBatch.postError(e);
                     }
                 });
     }
@@ -80,8 +80,9 @@ public class SearchDataSource extends PositionalDataSource<ResultsItem> {
         if (mCurrentOffset > mTotalCount) {
             return;
         }
-        mErrorData.postValue(null);
-        mLoadingData.postValue(true);
+        mPagingStateBatch.postError(null);
+        mPagingStateBatch.postLoading(true);
+        mPagingStateBatch.postIsEmptyList(false);
         mRepoRx.getSearchData(mSearchQuery, mCurrentOffset, mLanguage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -93,7 +94,7 @@ public class SearchDataSource extends PositionalDataSource<ResultsItem> {
 
                     @Override
                     public void onSuccess(SearchPodcastResponse searchPodcastResponse) {
-                        mLoadingData.setValue(false);
+                        mPagingStateBatch.postLoading(false);
                         mCurrentOffset = searchPodcastResponse.getNextOffset();
                         mTotalCount = searchPodcastResponse.getTotal();
                         callback.onResult(searchPodcastResponse.getResults());
@@ -101,8 +102,8 @@ public class SearchDataSource extends PositionalDataSource<ResultsItem> {
 
                     @Override
                     public void onError(Throwable e) {
-                        mLoadingData.setValue(false);
-                        mErrorData.setValue(e);
+                        mPagingStateBatch.postLoading(false);
+                        mPagingStateBatch.postError(e);
                     }
                 });
     }

@@ -19,7 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:title="@string/best_podcast_title"></androidx.appcompat.widget.Toolbar>
+                app:title="@string/best_podcast_title" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -36,6 +36,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:text="@string/empty_best_podcasts_message"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="@dimen/standard_text_size"
             android:visibility="gone" />
 
         <Button

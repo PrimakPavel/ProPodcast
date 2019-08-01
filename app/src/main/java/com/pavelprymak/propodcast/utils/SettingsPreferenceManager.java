@@ -7,9 +7,11 @@ public class SettingsPreferenceManager {
     private static final String APP_PREFERENCES = "settingsPodcastApp";
     private static final String APP_PREFERENCES_GENRE = "settingsGenre";
     private static final String APP_PREFERENCES_REGION = "settingsRegion";
+    private static final String APP_PREFERENCES_LANGUAGE = "settingsLanguage";
 
     public static final int ALL_GENRE = 0;
-    public static final String INVALID_REGION = "";
+    public static final String ALL_REGIONS = "all";
+    public static final String ALL_LANGUAGES = "Any language";
 
     private SharedPreferences mSettings;
 
@@ -41,7 +43,21 @@ public class SettingsPreferenceManager {
     }
 
     public String getFilterRegion() {
-        if (mSettings == null) return INVALID_REGION;
-        return mSettings.getString(APP_PREFERENCES_REGION, INVALID_REGION);
+        if (mSettings == null) return ALL_REGIONS;
+        return mSettings.getString(APP_PREFERENCES_REGION, ALL_REGIONS);
+    }
+
+
+    public void saveFilterLanguage(String language) {
+        if (mSettings != null) {
+            SharedPreferences.Editor editor = mSettings.edit();
+            editor.putString(APP_PREFERENCES_LANGUAGE, language);
+            editor.apply();
+        }
+    }
+
+    public String getFilterLanguage() {
+        if (mSettings == null) return ALL_LANGUAGES;
+        return mSettings.getString(APP_PREFERENCES_LANGUAGE, ALL_LANGUAGES);
     }
 }

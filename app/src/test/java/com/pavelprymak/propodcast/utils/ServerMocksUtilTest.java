@@ -1,6 +1,7 @@
 package com.pavelprymak.propodcast.utils;
 
 import com.pavelprymak.propodcast.model.network.pojo.genres.GenresResponse;
+import com.pavelprymak.propodcast.model.network.pojo.languages.LanguagesResponse;
 import com.pavelprymak.propodcast.model.network.pojo.podcastById.PodcastResponse;
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.BestPodcastsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.recommendations.RecommendationsResponse;
@@ -24,6 +25,12 @@ public class ServerMocksUtilTest {
     public void testRegionsMock() throws IOException {
         RegionsResponse regionsResponse = ServerMocksUtil.getRegionMock();
         assertNotNull(regionsResponse);
+    }
+
+    @Test
+    public void testLanguagesMock() throws IOException {
+        LanguagesResponse languagesResponse = ServerMocksUtil.getLanguagesMock();
+        assertNotNull(languagesResponse);
     }
 
     @Test

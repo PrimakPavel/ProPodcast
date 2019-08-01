@@ -20,7 +20,7 @@ import com.pavelprymak.propodcast.presentation.adapters.RegionAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.RegionClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.RegionViewModel;
 
-import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.INVALID_REGION;
+import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.ALL_REGIONS;
 
 
 public class RegionFilterFragment extends Fragment implements RegionClickListener {
@@ -41,8 +41,8 @@ public class RegionFilterFragment extends Fragment implements RegionClickListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (getActivity() != null)
-            mRegionViewModel = ViewModelProviders.of(getActivity()).get(RegionViewModel.class);
+
+        mRegionViewModel = ViewModelProviders.of(this).get(RegionViewModel.class);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_region_filter, container, false);
         return mBinding.getRoot();
     }
@@ -51,11 +51,11 @@ public class RegionFilterFragment extends Fragment implements RegionClickListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         prepareRecycler();
-        mRegionViewModel.getGenres().observe(this, regionItems -> {
+        mRegionViewModel.getRegions().observe(this, regionItems -> {
             if (regionItems != null) {
                 String selectedRegionShortName = App.mSettings.getFilterRegion();
                 mAdapter.updateList(regionItems, selectedRegionShortName);
-                if (!selectedRegionShortName.equals(INVALID_REGION)) {
+                if (!selectedRegionShortName.equals(ALL_REGIONS)) {
                     int selectedItemPosition = mAdapter.getPositionByRegionShortName(selectedRegionShortName);
                     mBinding.recyclerRegions.smoothScrollToPosition(selectedItemPosition);
                 }
@@ -66,7 +66,7 @@ public class RegionFilterFragment extends Fragment implements RegionClickListene
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRegionViewModel.getGenres().removeObservers(this);
+        mRegionViewModel.getRegions().removeObservers(this);
     }
 
     private void prepareRecycler() {

@@ -1,42 +1,37 @@
 package com.pavelprymak.propodcast.presentation.paging;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 import androidx.paging.DataSource;
 
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem;
 import com.pavelprymak.propodcast.model.network.repo.PodcastRepoRx;
+import com.pavelprymak.propodcast.presentation.common.PagingStateBatch;
 
 import java.util.List;
 
 public class PodcastDataSourceFactory extends DataSource.Factory<Integer, PodcastItem> {
-    private MutableLiveData<Boolean> mLoadingData;
-    private MutableLiveData<Throwable> mErrorData;
+    private PagingStateBatch mPagingStateBatch;
     private PodcastRepoRx mRepoRx;
     private int mGenreId;
     private String mRegion;
     private List<PodcastItem> mPrevLoadingList;
 
     public PodcastDataSourceFactory(PodcastRepoRx repoRx,
-                                    MutableLiveData<Boolean> loadingData,
-                                    MutableLiveData<Throwable> errorData,
+                                    PagingStateBatch pagingStateBatch,
                                     int genreId,
                                     String region) {
-        mLoadingData = loadingData;
-        mErrorData = errorData;
+        mPagingStateBatch = pagingStateBatch;
         mRepoRx = repoRx;
         mGenreId = genreId;
         mRegion = region;
     }
 
     public PodcastDataSourceFactory(PodcastRepoRx repoRx,
-                                    MutableLiveData<Boolean> loadingData,
-                                    MutableLiveData<Throwable> errorData,
+                                    PagingStateBatch pagingStateBatch,
                                     int genreId,
                                     String region,
                                     List<PodcastItem> prevLoadingList) {
-        mLoadingData = loadingData;
-        mErrorData = errorData;
+        mPagingStateBatch = pagingStateBatch;
         mRepoRx = repoRx;
         mGenreId = genreId;
         mRegion = region;
@@ -46,6 +41,6 @@ public class PodcastDataSourceFactory extends DataSource.Factory<Integer, Podcas
     @NonNull
     @Override
     public DataSource<Integer, PodcastItem> create() {
-        return new PodcastDataSource(mRepoRx, mLoadingData, mErrorData, mGenreId, mRegion, mPrevLoadingList);
+        return new PodcastDataSource(mRepoRx, mPagingStateBatch, mGenreId, mRegion, mPrevLoadingList);
     }
 }

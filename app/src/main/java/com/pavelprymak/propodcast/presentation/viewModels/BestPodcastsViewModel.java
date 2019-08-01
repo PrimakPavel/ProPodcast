@@ -1,5 +1,6 @@
 package com.pavelprymak.propodcast.presentation.viewModels;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,6 +13,7 @@ import com.pavelprymak.propodcast.model.network.PodcastApiController;
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem;
 import com.pavelprymak.propodcast.model.network.repo.PodcastRepoImpl;
 import com.pavelprymak.propodcast.model.network.repo.PodcastRepoRx;
+import com.pavelprymak.propodcast.presentation.common.PagingStateBatch;
 import com.pavelprymak.propodcast.presentation.paging.PodcastDataSourceFactory;
 
 import java.util.List;
@@ -23,11 +25,9 @@ public class BestPodcastsViewModel extends ViewModel {
     public static final int INVALID_GENRE_ID = -1;
     private PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
     private Executor mExecutor = App.appExecutors.networkIO();
-
     private LiveData<PagedList<PodcastItem>> mPodcastPagingLiveData;
     private MediatorLiveData<PagedList<PodcastItem>> mPodcastsData = new MediatorLiveData<>();
-    private MutableLiveData<Boolean> mLoadData = new MutableLiveData<>();
-    private MutableLiveData<Throwable> mErrorData = new MutableLiveData<>();
+    private PagingStateBatch mPagingStateBatch = new PagingStateBatch();
 
     private PagedList.Config mPagedListConfig = new PagedList.Config.Builder()
             .setEnablePlaceholders(false)
@@ -42,9 +42,10 @@ public class BestPodcastsViewModel extends ViewModel {
         if (genreId != mGenreId || !region.equals(mRegion) || mPodcastsData.getValue() == null) {
             mGenreId = genreId;
             mRegion = region;
-            mLoadData.postValue(false);
-            mErrorData.postValue(null);
-            PodcastDataSourceFactory podcastDataSourceFactory = new PodcastDataSourceFactory(mRepo, mLoadData, mErrorData, genreId, region);
+            mPagingStateBatch.postLoading(true);
+            mPagingStateBatch.postError(null);
+            mPagingStateBatch.postIsEmptyList(false);
+            PodcastDataSourceFactory podcastDataSourceFactory = new PodcastDataSourceFactory(mRepo, mPagingStateBatch, genreId, region);
             if (mPodcastPagingLiveData != null) {
                 mPodcastsData.removeSource(mPodcastPagingLiveData);
             }
@@ -58,14 +59,14 @@ public class BestPodcastsViewModel extends ViewModel {
 
     public int retryAfterErrorAndPrevLoadingListSize() {
         if (mRegion == null || mGenreId == INVALID_GENRE_ID) return 0;
-
-        mLoadData.postValue(false);
-        mErrorData.postValue(null);
+        mPagingStateBatch.postLoading(false);
+        mPagingStateBatch.postError(null);
+        mPagingStateBatch.postIsEmptyList(false);
         List<PodcastItem> prevLoadingList = null;
         if (mPodcastsData.getValue() != null) {
             prevLoadingList = mPodcastsData.getValue().subList(0, mPodcastsData.getValue().size());
         }
-        PodcastDataSourceFactory podcastDataSourceFactory = new PodcastDataSourceFactory(mRepo, mLoadData, mErrorData, mGenreId, mRegion, prevLoadingList);
+        PodcastDataSourceFactory podcastDataSourceFactory = new PodcastDataSourceFactory(mRepo, mPagingStateBatch, mGenreId, mRegion, prevLoadingList);
         if (mPodcastPagingLiveData != null) {
             mPodcastsData.removeSource(mPodcastPagingLiveData);
         }
@@ -83,11 +84,22 @@ public class BestPodcastsViewModel extends ViewModel {
         return mPodcastsData;
     }
 
+    public void removeObservers(LifecycleOwner lifecycleOwner){
+        mPagingStateBatch.getError().removeObservers(lifecycleOwner);
+        mPagingStateBatch.getLoading().removeObservers(lifecycleOwner);
+        mPagingStateBatch.getIsEmptyListData().removeObservers(lifecycleOwner);
+        mPodcastsData.removeObservers(lifecycleOwner);
+    }
+
     public MutableLiveData<Boolean> getLoadData() {
-        return mLoadData;
+        return mPagingStateBatch.getLoading();
     }
 
     public MutableLiveData<Throwable> getErrorData() {
-        return mErrorData;
+        return mPagingStateBatch.getError();
+    }
+
+    public MutableLiveData<Boolean> getIsEmptyListData() {
+        return mPagingStateBatch.getIsEmptyListData();
     }
 }

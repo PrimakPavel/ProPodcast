@@ -9,6 +9,9 @@
     <string name="filters_title">Filters</string>
     <string name="filters_genre_title">Genre</string>
     <string name="filters_region_title">Region</string>
+    <string name="filters_language_title">Language</string>
+
+    <string name="genres_all_title">All genres</string>
 
     <!--popup menu actions -->
     <string name="add_to_favorite">Add to favorite</string>
@@ -29,6 +32,7 @@
     <!-- Empty list errors-->
     <string name="empty_favorites_list">Empty favorites list!</string>
     <string name="empty_search_message">Empty search list!</string>
+    <string name="empty_best_podcasts_message">Empty best poscasts list!</string>
 
     <string name="retry_btn">Connection Error! Retry</string>
 
@@ -41,6 +45,4 @@
     <string name="error_video_url">Sorry, video URL is Empty</string>
     <string name="error_connection">Connection error!</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

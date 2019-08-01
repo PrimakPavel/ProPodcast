@@ -9,7 +9,7 @@
         android:id="@+id/bestPodcastsFragment"
         android:name="com.pavelprymak.propodcast.presentation.screens.BestPodcastsFragment"
         android:label="@string/best_podcast_title"
-        tools:layout="@layout/fragment_best_podcasts" >
+        tools:layout="@layout/fragment_best_podcasts">
         <action
             android:id="@+id/action_bestPodcastsFragment_to_podcastDetailsFragment"
             app:destination="@id/podcastDetailsFragment" />
@@ -21,7 +21,7 @@
         android:id="@+id/favoritesPodcastsFragment"
         android:name="com.pavelprymak.propodcast.presentation.screens.FavoritesPodcastsFragment"
         android:label="@string/favorite_podcasts_title"
-        tools:layout="@layout/fragment_favorites_podcasts" >
+        tools:layout="@layout/fragment_favorites_podcasts">
         <action
             android:id="@+id/action_favoritesPodcastsFragment_to_podcastDetailsFragment"
             app:destination="@id/podcastDetailsFragment" />
@@ -30,10 +30,13 @@
         android:id="@+id/searchFragment"
         android:name="com.pavelprymak.propodcast.presentation.screens.SearchFragment"
         android:label="@string/search_podcasts_title"
-        tools:layout="@layout/fragment_search" >
+        tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_podcastDetailsFragment"
             app:destination="@id/podcastDetailsFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_languageFilterFragment"
+            app:destination="@id/languageFilterFragment" />
     </fragment>
     <fragment
         android:id="@+id/podcastDetailsFragment"
@@ -50,4 +53,9 @@
         android:name="com.pavelprymak.propodcast.presentation.screens.PlayerFragment"
         android:label="fragment_player"
         tools:layout="@layout/fragment_player" />
+    <fragment
+        android:id="@+id/languageFilterFragment"
+        android:name="com.pavelprymak.propodcast.presentation.screens.filters.LanguageFilterFragment"
+        android:label="@string/filters_language_title"
+        tools:layout="@layout/fragment_language_filter" />
 </navigation>

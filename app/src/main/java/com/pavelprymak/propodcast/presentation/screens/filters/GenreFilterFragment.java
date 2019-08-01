@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.pavelprymak.propodcast.App;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentGenreFilterBinding;
@@ -53,7 +54,7 @@ public class GenreFilterFragment extends Fragment implements GenreClickListener 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         prepareRecycler();
-        mGenreViewModel.getGenres().observe(this, genresItems -> {
+        mGenreViewModel.getGenresBatch().getData().observe(this, genresItems -> {
             if (genresItems != null) {
                 int selectedGenreId = App.mSettings.getFilterGenre();
                 mAdapter.updateList(genresItems, selectedGenreId);
@@ -63,12 +64,29 @@ public class GenreFilterFragment extends Fragment implements GenreClickListener 
                 }
             }
         });
+        mGenreViewModel.getGenresBatch().getLoading().observe(this, this::showLoading);
+        mGenreViewModel.getGenresBatch().getError().observe(this, error -> showError(error, view));
+    }
+
+    private void showLoading(boolean isLoading) {
+        if (isLoading) {
+            mBinding.progressBar.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void showError(Throwable throwable, View view) {
+        if (throwable != null) {
+            Snackbar snackbar = Snackbar.make(view, R.string.error_connection, Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mGenreViewModel.getGenres().removeObservers(this);
+        mGenreViewModel.removeObsorvers(this);
     }
 
     private void prepareRecycler() {

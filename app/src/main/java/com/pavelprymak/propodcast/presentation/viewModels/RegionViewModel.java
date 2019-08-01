@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.Map;
 
 public class RegionViewModel extends ViewModel {
-    private MutableLiveData<List<RegionItem>> mGenresData = new MutableLiveData<>();
+    private MutableLiveData<List<RegionItem>> mRegionData = new MutableLiveData<>();
 
-    public LiveData<List<RegionItem>> getGenres() {
-        if (mGenresData.getValue() == null) {
+    public LiveData<List<RegionItem>> getRegions() {
+        if (mRegionData.getValue() == null) {
             try {
-                mGenresData.setValue(convert(ServerMocksUtil.getRegionMock().getRegions()));
+                mRegionData.setValue(convert(ServerMocksUtil.getRegionMock().getRegions()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return mGenresData;
+        return mRegionData;
     }
 
     private List<RegionItem> convert(Map<String, String> regionsMap) {
