@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 
 import com.pavelprymak.propodcast.model.db.AppDatabase;
 import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity;
+import com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -32,6 +33,7 @@ public class DbRepoImpl implements DbRepo {
     @Override
     public void insertPodcast(FavoritePodcastEntity podcastEntity) {
         diskIO.execute(() -> mDb.favoritePodcastDao().insertPodcast(podcastEntity));
+        AnalyticsHelper.sentFirebaseAnalyticAddToFavorite(podcastEntity);
     }
 
     @Override
@@ -42,6 +44,7 @@ public class DbRepoImpl implements DbRepo {
     @Override
     public void deletePodcastById(String podcastId) {
         diskIO.execute(() -> mDb.favoritePodcastDao().deletePodcast(podcastId));
+        AnalyticsHelper.sentFirebaseAnalyticRemoveFromFavorite(podcastId);
     }
 
     @Override

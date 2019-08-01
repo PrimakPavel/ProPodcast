@@ -20,7 +20,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pavelprymak.propodcast.App;
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
@@ -40,7 +39,7 @@ import java.util.List;
 import static com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.ARG_PODCAST_ID;
 import static com.pavelprymak.propodcast.utils.KeyboardUtil.showInputMethod;
 import static com.pavelprymak.propodcast.utils.PodcastItemToFavoritePodcastConverter.createFavorite;
-import static com.pavelprymak.propodcast.utils.firebase.AnalyticConstants.ANALYTIC_TYPE_SEARCH;
+import static com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper.sentFirebaseAnalyticSearchQueryData;
 
 public class SearchFragment extends Fragment implements SearchPodcastClickListener {
     private FragmentSearchBinding mBinding;
@@ -114,15 +113,6 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
             mNavController.navigate(R.id.languageFilterFragment);
         });
         searchViewShowKeyboard();
-    }
-
-    private void sentFirebaseAnalyticSearchQueryData(String searchQuery, String filterLanguage) {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, searchQuery);
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, filterLanguage);
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ANALYTIC_TYPE_SEARCH);
-        if (App.mFirebaseAnalytics != null)
-            App.mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     private void searchViewShowKeyboard() {
