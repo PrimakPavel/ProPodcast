@@ -1,9 +1,11 @@
 package com.pavelprymak.propodcast;
 
-import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
+
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
@@ -19,7 +21,7 @@ import com.squareup.otto.Bus;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
-public class App extends Application {
+public class App extends MultiDexApplication {
     public static final String CHANNEL_ID = "ProPodcastChannel";
     public static final String CHANNEL_NAME = "ProPodcast App Channel";
     public static AppExecutors appExecutors;
@@ -34,6 +36,8 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
+        //MultiDex
+        MultiDex.install(this);
         createNotificationChannel();
         Stetho.initializeWithDefaults(this);
         if (!BuildConfig.DEBUG) {
@@ -57,11 +61,10 @@ public class App extends Application {
                     CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_HIGH
             );
-
-
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
         }
     }
+
 
 }
