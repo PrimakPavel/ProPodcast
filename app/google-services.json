@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "741953342339",
+    "firebase_url": "https://propodcast-34ca9.firebaseio.com",
+    "project_id": "propodcast-34ca9",
+    "storage_bucket": "propodcast-34ca9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741953342339:android:79ba0b521d3d702e",
+        "android_client_info": {
+          "package_name": "com.pavelprymak.propodcast"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741953342339-hfj0ort3em3vujqq5alc89vc7kagbor5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLd6UtQ4fyStGcXPvwrb_S_9HFBdIbJfE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741953342339-hfj0ort3em3vujqq5alc89vc7kagbor5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

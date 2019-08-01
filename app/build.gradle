@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
 
 android {
-
-
-
     signingConfigs {
         releaseConf {
             storeFile file("$rootDir/keystore.jks")
@@ -21,10 +20,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
         try {
-            def props = new Properties()
-            file("api.properties").withInputStream { props.load(it) }
-            buildConfigField("String", "API_KEY", props.getProperty("API_KEY"))
+            def apiProps = new Properties()
+            file("api.properties").withInputStream { apiProps.load(it) }
+            buildConfigField("String", "API_KEY", apiProps.getProperty("API_KEY"))
         } catch (Exception exception) {
             throw new InvalidUserDataException("You should define API_KEY in (app/api.properties)\n" + exception.getMessage())
         }
@@ -54,6 +54,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    //Multidex
+    implementation "androidx.multidex:multidex:2.0.1"
 
     //Architecture components
     implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
@@ -112,4 +114,16 @@ dependencies {
 //    ------------------------------------------------------------
     implementation "com.squareup.picasso:picasso:2.71828"
 //    -----------------------------------------------------------
+    //Firebase
+    implementation 'com.google.firebase:firebase-core:17.0.1'
+    // Check for v11.4.2 or higher
+    implementation 'com.google.firebase:firebase-core:17.0.1'
+
+    // (Recommended) Add Analytics
+    implementation 'com.google.firebase:firebase-analytics:17.0.1'
+
+    // Add dependency
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pavelprymak.propodcast.App;
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
@@ -45,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.pavelprymak.propodcast.utils.PodcastItemToFavoritePodcastConverter.createFavorite;
+import static com.pavelprymak.propodcast.utils.firebase.AnalyticConstants.ANALYTIC_TYPE_EPISODE;
 
 
 public class PodcastDetailsFragment extends Fragment implements PodcastInfoClickListener {
@@ -145,8 +147,18 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     @Override
     public void onEpisodeItemClick(EpisodesItem episodesItem) {
         Date publishDate = new Date(episodesItem.getPubDateMs());
+        sentFirebaseAnalyticEpisodeData(episodesItem);
         App.eventBus.post(new EventStartTack(episodesItem.getAudio(), episodesItem.getTitle(), episodesItem.getThumbnail(), DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate)));
         App.eventBus.post(new EventUpdatePlayerVisibility(true));
+    }
+
+    private void sentFirebaseAnalyticEpisodeData(EpisodesItem episodesItem) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, episodesItem.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, episodesItem.getTitle());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ANALYTIC_TYPE_EPISODE);
+        if (App.mFirebaseAnalytics != null)
+            App.mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     @Override
