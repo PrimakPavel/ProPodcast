@@ -60,6 +60,7 @@ public class MediaSessionNotificationsManager {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(restartAction)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .addAction(playPauseAction)
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(mediaSessionToken)
