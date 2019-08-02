@@ -18,10 +18,10 @@
             app:destination="@id/filtersViewPagerFragment" />
     </fragment>
     <fragment
-        android:id="@+id/favoritesPodcastsFragment"
-        android:name="com.pavelprymak.propodcast.presentation.screens.FavoritesPodcastsFragment"
-        android:label="@string/favorite_podcasts_title"
-        tools:layout="@layout/fragment_favorites_podcasts">
+        android:id="@+id/favoritesViewPagerFragment"
+        android:name="com.pavelprymak.propodcast.presentation.screens.favorites.FavoriteViewPagerFragment"
+        android:label="@string/favorite_items_title"
+        tools:layout="@layout/fragment_favorite_pager">
         <action
             android:id="@+id/action_favoritesPodcastsFragment_to_podcastDetailsFragment"
             app:destination="@id/podcastDetailsFragment" />

@@ -22,4 +22,7 @@
     <!-- Player UI-->
     <item name="image_percent" format="float" type="dimen">0.21</item>
 
+    <item name="podcast_image_percent" format="float" type="dimen">0.4</item>
+    <item name="episode_image_percent" format="float" type="dimen">0.25</item>
+
 </resources>

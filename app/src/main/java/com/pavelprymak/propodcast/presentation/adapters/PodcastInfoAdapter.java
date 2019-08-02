@@ -244,6 +244,10 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     binding.container.tvPublishedDate.setText(R.string.published_date_label);
                     binding.container.tvPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
                 }
+                binding.container.ivMoreOptions.setOnClickListener(v -> {
+                    if (mClickListener != null)
+                        mClickListener.onEpisodeMoreOptionClick(episodeItem, v);
+                });
             }
         }
 

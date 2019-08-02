@@ -25,12 +25,14 @@ import com.pavelprymak.propodcast.App;
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentPodcastDetailsBinding;
+import com.pavelprymak.propodcast.model.db.FavoriteEpisodeEntity;
 import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity;
 import com.pavelprymak.propodcast.model.network.pojo.podcastById.EpisodesItem;
 import com.pavelprymak.propodcast.model.network.pojo.podcastById.PodcastResponse;
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem;
 import com.pavelprymak.propodcast.presentation.adapters.PodcastInfoAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.PodcastInfoClickListener;
+import com.pavelprymak.propodcast.presentation.viewModels.FavoriteEpisodesViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModelFactory;
@@ -44,20 +46,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.pavelprymak.propodcast.utils.PodcastItemToFavoritePodcastConverter.createFavorite;
+import static com.pavelprymak.propodcast.utils.PodcastItemToFavoriteConverter.createFavorite;
 import static com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper.sentFirebaseAnalyticEpisodeData;
 
 
 public class PodcastDetailsFragment extends Fragment implements PodcastInfoClickListener {
 
-    static final String ARG_PODCAST_ID = "argPodcastId";
+    public static final String ARG_PODCAST_ID = "argPodcastId";
     private String mPodcastId;
     private FragmentPodcastDetailsBinding mBinding;
     private NavController mNavController;
     private PodcastInfoAdapter mAdapter;
     private PodcastInfoViewModel mPodcastDataViewModel;
     private FavoritePodcastsViewModel mFavoritePodcastsViewModel;
-    private List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
+    private FavoriteEpisodesViewModel mFavoriteEpisodesViewModel;
+    private List<FavoritePodcastEntity> mFavoritePodcasts = new ArrayList<>();
+    private List<FavoriteEpisodeEntity> mFavoriteEpisodes = new ArrayList<>();
     private List<EpisodesItem> mEpisodes = new ArrayList<>();
     private List<PodcastItem> mRecommendations = new ArrayList<>();
 
@@ -77,8 +81,10 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
             PodcastInfoViewModelFactory factory = new PodcastInfoViewModelFactory(mPodcastId);
             mPodcastDataViewModel = ViewModelProviders.of(this, factory).get(PodcastInfoViewModel.class);
         }
-        if (getActivity() != null)
+        if (getActivity() != null) {
             mFavoritePodcastsViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
+            mFavoriteEpisodesViewModel = ViewModelProviders.of(getActivity()).get(FavoriteEpisodesViewModel.class);
+        }
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_podcast_details, container, false);
         ((MainActivity) getActivity()).setNavViewVisibility(false);
         return mBinding.getRoot();
@@ -119,9 +125,16 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
         });
 
         mFavoritePodcastsViewModel.getFavorites().observe(this, favoritePodcastEntities -> {
-            mFavorites.clear();
+            mFavoritePodcasts.clear();
             if (favoritePodcastEntities != null) {
-                mFavorites.addAll(favoritePodcastEntities);
+                mFavoritePodcasts.addAll(favoritePodcastEntities);
+            }
+        });
+
+        mFavoriteEpisodesViewModel.getFavorites().observe(this, favoriteEpisodesEntities -> {
+            mFavoriteEpisodes.clear();
+            if (favoriteEpisodesEntities != null) {
+                mFavoriteEpisodes.addAll(favoriteEpisodesEntities);
             }
         });
     }
@@ -133,6 +146,8 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
             mPodcastDataViewModel.removePodcastDataBatchObservers(this);
             mPodcastDataViewModel.getRecommendData().removeObservers(this);
         }
+        mFavoriteEpisodesViewModel.getFavorites().removeObservers(this);
+        mFavoritePodcastsViewModel.getFavorites().removeObservers(this);
     }
 
     private void prepareRecycler() {
@@ -159,6 +174,11 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     }
 
     @Override
+    public void onEpisodeMoreOptionClick(EpisodesItem episodesItem, View view) {
+        showEpisodePopupMenu(view, episodesItem);
+    }
+
+    @Override
     public void onRecommendationItemClick(String podcastId) {
         Bundle args = new Bundle();
         args.putString(ARG_PODCAST_ID, podcastId);
@@ -167,7 +187,7 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
 
     @Override
     public void onPodcastMoreOptionsClick(PodcastItem podcastItem, View v) {
-        showPopupMenu(v, podcastItem);
+        showPodcastPopupMenu(v, podcastItem);
     }
 
     private void progressBarVisibility(boolean isVisible) {
@@ -229,13 +249,13 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
         }
     }
 
-    private void showPopupMenu(View v, PodcastItem podcastItem) {
+    private void showPodcastPopupMenu(View v, PodcastItem podcastItem) {
         if (getContext() == null) return;
 
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.inflate(R.menu.podcast_popup_menu);
         MenuItem menuItem = popupMenu.getMenu().findItem(R.id.action_favorite);
-        boolean isFavorite = mFavoritePodcastsViewModel.isFavorite(mFavorites, podcastItem.getId());
+        boolean isFavorite = mFavoritePodcastsViewModel.isFavorite(mFavoritePodcasts, podcastItem.getId());
         if (isFavorite) {
             menuItem.setTitle(R.string.remove_from_favorite);
         } else {
@@ -254,6 +274,40 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
                             return true;
                         case R.id.action_share:
                             ShareUtil.shareData(getActivity(), podcastItem.getListennotesUrl());
+                            return true;
+                        default:
+                            return false;
+                    }
+                });
+
+        popupMenu.show();
+    }
+
+    private void showEpisodePopupMenu(View v, EpisodesItem episodesItem) {
+        if (getContext() == null) return;
+
+        PopupMenu popupMenu = new PopupMenu(getContext(), v);
+        popupMenu.inflate(R.menu.podcast_popup_menu);
+        MenuItem menuItem = popupMenu.getMenu().findItem(R.id.action_favorite);
+        boolean isFavorite = mFavoriteEpisodesViewModel.isFavorite(mFavoriteEpisodes, episodesItem.getId());
+        if (isFavorite) {
+            menuItem.setTitle(R.string.remove_from_favorite);
+        } else {
+            menuItem.setTitle(R.string.add_to_favorite);
+        }
+
+        popupMenu
+                .setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_favorite:
+                            if (isFavorite) {
+                                mFavoriteEpisodesViewModel.removeFromFavorite(episodesItem.getId());
+                            } else {
+                                mFavoriteEpisodesViewModel.addToFavorite(createFavorite(episodesItem));
+                            }
+                            return true;
+                        case R.id.action_share:
+                            ShareUtil.shareData(getActivity(), episodesItem.getListennotesUrl());
                             return true;
                         default:
                             return false;

@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pavelprymak.propodcast.App;
+import com.pavelprymak.propodcast.model.db.FavoriteEpisodeEntity;
 import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity;
 import com.pavelprymak.propodcast.model.network.pojo.podcastById.EpisodesItem;
 
@@ -24,6 +25,15 @@ public class AnalyticsHelper {
     }
 
     public static void sentFirebaseAnalyticEpisodeData(EpisodesItem episodesItem) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, episodesItem.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, episodesItem.getTitle());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ANALYTIC_TYPE_EPISODE);
+        if (App.mFirebaseAnalytics != null)
+            App.mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+    }
+
+    public static void sentFirebaseAnalyticEpisodeData(FavoriteEpisodeEntity episodesItem) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, episodesItem.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, episodesItem.getTitle());

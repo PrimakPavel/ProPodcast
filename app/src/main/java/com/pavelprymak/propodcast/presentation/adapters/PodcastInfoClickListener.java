@@ -10,6 +10,8 @@ public interface PodcastInfoClickListener {
 
     void onMoreEpisodeClick();
 
+    void onEpisodeMoreOptionClick(EpisodesItem episodesItem, View view);
+
     void onRecommendationItemClick(String podcastId);
 
     void onPodcastMoreOptionsClick(PodcastItem podcastItem, View v);

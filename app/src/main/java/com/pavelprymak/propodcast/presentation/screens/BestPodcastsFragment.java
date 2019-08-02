@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.ARG_PODCAST_ID;
-import static com.pavelprymak.propodcast.utils.PodcastItemToFavoritePodcastConverter.createFavorite;
+import static com.pavelprymak.propodcast.utils.PodcastItemToFavoriteConverter.createFavorite;
 
 
 public class BestPodcastsFragment extends Fragment implements PodcastClickListener {

@@ -1,4 +1,4 @@
-package com.pavelprymak.propodcast.presentation.screens;
+package com.pavelprymak.propodcast.presentation.screens.favorites;
 
 
 import android.os.Bundle;
@@ -14,13 +14,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
-import com.pavelprymak.propodcast.databinding.FragmentFavoritesPodcastsBinding;
+import com.pavelprymak.propodcast.databinding.FragmentFavoriteItemsBinding;
 import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity;
 import com.pavelprymak.propodcast.presentation.adapters.FavoritePodcastAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.FavoritePodcastClickListener;
@@ -32,29 +31,37 @@ import java.util.List;
 
 import static com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.ARG_PODCAST_ID;
 
-
-public class FavoritesPodcastsFragment extends Fragment implements FavoritePodcastClickListener {
-    private FragmentFavoritesPodcastsBinding mBinding;
+public class FavoritePodcastsFragment extends Fragment implements FavoritePodcastClickListener {
+    private FragmentFavoriteItemsBinding mBinding;
     private FavoritePodcastAdapter mAdapter;
     private FavoritePodcastsViewModel mFavoritesViewModel;
     private List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
     private NavController mNavController;
 
 
+    static FavoritePodcastsFragment newInstance() {
+        Bundle arg = new Bundle();
+        FavoritePodcastsFragment fragment = new FavoritePodcastsFragment();
+        fragment.setArguments(arg);
+        return fragment;
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).setNavViewVisibility(true);
-        mFavoritesViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
+        if (getActivity() != null)
+            mFavoritesViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
         // Inflate the layout for this fragment
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_favorites_podcasts, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_favorite_items, container, false);
         return mBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mNavController = Navigation.findNavController(view);
+        if (getActivity() instanceof MainActivity) {
+            mNavController = ((MainActivity) getActivity()).getNavController();
+        }
         prepareRecycler();
         mFavoritesViewModel.getFavorites().observe(this, favoritePodcastEntities -> {
             mFavorites.clear();
@@ -62,7 +69,7 @@ public class FavoritesPodcastsFragment extends Fragment implements FavoritePodca
                 mFavorites.addAll(favoritePodcastEntities);
                 mBinding.errorMessage.setVisibility(View.GONE);
             } else {
-                mBinding.errorMessage.setText(R.string.empty_favorites_list);
+                mBinding.errorMessage.setText(R.string.empty_favorites_podcasts_list);
                 mBinding.errorMessage.setVisibility(View.VISIBLE);
             }
             mAdapter.updateList(mFavorites);
@@ -79,9 +86,11 @@ public class FavoritesPodcastsFragment extends Fragment implements FavoritePodca
 
     @Override
     public void onPodcastItemClick(String podcastId) {
-        Bundle args = new Bundle();
-        args.putString(ARG_PODCAST_ID, podcastId);
-        mNavController.navigate(R.id.podcastDetailsFragment, args);
+        if (mNavController != null) {
+            Bundle args = new Bundle();
+            args.putString(ARG_PODCAST_ID, podcastId);
+            mNavController.navigate(R.id.podcastDetailsFragment, args);
+        }
     }
 
     @Override

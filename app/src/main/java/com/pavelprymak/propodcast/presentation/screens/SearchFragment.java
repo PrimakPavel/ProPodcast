@@ -38,7 +38,7 @@ import java.util.List;
 
 import static com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.ARG_PODCAST_ID;
 import static com.pavelprymak.propodcast.utils.KeyboardUtil.showInputMethod;
-import static com.pavelprymak.propodcast.utils.PodcastItemToFavoritePodcastConverter.createFavorite;
+import static com.pavelprymak.propodcast.utils.PodcastItemToFavoriteConverter.createFavorite;
 import static com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper.sentFirebaseAnalyticSearchQueryData;
 
 public class SearchFragment extends Fragment implements SearchPodcastClickListener {

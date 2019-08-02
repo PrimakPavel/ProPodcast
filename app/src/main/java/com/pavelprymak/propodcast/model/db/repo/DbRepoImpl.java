@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.pavelprymak.propodcast.model.db.AppDatabase;
+import com.pavelprymak.propodcast.model.db.FavoriteEpisodeEntity;
 import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity;
 import com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper;
 
@@ -19,6 +20,8 @@ public class DbRepoImpl implements DbRepo {
         mDb = appDatabase;
         diskIO = discIOExecutor;
     }
+
+    //PODCASTS
 
     @Override
     public LiveData<List<FavoritePodcastEntity>> getFavoritePodcasts() {
@@ -51,4 +54,43 @@ public class DbRepoImpl implements DbRepo {
     public LiveData<Integer> getPodcastsCount() {
         return mDb.favoritePodcastDao().getRowCount();
     }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    //EPISODES
+
+
+    @Override
+    public LiveData<List<FavoriteEpisodeEntity>> getFavoriteEpisodes() {
+        return mDb.favoriteEpisodeDao().loadAllEpisodes();
+    }
+
+    @Override
+    public LiveData<FavoriteEpisodeEntity> getFavoriteEpisodeById(String id) {
+        return mDb.favoriteEpisodeDao().loadEpisodeById(id);
+    }
+
+    @Override
+    public void insertEpisode(FavoriteEpisodeEntity episodeEntity) {
+        diskIO.execute(() -> mDb.favoriteEpisodeDao().insertEpisode(episodeEntity));
+    }
+
+    @Override
+    public void updateEpisode(FavoriteEpisodeEntity episodeEntity) {
+        diskIO.execute(() -> mDb.favoriteEpisodeDao().updateEpisode(episodeEntity));
+    }
+
+    @Override
+    public void deleteEpisodeById(String episodeId) {
+        diskIO.execute(() -> mDb.favoriteEpisodeDao().deleteEpisodeById(episodeId));
+    }
+
+    @Override
+    public LiveData<Integer> getEpisodesCount() {
+        return mDb.favoriteEpisodeDao().getRowCount();
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
 }

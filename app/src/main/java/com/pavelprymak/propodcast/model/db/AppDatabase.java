@@ -11,7 +11,7 @@ import com.pavelprymak.propodcast.model.db.converters.GenreListConverter;
 
 import timber.log.Timber;
 
-@Database(entities = {FavoritePodcastEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {FavoritePodcastEntity.class, FavoriteEpisodeEntity.class}, version = 2, exportSchema = false)
 @TypeConverters(value = {GenreListConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static final Object LOCK = new Object();
@@ -32,4 +32,5 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract FavoritePodcastDao favoritePodcastDao();
+    public abstract FavoriteEpisodeDao favoriteEpisodeDao();
 }

@@ -7,9 +7,9 @@
         android:title="@string/best_podcast_title" />
 
     <item
-        android:id="@+id/favoritesPodcastsFragment"
+        android:id="@+id/favoritesViewPagerFragment"
         android:icon="@drawable/ic_baseline_favorite_black_24dp"
-        android:title="@string/favorite_podcasts_title" />
+        android:title="@string/favorite_items_title" />
 
     <item
         android:id="@+id/searchFragment"

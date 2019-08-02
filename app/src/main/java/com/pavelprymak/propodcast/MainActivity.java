@@ -91,4 +91,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public NavController getNavController() {
+        return mNavController;
+    }
 }
