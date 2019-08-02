@@ -108,12 +108,17 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
                 return false;
             }
         });
-        mBinding.fabFilter.setOnClickListener(v -> {
-            KeyboardUtil.hideKeyboard(getActivity());
-            mNavController.navigate(R.id.languageFilterFragment);
-        });
+        if (getResources().getBoolean(R.bool.isTablet)) {
+            mBinding.fabFilter.hide();
+        } else {
+            mBinding.fabFilter.setOnClickListener(v -> {
+                KeyboardUtil.hideKeyboard(getActivity());
+                mNavController.navigate(R.id.languageFilterFragment);
+            });
+        }
         searchViewShowKeyboard();
     }
+
 
     private void searchViewShowKeyboard() {
         SearchView.SearchAutoComplete searchText = mBinding.searchView.findViewById(R.id.search_src_text);

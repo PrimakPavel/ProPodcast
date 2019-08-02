@@ -84,9 +84,9 @@ public class PodcastAdapter extends PagedListAdapter<PodcastItem, PodcastAdapter
                 if ((podcastItem.getTotalEpisodes() > 0)) {
                     binding.tvEpisodesCount.setText(String.valueOf(podcastItem.getTotalEpisodes()));
                     binding.tvEpisodesCount.append(" " + mContext.getString(R.string.episodes_label));
-
+                    binding.tvEpisodesCount.setVisibility(View.VISIBLE);
                 } else {
-                    binding.tvEpisodesCount.setText(EMPTY);
+                    binding.tvEpisodesCount.setVisibility(View.GONE);
                 }
                 //Title
                 if (!TextUtils.isEmpty(podcastItem.getTitle())) {

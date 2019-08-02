@@ -25,29 +25,33 @@
                 app:iconifiedByDefault="false"
                 app:queryHint="@string/search_podcasts_title" />
 
+
         </com.google.android.material.appbar.AppBarLayout>
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/searchRecycler"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/list_padding_bottom" />
+                android:layout_marginBottom="@dimen/list_padding_bottom"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline4" />
 
             <Button
                 android:id="@+id/retryBtn"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|top"
-                android:layout_marginBottom="@dimen/list_padding_bottom"
                 android:background="@color/colorBackgroundTransparent"
                 android:text="@string/retry_btn"
                 android:textColor="@color/colorAccent"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
 
             <TextView
@@ -59,6 +63,10 @@
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="@dimen/standard_text_size"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/searchRecycler"
+                app:layout_constraintEnd_toEndOf="@+id/searchRecycler"
+                app:layout_constraintStart_toStartOf="@+id/searchRecycler"
+                app:layout_constraintTop_toTopOf="@+id/searchRecycler"
                 tools:visibility="visible" />
 
             <ProgressBar
@@ -68,20 +76,40 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/searchRecycler"
+                app:layout_constraintEnd_toEndOf="@+id/searchRecycler"
+                app:layout_constraintStart_toStartOf="@+id/searchRecycler"
+                app:layout_constraintTop_toTopOf="@+id/searchRecycler"
                 tools:visibility="visible" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end|top"
                 android:layout_margin="@dimen/standard_margin"
                 android:clickable="true"
                 android:focusable="true"
-
+                app:layout_constraintEnd_toEndOf="@+id/searchRecycler"
+                app:layout_constraintTop_toTopOf="@+id/retryBtn"
                 app:srcCompat="@drawable/ic_baseline_filter_list" />
 
-        </FrameLayout>
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.40" />
+            <fragment
+                android:id="@+id/fragmentLanguage"
+                android:name="com.pavelprymak.propodcast.presentation.screens.filters.LanguageFilterFragment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/list_padding_bottom"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

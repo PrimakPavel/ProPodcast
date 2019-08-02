@@ -87,6 +87,7 @@ public class FavoritePodcastAdapter extends RecyclerView.Adapter<FavoritePodcast
                 } else {
                     binding.tvPublisher.setText(EMPTY);
                 }
+                binding.tvEpisodesCount.setVisibility(View.GONE);
                 //Country(Language)
                 if (!TextUtils.isEmpty(podcastItem.getCountry())) {
                     binding.tvCountryLanguage.setText(podcastItem.getCountry());

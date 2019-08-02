@@ -111,7 +111,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         RecommendationViewHolder(@NonNull ItemRecommendationBinding podcastBinding) {
             super(podcastBinding.getRoot());
             this.binding = podcastBinding;
-            podcastBinding.container.itemContainer.setOnClickListener(this);
+            binding.getRoot().setOnClickListener(this);
         }
 
         void bind(int position) {
@@ -129,48 +129,48 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     Picasso.get()
                             .load(podcastItem.getThumbnail())
                             .placeholder(mContext.getResources().getDrawable(R.drawable.image_placeholder))
-                            .into(binding.container.ivPodcastLogo);
+                            .into(binding.ivPodcastLogo);
                 } else {
-                    binding.container.ivPodcastLogo.setImageDrawable(null);
+                    binding.ivPodcastLogo.setImageDrawable(null);
                 }
 
                 //Episodes Count
                 if ((podcastItem.getTotalEpisodes() > 0)) {
-                    binding.container.tvEpisodesCount.setText(String.valueOf(podcastItem.getTotalEpisodes()));
-                    binding.container.tvEpisodesCount.append(" " + mContext.getString(R.string.episodes_label));
+                    binding.tvEpisodesCount.setText(String.valueOf(podcastItem.getTotalEpisodes()));
+                    binding.tvEpisodesCount.append(" " + mContext.getString(R.string.episodes_label));
 
                 } else {
-                    binding.container.tvEpisodesCount.setText(EMPTY);
+                    binding.tvEpisodesCount.setText(EMPTY);
                 }
                 //Title
                 if (!TextUtils.isEmpty(podcastItem.getTitle())) {
-                    binding.container.tvTitle.setText(podcastItem.getTitle().trim());
+                    binding.tvTitle.setText(podcastItem.getTitle().trim());
                 } else {
-                    binding.container.tvTitle.setText(EMPTY);
+                    binding.tvTitle.setText(EMPTY);
                 }
                 //Publisher
                 if (!TextUtils.isEmpty(podcastItem.getPublisher())) {
-                    binding.container.tvPublisher.setText(podcastItem.getPublisher().trim());
+                    binding.tvPublisher.setText(podcastItem.getPublisher().trim());
                 } else {
-                    binding.container.tvPublisher.setText(EMPTY);
+                    binding.tvPublisher.setText(EMPTY);
                 }
                 //Country(Language)
                 if (!TextUtils.isEmpty(podcastItem.getCountry())) {
-                    binding.container.tvCountryLanguage.setText(podcastItem.getCountry().trim());
+                    binding.tvCountryLanguage.setText(podcastItem.getCountry().trim());
                     if (!TextUtils.isEmpty(podcastItem.getLanguage())) {
-                        binding.container.tvCountryLanguage.append("(" + podcastItem.getLanguage() + ")");
+                        binding.tvCountryLanguage.append("(" + podcastItem.getLanguage() + ")");
                     }
                 } else {
-                    binding.container.tvCountryLanguage.setText(EMPTY);
+                    binding.tvCountryLanguage.setText(EMPTY);
                 }
 
                 if (podcastItem.getLatestPubDateMs() > 0L) {
                     Date publishDate = new Date(podcastItem.getLatestPubDateMs());
-                    binding.container.tvLastPublishedDate.setText(R.string.last_published_date_label);
-                    binding.container.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
+                    binding.tvLastPublishedDate.setText(R.string.last_published_date_label);
+                    binding.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
                 }
 
-                binding.container.ivMoreOptions.setOnClickListener(v -> {
+                binding.ivMoreOptions.setOnClickListener(v -> {
                     if (mClickListener != null)
                         mClickListener.onPodcastMoreOptionsClick(podcastItem, v);
                 });

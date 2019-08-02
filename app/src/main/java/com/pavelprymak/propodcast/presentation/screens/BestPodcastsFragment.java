@@ -31,13 +31,15 @@ import com.pavelprymak.propodcast.presentation.viewModels.BestPodcastsViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel;
 import com.pavelprymak.propodcast.utils.SettingsPreferenceManager;
 import com.pavelprymak.propodcast.utils.ShareUtil;
+import com.pavelprymak.propodcast.utils.otto.filters.EventUpdateGenreFilter;
+import com.pavelprymak.propodcast.utils.otto.filters.EventUpdateRegionFilter;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.ARG_PODCAST_ID;
 import static com.pavelprymak.propodcast.utils.PodcastItemToFavoriteConverter.createFavorite;
-
 
 public class BestPodcastsFragment extends Fragment implements PodcastClickListener {
     private FragmentBestPodcastsBinding mBinding;
@@ -54,12 +56,17 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).setNavViewVisibility(true);
-        mFavoritePodcastsViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setNavViewVisibility(true);
+        }
+        if (getActivity() != null) {
+            mFavoritePodcastsViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
+        }
         mBestPodcastsViewModel = ViewModelProviders.of(this).get(BestPodcastsViewModel.class);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_best_podcasts, container, false);
         return mBinding.getRoot();
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -96,14 +103,17 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
                 mFavorites.addAll(favoritePodcastEntities);
             }
         });
-        mBinding.toolbar.inflateMenu(R.menu.filters_menu);
-        mBinding.toolbar.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_filters) {
-                mNavController.navigate(R.id.filtersViewPagerFragment);
-                return true;
-            }
-            return false;
-        });
+        if (!getResources().getBoolean(R.bool.isTablet)) {
+            mBinding.toolbar.inflateMenu(R.menu.filters_menu);
+            mBinding.toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_filters) {
+                    mNavController.navigate(R.id.filtersViewPagerFragment);
+                    return true;
+                }
+                return false;
+            });
+        }
+
     }
 
     @Override
@@ -111,6 +121,29 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
         super.onDestroyView();
         mBestPodcastsViewModel.removeObservers(this);
         mFavoritePodcastsViewModel.getFavorites().removeObservers(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        App.eventBus.unregister(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        App.eventBus.register(this);
+    }
+
+
+    @Subscribe
+    public void onGenreFilterUpdate(EventUpdateGenreFilter eventUpdateGenreFilter) {
+        mBestPodcastsViewModel.prepareBestPodcasts(mSettings.getFilterGenre(), mSettings.getFilterRegion());
+    }
+
+    @Subscribe
+    public void onRegionFilterUpdate(EventUpdateRegionFilter eventUpdateRegionFilter) {
+        mBestPodcastsViewModel.prepareBestPodcasts(mSettings.getFilterGenre(), mSettings.getFilterRegion());
     }
 
     private void showProgressBar(Boolean isShow) {

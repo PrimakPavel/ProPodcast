@@ -19,6 +19,7 @@ import com.pavelprymak.propodcast.databinding.FragmentRegionFilterBinding;
 import com.pavelprymak.propodcast.presentation.adapters.RegionAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.RegionClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.RegionViewModel;
+import com.pavelprymak.propodcast.utils.otto.filters.EventUpdateRegionFilter;
 
 import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.ALL_REGIONS;
 
@@ -80,5 +81,8 @@ public class RegionFilterFragment extends Fragment implements RegionClickListene
     @Override
     public void onRegionItemClick(String regionName) {
         App.mSettings.saveFilterRegion(regionName);
+        if (getResources().getBoolean(R.bool.isTablet)) {
+            App.eventBus.post(new EventUpdateRegionFilter());
+        }
     }
 }

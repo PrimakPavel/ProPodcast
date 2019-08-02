@@ -15,11 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pavelprymak.propodcast.App;
+import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentLanguageFilterBinding;
 import com.pavelprymak.propodcast.presentation.adapters.LanguageAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.LanguageClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.LanguageViewModel;
+import com.pavelprymak.propodcast.utils.otto.filters.EventUpdateLanguageFilter;
 
 import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.ALL_LANGUAGES;
 
@@ -34,6 +36,11 @@ public class LanguageFilterFragment extends Fragment implements LanguageClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        if (getActivity() instanceof MainActivity) {
+            if (!getResources().getBoolean(R.bool.isTablet)) {
+                ((MainActivity) getActivity()).setNavViewVisibility(false);
+            }
+        }
         mLanguageViewModel = ViewModelProviders.of(this).get(LanguageViewModel.class);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_language_filter, container, false);
         return mBinding.getRoot();
@@ -57,6 +64,9 @@ public class LanguageFilterFragment extends Fragment implements LanguageClickLis
             if (getActivity() != null)
                 getActivity().onBackPressed();
         });
+        if (getResources().getBoolean(R.bool.isTablet)) {
+            mBinding.toolbar.setNavigationIcon(null);
+        }
     }
 
     @Override
@@ -76,5 +86,8 @@ public class LanguageFilterFragment extends Fragment implements LanguageClickLis
     @Override
     public void onLanguageItemClick(String language) {
         App.mSettings.saveFilterLanguage(language);
+        if(getResources().getBoolean(R.bool.isTablet)){
+            App.eventBus.post(new EventUpdateLanguageFilter());
+        }
     }
 }

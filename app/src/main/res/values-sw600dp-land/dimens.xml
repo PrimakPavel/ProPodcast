@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player UI-->
+    <item name="image_percent" format="float" type="dimen">0.1</item>
+    <item name="recommendation_image_percent" format="float" type="dimen">0.15</item>
+</resources>

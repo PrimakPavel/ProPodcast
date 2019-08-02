@@ -21,6 +21,7 @@ import com.pavelprymak.propodcast.databinding.FragmentGenreFilterBinding;
 import com.pavelprymak.propodcast.presentation.adapters.GenreAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.GenreClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.GenreViewModel;
+import com.pavelprymak.propodcast.utils.otto.filters.EventUpdateGenreFilter;
 
 import static com.pavelprymak.propodcast.utils.SettingsPreferenceManager.ALL_GENRE;
 
@@ -100,5 +101,8 @@ public class GenreFilterFragment extends Fragment implements GenreClickListener 
     @Override
     public void onGenreClick(int id) {
         App.mSettings.saveFilterGenre(id);
+        if(getResources().getBoolean(R.bool.isTablet)){
+            App.eventBus.post(new EventUpdateGenreFilter());
+        }
     }
 }

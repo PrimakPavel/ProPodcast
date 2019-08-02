@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Margins and padding-->
+    <dimen name="card_view_margin">16dp</dimen>
+    <dimen name="standard_margin">24dp</dimen>
+    <dimen name="fab_margin">32dp</dimen>
+    <dimen name="small_margin">12dp</dimen>
+    <dimen name="extra_small_margin">6dp</dimen>
+    <dimen name="list_padding_bottom">60dp</dimen>
+
+    <!-- podcast details-->
+    <dimen name="detail_expanded_photo_size">150dp</dimen>
+    <dimen name="detail_expanded_layout_height">420dp</dimen>
+
+    <!-- text size-->
+    <dimen name="standard_text_size">17sp</dimen>
+    <dimen name="standard_title_text_size">20sp</dimen>
+    <dimen name="large_title_text_size">28sp</dimen>
+    <dimen name="small_text_size">14sp</dimen>
+    <dimen name="extra_small_text_size">12sp</dimen>
+
+    <!-- Player UI-->
+    <item name="image_percent" format="float" type="dimen">0.15</item>
+
+    <item name="recommendation_image_percent" format="float" type="dimen">0.20</item>
+</resources>

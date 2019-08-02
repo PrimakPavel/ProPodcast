@@ -26,7 +26,7 @@
     <string name="published_date_label">Published: </string>
     <string name="episodes_label">episodes</string>
     <string name="more_label">More episodes ></string>
-    <string name="recommendation_podcasts_label">Recommendations:</string>
+    <string name="recommendation_podcasts_label"><u>Recommendations:</u></string>
     <string name="web_site_link">Visit website</string>
     <string name="publisher_label">Publisher: </string>
     <string name="country_label">Country: </string>

@@ -7,7 +7,7 @@
         android:id="@+id/itemContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/extra_small_margin"
+        android:layout_margin="@dimen/card_view_margin"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?selectableItemBackground">
@@ -26,6 +26,14 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/standard_margin"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivPodcastLogo" />
+
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline"
@@ -51,10 +59,10 @@
                 android:id="@+id/ivMoreOptions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:elevation="4dp"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackground"
                 android:padding="@dimen/standard_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -73,12 +81,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/standard_margin"
-                android:layout_marginRight="@dimen/small_margin"
                 android:layout_marginEnd="@dimen/small_margin"
+                android:layout_marginRight="@dimen/small_margin"
                 app:layout_constraintEnd_toEndOf="@+id/barrier"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Podcast Title" />
+                tools:text="Podcast Title " />
 
             <TextView
                 android:id="@+id/tvPublisher"
@@ -86,8 +94,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/small_margin"
-                android:layout_marginRight="@dimen/small_margin"
                 android:layout_marginEnd="@dimen/small_margin"
+                android:layout_marginRight="@dimen/small_margin"
                 android:ellipsize="end"
                 android:maxLines="1"
                 app:layout_constraintEnd_toEndOf="@+id/barrier"
@@ -100,8 +108,8 @@
                 style="@style/AppTheme.Body"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/small_margin"
                 android:layout_marginEnd="@dimen/small_margin"
+                android:layout_marginRight="@dimen/small_margin"
                 android:ellipsize="end"
                 android:maxLines="1"
                 app:layout_constraintEnd_toEndOf="@+id/barrier"
@@ -114,8 +122,8 @@
                 style="@style/AppTheme.Body"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/small_margin"
                 android:layout_marginEnd="@dimen/small_margin"
+                android:layout_marginRight="@dimen/small_margin"
                 android:paddingBottom="@dimen/standard_margin"
                 app:layout_constraintEnd_toEndOf="@+id/barrier"
                 app:layout_constraintStart_toStartOf="@+id/guideline"

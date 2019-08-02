@@ -12,7 +12,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pavelprymak.propodcast.App;
@@ -89,7 +89,7 @@ public class FavoriteEpisodesFragment extends Fragment implements FavoriteEpisod
 
     private void prepareRecycler() {
         mAdapter = new FavoriteEpisodeAdapter(this);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), getResources().getInteger(R.integer.recycler_column_count), RecyclerView.VERTICAL, false);
         mBinding.recyclerFavorites.setLayoutManager(layoutManager);
         mBinding.recyclerFavorites.setHasFixedSize(true);
         mBinding.recyclerFavorites.setAdapter(mAdapter);

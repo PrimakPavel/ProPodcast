@@ -61,6 +61,8 @@ public class MediaSessionNotificationsManager {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(restartAction)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(Notification.CATEGORY_STATUS)
+                .setSound(null)
                 .addAction(playPauseAction)
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(mediaSessionToken)

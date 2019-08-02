@@ -26,7 +26,11 @@ public class FiltersViewPagerFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).setNavViewVisibility(false);
+        if (getActivity() instanceof MainActivity) {
+            if (!getResources().getBoolean(R.bool.isTablet)) {
+                ((MainActivity) getActivity()).setNavViewVisibility(false);
+            }
+        }
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_filters_view_pager, container, false);
         return mBinding.getRoot();
     }
@@ -40,7 +44,7 @@ public class FiltersViewPagerFragment extends Fragment {
         if (mBinding.tabLayout.getTabAt(0) != null) {
             mBinding.tabLayout.getTabAt(0).setIcon(R.drawable.ic_baseline_category);
         }
-        if(mBinding.tabLayout.getTabAt(1)!=null){
+        if (mBinding.tabLayout.getTabAt(1) != null) {
             mBinding.tabLayout.getTabAt(1).setIcon(R.drawable.ic_baseline_region);
         }
         mBinding.viewPagerFilters.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -55,6 +59,9 @@ public class FiltersViewPagerFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+        if (getResources().getBoolean(R.bool.isTablet)) {
+            mBinding.toolbar.setVisibility(View.GONE);
+        }
     }
 
     @Override
