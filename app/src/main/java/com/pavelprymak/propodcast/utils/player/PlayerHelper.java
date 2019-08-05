@@ -50,6 +50,8 @@ public class PlayerHelper implements Player.EventListener {
     private MediaSessionHelper mMediaSessionHelper;
     private PlayerStateListener mPlayerStateListener;
     private PlayerErrorsListener mPlayerErrorsListener;
+    private static final int DEFAULT_OLD_POSITION = -1;
+    private long mOldPosition = DEFAULT_OLD_POSITION;
 
 
     private int resumeWindow = DEFAULT_RESUME_WINDOW;
@@ -67,6 +69,11 @@ public class PlayerHelper implements Player.EventListener {
      * @param mediaUri The URI of the sample to play.
      */
 
+
+    public void initializePlayer(Uri mediaUri, long oldPosition) {
+        mOldPosition = oldPosition;
+        initializePlayer(mediaUri);
+    }
 
     public void initializePlayer(Uri mediaUri) {
         if (mContext != null) {
@@ -137,17 +144,12 @@ public class PlayerHelper implements Player.EventListener {
         if (mExoPlayer != null) {
             mExoPlayer.setPlayWhenReady(false);
         }
-        if (mAudioFocusHelper != null) {
-            mAudioFocusHelper.abandonAudioFocus();
-        }
     }
 
     public void playTrack() {
         if (mExoPlayer != null) {
             mExoPlayer.setPlayWhenReady(true);
         }
-        if (mAudioFocusHelper != null)
-            mAudioFocusHelper.requestAudioFocus();
     }
 
     /**
@@ -252,17 +254,12 @@ public class PlayerHelper implements Player.EventListener {
         public void onPlay() {
             if (mExoPlayer != null)
                 mExoPlayer.setPlayWhenReady(true);
-            if (mAudioFocusHelper != null)
-                mAudioFocusHelper.requestAudioFocus();
         }
 
         @Override
         public void onPause() {
             if (mExoPlayer != null)
                 mExoPlayer.setPlayWhenReady(false);
-            if (mAudioFocusHelper != null) {
-                mAudioFocusHelper.abandonAudioFocus();
-            }
         }
 
         @Override
@@ -350,9 +347,18 @@ public class PlayerHelper implements Player.EventListener {
             }
         }
         if ((playbackState == Player.STATE_READY) && playWhenReady) {
+            if (mAudioFocusHelper != null)
+                mAudioFocusHelper.requestAudioFocus();
             if (mPlayerStateListener != null)
                 mPlayerStateListener.isReadyAndPlay();
+            if (this.mOldPosition > DEFAULT_OLD_POSITION) {
+                mExoPlayer.seekTo(this.mOldPosition);
+                this.mOldPosition = DEFAULT_OLD_POSITION;
+            }
         } else if (playbackState == Player.STATE_READY) {
+            if (mAudioFocusHelper != null) {
+                mAudioFocusHelper.abandonAudioFocus();
+            }
             if (mPlayerStateListener != null)
                 mPlayerStateListener.isReadyAndPause();
         }

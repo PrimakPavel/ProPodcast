@@ -16,6 +16,17 @@ public class AudioFocusHelper {
     public AudioFocusHelper(Context context, AudioManager.OnAudioFocusChangeListener audioFocusChangeListener) {
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mAudioFocusListener = audioFocusChangeListener;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build();
+            mAudioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                            .setAudioAttributes(audioAttributes)
+                            .setAcceptsDelayedFocusGain(true)
+                            .setOnAudioFocusChangeListener(mAudioFocusListener) // Need to implement instance
+                            .build();
+        }
     }
 
     public boolean requestAudioFocus() {
@@ -38,18 +49,6 @@ public class AudioFocusHelper {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean requestAudioFocusO() {
         if (mAudioManager != null && mAudioFocusListener != null) {
-            AudioAttributes mAudioAttributes =
-                    new AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_MEDIA)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .build();
-            mAudioFocusRequest =
-                    new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                            .setAudioAttributes(mAudioAttributes)
-                            .setAcceptsDelayedFocusGain(true)
-                            .setOnAudioFocusChangeListener(mAudioFocusListener) // Need to implement instance
-                            .build();
-
             int focusRequest = mAudioManager.requestAudioFocus(mAudioFocusRequest);
             switch (focusRequest) {
                 case AudioManager.AUDIOFOCUS_REQUEST_FAILED:
