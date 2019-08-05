@@ -22,5 +22,5 @@
     <!-- Player UI-->
     <item name="image_percent" format="float" type="dimen">0.15</item>
 
-    <item name="recommendation_image_percent" format="float" type="dimen">0.20</item>
+    <item name="recommendation_image_percent" format="float" type="dimen">0.25</item>
 </resources>
