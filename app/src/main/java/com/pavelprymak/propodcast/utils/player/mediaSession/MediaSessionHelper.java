@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
@@ -79,10 +80,10 @@ public class MediaSessionHelper {
         }
     }
 
-    public Notification getNotification(String trackTitle, String trackAuthor) {
+    public Notification getNotification(String trackTitle, String trackAuthor, Bitmap logoBitmap) {
         //SHOW NOTIFICATION
         if (mMediaSessionNotificationsManager != null && mMediaSession != null && mStateBuilder != null) {
-            return mMediaSessionNotificationsManager.getNotification(mStateBuilder.build(), mMediaSession.getSessionToken(), trackTitle, trackAuthor);
+            return mMediaSessionNotificationsManager.getNotification(mStateBuilder.build(), mMediaSession.getSessionToken(), trackTitle, trackAuthor, logoBitmap);
         } else return null;
     }
 

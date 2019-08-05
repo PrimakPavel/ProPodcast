@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pavelprymak.propodcast.App;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentPlayerBinding;
@@ -156,7 +155,7 @@ public class PlayerFragment extends Fragment implements PlayerUI {
 
     @Override
     public void playAction() {
-        if (getContext() != null) {
+        if (getContext() != null && PlayerService.isStartService) {
             Intent serviceIntent = new Intent(getContext(), PlayerService.class);
             serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_PLAY);
             ContextCompat.startForegroundService(getContext(), serviceIntent);
@@ -165,7 +164,7 @@ public class PlayerFragment extends Fragment implements PlayerUI {
 
     @Override
     public void pauseAction() {
-        if (getContext() != null) {
+        if (getContext() != null && PlayerService.isStartService) {
             Intent serviceIntent = new Intent(getContext(), PlayerService.class);
             serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_PAUSE);
             ContextCompat.startForegroundService(getContext(), serviceIntent);
@@ -196,7 +195,7 @@ public class PlayerFragment extends Fragment implements PlayerUI {
 
     @Override
     public void updateUiAction() {
-        if (getContext() != null) {
+        if (getContext() != null && PlayerService.isStartService) {
             Intent serviceIntent = new Intent(getContext(), PlayerService.class);
             serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_UPDATE_UI);
             ContextCompat.startForegroundService(getContext(), serviceIntent);
@@ -205,7 +204,7 @@ public class PlayerFragment extends Fragment implements PlayerUI {
 
     @Override
     public void seekToPositionAction(float progressInPercents) {
-        if (getContext() != null) {
+        if (getContext() != null && PlayerService.isStartService) {
             Intent serviceIntent = new Intent(getContext(), PlayerService.class);
             serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_SEEK_TO_POSITION);
             serviceIntent.putExtra(EXTRA_TRACK_SEEK_PROGRESS_IN_PERSENTS, progressInPercents);
@@ -240,8 +239,12 @@ public class PlayerFragment extends Fragment implements PlayerUI {
 
     @Override
     public void setPlaybackDuration(long duration) {
-        if (duration > MS_AT_SEC)
+        if (duration > MS_AT_SEC) {
             mBinding.tvEpisodeDuration.setText(formatTimeHHmmss((int) (duration / MS_AT_SEC)));
+            mBinding.tvEpisodeDuration.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.tvEpisodeDuration.setVisibility(View.GONE);
+        }
     }
 
     @Override

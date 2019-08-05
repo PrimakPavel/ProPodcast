@@ -3,6 +3,9 @@ package com.pavelprymak.propodcast.services;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
@@ -24,18 +27,22 @@ import com.pavelprymak.propodcast.utils.player.PlayerHelper;
 import com.pavelprymak.propodcast.utils.player.PlayerStateListener;
 import com.pavelprymak.propodcast.utils.player.UpdateByTimerHandler;
 import com.pavelprymak.propodcast.utils.widget.LastTrackPreferenceManager;
+import com.pavelprymak.propodcast.utils.widget.WidgetUpdateManager;
 import com.squareup.otto.Bus;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import timber.log.Timber;
 
 import static com.pavelprymak.propodcast.App.CHANNEL_ID;
 
 public class PlayerService extends Service implements PlayerStateListener, PlayerErrorsListener {
-    private PowerManager.WakeLock wakeLock;
     public static final String EXTRA_COMMAND_PLAYER = "extraCommandToPlayerService";
     private static final int NOTIFICATION_FOREGROUND_ID = 123;
 
     public static final String COMMAND_START_TRACK = "commandStartTrack";
+    public static final String COMMAND_CONTINUE_LAST_TRACK = "commandContinueLastTrack";
+    public static final String COMMAND_STOP_SERVICE = "commandStopService";
     public static final String EXTRA_TRACK_URL = "extraTrackUrl";
     public static final String EXTRA_TRACK_TITLE = "extraTrackTitle";
     public static final String EXTRA_TRACK_AUTHOR = "extraTrackAuthor";
@@ -49,9 +56,12 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
 
     public static final String COMMAND_UPDATE_UI = "commandUpdateUI";
 
-    private PlayerHelper mPlayerHelper;
-    private boolean mIsStartTrack = false;
+    public static boolean isStartService = false;
     public static boolean isTrackPlayNow = false;
+
+    private PlayerHelper mPlayerHelper;
+    private PowerManager.WakeLock wakeLock;
+
     private UpdateByTimerHandler mUpdateUIPositionHandler;
     private Bus eventBus = App.eventBus;
     private LastTrackPreferenceManager mLastTrackPreferenceManager;
@@ -60,6 +70,7 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
     @Override
     public void onCreate() {
         super.onCreate();
+        isStartService = true;
         Timber.d("onCreate");
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
@@ -101,10 +112,10 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
             mUpdateUIPositionHandler.stopHandler();
             mUpdateUIPositionHandler = null;
         }
-        mLastTrackPreferenceManager = null;
-        mIsStartTrack = false;
+        isStartService = false;
         isTrackPlayNow = false;
-        //todo update widget
+        WidgetUpdateManager.updateWidget(getApplicationContext());
+        mLastTrackPreferenceManager = null;
         Timber.d("onDestroy");
         if (wakeLock.isHeld()) {
             wakeLock.release();
@@ -125,70 +136,86 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
                 String trackAuthor = intent.getStringExtra(EXTRA_TRACK_AUTHOR);
                 String trackImage = intent.getStringExtra(EXTRA_TRACK_IMAGE_URL);
                 Uri trackUri = Uri.parse(trackUrlStr);
-                if (mPlayerHelper != null) {
-                    //update UI loading flag true
-                    if (eventBus != null)
-                        eventBus.post(new EventUpdateLoading(true));
-                    if (mUpdateUIPositionHandler != null) {
-                        mUpdateUIPositionHandler.startHandler();
-                    }
-                    //clear position data and stop
-                    mPlayerHelper.stopCurrentTrack();
-                    mPlayerHelper.clearResumePosition();
-                    //init new track data
-                    mPlayerHelper.initializePlayer(trackUri);
-                    mPlayerHelper.setTrackTitle(trackTitle);
-                    mPlayerHelper.setTrackImageUrl(trackImage);
-                    mPlayerHelper.setTrackAuthor(trackAuthor);
-                    //update UI track image and title
-                    if (eventBus != null)
-                        eventBus.post(new EventUpdateTrackImageAndTitle(trackTitle, trackImage));
-                }
+                startTrack(trackTitle, trackAuthor, trackImage, trackUri, 0);
                 mLastTrackPreferenceManager.saveTrackInfo(trackUrlStr, trackTitle, trackAuthor, trackImage);
-                //TODO update widget
-                mIsStartTrack = true;
+                break;
+            }
+            case COMMAND_CONTINUE_LAST_TRACK: {
+                if (mLastTrackPreferenceManager.getTrackAudioUrl() != null) {
+                    Uri trackUri = Uri.parse(mLastTrackPreferenceManager.getTrackAudioUrl());
+                    startTrack(mLastTrackPreferenceManager.getTrackTitle(),
+                            mLastTrackPreferenceManager.getTrackAuthor(),
+                            mLastTrackPreferenceManager.getTrackLogo(),
+                            trackUri,
+                            mLastTrackPreferenceManager.getTrackCurrentPosition());
+                }
                 break;
             }
             case COMMAND_PAUSE: {
-                if (mIsStartTrack) {
-                    if (mPlayerHelper != null) {
-                        mPlayerHelper.pauseTrack();
-                        mLastTrackPreferenceManager.saveTrackCurrentPosition(mPlayerHelper.getCurrentResumePosition());
-                    }
-                    if (mUpdateUIPositionHandler != null) {
-                        mUpdateUIPositionHandler.stopHandler();
-                    }
+                if (mPlayerHelper != null) {
+                    mPlayerHelper.pauseTrack();
+                    mLastTrackPreferenceManager.saveTrackCurrentPosition(mPlayerHelper.getCurrentResumePosition());
                 }
+                if (mUpdateUIPositionHandler != null) {
+                    mUpdateUIPositionHandler.stopHandler();
+                }
+
                 break;
             }
             case COMMAND_PLAY: {
-                if (mIsStartTrack) {
-                    if (mPlayerHelper != null) {
-                        mPlayerHelper.playTrack();
-                    }
-                    if (mUpdateUIPositionHandler != null) {
-                        mUpdateUIPositionHandler.startHandler();
-                    }
+                if (mPlayerHelper != null) {
+                    mPlayerHelper.playTrack();
+                }
+                if (mUpdateUIPositionHandler != null) {
+                    mUpdateUIPositionHandler.startHandler();
                 }
                 break;
             }
             case COMMAND_SEEK_TO_POSITION: {
-                if (mIsStartTrack) {
-                    float progressInPercents = intent.getFloatExtra(EXTRA_TRACK_SEEK_PROGRESS_IN_PERSENTS, 0f);
-                    if (mPlayerHelper != null) {
-                        mPlayerHelper.seekToPosition(progressInPercents);
-                    }
+                float progressInPercents = intent.getFloatExtra(EXTRA_TRACK_SEEK_PROGRESS_IN_PERSENTS, 0f);
+                if (mPlayerHelper != null) {
+                    mPlayerHelper.seekToPosition(progressInPercents);
                 }
                 break;
             }
             case COMMAND_UPDATE_UI: {
-                if (mPlayerHelper != null && eventBus != null && mIsStartTrack) {
+                if (mPlayerHelper != null && eventBus != null) {
                     eventBus.post(getDataAboutPlayer());
                 }
                 break;
             }
+            case COMMAND_STOP_SERVICE: {
+                stopSelf();
+                break;
+            }
         }
         return START_STICKY;
+    }
+
+    private void startTrack(String trackTitle, String trackAuthor, String trackImage, Uri trackUri, long oldPosition) {
+        if (mPlayerHelper != null) {
+            //update UI loading flag true
+            if (eventBus != null)
+                eventBus.post(new EventUpdateLoading(true));
+            if (mUpdateUIPositionHandler != null) {
+                mUpdateUIPositionHandler.startHandler();
+            }
+            //clear position data and stop
+            mPlayerHelper.stopCurrentTrack();
+            mPlayerHelper.clearResumePosition();
+            //init new track data
+            if (oldPosition == 0L) {
+                mPlayerHelper.initializePlayer(trackUri);
+            } else {
+                mPlayerHelper.initializePlayer(trackUri, oldPosition);
+            }
+            mPlayerHelper.setTrackTitle(trackTitle);
+            mPlayerHelper.setTrackImageUrl(trackImage);
+            mPlayerHelper.setTrackAuthor(trackAuthor);
+            //update UI track image and title
+            if (eventBus != null)
+                eventBus.post(new EventUpdateTrackImageAndTitle(trackTitle, trackImage));
+        }
     }
 
     @Nullable
@@ -214,10 +241,28 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
     public void stateChanged() {
         // Show foreground notification
         if (mPlayerHelper != null && mPlayerHelper.getMediaSessionHelper() != null) {
-            Notification notification = mPlayerHelper.getMediaSessionHelper().getNotification(mPlayerHelper.getTrackTitle(), mPlayerHelper.getTrackAuthor());
-            if (notification != null) {
-                startForeground(NOTIFICATION_FOREGROUND_ID, notification);
-            }
+            Picasso.get().load(mPlayerHelper.getTrackImageUrl()).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Notification notification = mPlayerHelper.getMediaSessionHelper().getNotification(mPlayerHelper.getTrackTitle(), mPlayerHelper.getTrackAuthor(), bitmap);
+                    if (notification != null) {
+                        startForeground(NOTIFICATION_FOREGROUND_ID, notification);
+                    }
+                }
+
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                    Notification notification = mPlayerHelper.getMediaSessionHelper().getNotification(mPlayerHelper.getTrackTitle(), mPlayerHelper.getTrackAuthor(), BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher));
+                    if (notification != null) {
+                        startForeground(NOTIFICATION_FOREGROUND_ID, notification);
+                    }
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            });
         }
     }
 
@@ -238,7 +283,7 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
             mUpdateUIPositionHandler.startHandler();
         }
         isTrackPlayNow = true;
-        //Todo update widget
+        WidgetUpdateManager.updateWidget(getApplicationContext());
     }
 
     @Override
@@ -248,7 +293,7 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
             eventBus.post(new EventUpdatePlayPauseBtn(false));
         }
         isTrackPlayNow = false;
-        //Todo update widget
+        WidgetUpdateManager.updateWidget(getApplicationContext());
     }
 
     @Override
@@ -257,7 +302,7 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
             eventBus.post(new EventUpdateLoading(false));
         }
         isTrackPlayNow = false;
-        //Todo update widget
+        WidgetUpdateManager.updateWidget(getApplicationContext());
     }
 
     @Override

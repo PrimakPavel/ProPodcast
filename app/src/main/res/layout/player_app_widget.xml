@@ -1,0 +1,88 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorBackground"
+    android:padding="@dimen/widget_margin">
+
+    <ImageView
+        android:id="@+id/topElement"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorAccent"
+        android:layout_height="5dp"/>
+
+
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="@dimen/widget_logo_size"
+        android:layout_height="@dimen/widget_logo_size"
+        android:layout_below="@+id/topElement"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/AppTheme.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topElement"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginLeft="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginRight="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_toEndOf="@+id/ivLogo"
+        android:layout_toRightOf="@+id/ivLogo"
+        android:maxLines="1"
+        tools:text="Track Title" />
+
+    <ImageView
+        android:id="@+id/ivPlayPauseBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTitle"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginLeft="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginRight="@dimen/standard_margin"
+        android:layout_toStartOf="@+id/ivStopBtn"
+        android:layout_toLeftOf="@+id/ivStopBtn"
+        android:background="@drawable/widget_button_background"
+        android:src="@drawable/baseline_play_arrow_black_36" />
+
+    <ImageView
+        android:id="@+id/ivStopBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTitle"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginRight="@dimen/standard_margin"
+        android:background="@drawable/widget_button_background"
+        android:src="@drawable/baseline_stop_black_36" />
+
+    <TextView
+        android:id="@+id/tvAuthor"
+        style="@style/AppTheme.Body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTitle"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginLeft="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:layout_marginRight="@dimen/small_margin"
+        android:layout_toStartOf="@+id/ivPlayPauseBtn"
+        android:layout_toLeftOf="@+id/ivPlayPauseBtn"
+        android:layout_toEndOf="@+id/ivLogo"
+        android:layout_toRightOf="@+id/ivLogo"
+        android:ellipsize="end"
+        android:maxLines="1"
+        tools:text="Author" />
+
+</RelativeLayout>

@@ -36,14 +36,12 @@ import com.pavelprymak.propodcast.presentation.viewModels.FavoriteEpisodesViewMo
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModelFactory;
-import com.pavelprymak.propodcast.utils.DateFormatUtil;
 import com.pavelprymak.propodcast.utils.ShareUtil;
 import com.pavelprymak.propodcast.utils.otto.player.EventStartTack;
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.pavelprymak.propodcast.utils.PodcastItemToFavoriteConverter.createFavorite;
@@ -63,6 +61,7 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     private List<FavoritePodcastEntity> mFavoritePodcasts = new ArrayList<>();
     private List<FavoriteEpisodeEntity> mFavoriteEpisodes = new ArrayList<>();
     private List<EpisodesItem> mEpisodes = new ArrayList<>();
+    private PodcastResponse mPodcastResponse;
     private List<PodcastItem> mRecommendations = new ArrayList<>();
 
 
@@ -160,9 +159,12 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
 
     @Override
     public void onEpisodeItemClick(EpisodesItem episodesItem) {
-        Date publishDate = new Date(episodesItem.getPubDateMs());
+        String podcastPablisher = null;
+        if (mPodcastResponse != null) {
+            podcastPablisher = mPodcastResponse.getPublisher();
+        }
         sentFirebaseAnalyticEpisodeData(episodesItem);
-        App.eventBus.post(new EventStartTack(episodesItem.getAudio(), episodesItem.getTitle(), episodesItem.getThumbnail(), DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate)));
+        App.eventBus.post(new EventStartTack(episodesItem.getAudio(), episodesItem.getTitle(), episodesItem.getThumbnail(), podcastPablisher));
         App.eventBus.post(new EventUpdatePlayerVisibility(true));
     }
 
@@ -200,7 +202,7 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
 
     private void showData(PodcastResponse podcastResponse) {
         if (podcastResponse != null) {
-
+            mPodcastResponse = podcastResponse;
             //Title
             if (!TextUtils.isEmpty(podcastResponse.getTitle()))
                 mBinding.tvTitle.setText(podcastResponse.getTitle());

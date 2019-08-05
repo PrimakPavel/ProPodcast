@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -73,7 +74,7 @@ public class MediaSessionNotificationsManager {
         mNotificationManager.notify(0, builder.build());
     }
 
-    public Notification getNotification(PlaybackStateCompat state, MediaSessionCompat.Token mediaSessionToken, String trackTitle, String trackAuthor) {
+    public Notification getNotification(PlaybackStateCompat state, MediaSessionCompat.Token mediaSessionToken, String trackTitle, String trackAuthor, Bitmap logoBitmap) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID);
 
         int icon;
@@ -104,7 +105,7 @@ public class MediaSessionNotificationsManager {
                 .setContentText(trackTitle)
                 .setContentIntent(contentPendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(),R.mipmap.ic_launcher))
+                .setLargeIcon(logoBitmap)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(restartAction)
                 .addAction(playPauseAction)

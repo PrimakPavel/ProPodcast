@@ -11,6 +11,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.pavelprymak.propodcast.databinding.ActivityMainBinding;
+import com.pavelprymak.propodcast.services.PlayerService;
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdateDurationAndCurrentPos;
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility;
 import com.squareup.otto.Subscribe;
@@ -18,8 +19,7 @@ import com.squareup.otto.Subscribe;
 public class MainActivity extends AppCompatActivity {
     private NavController mNavController;
     private ActivityMainBinding mBinding;
-    private boolean isPlayerVisible = false;
-    public static final String SAVE_INSTANCE_PLAYER_VISIBILITY = "SaveInstancePlayerVisibility";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,22 +28,14 @@ public class MainActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mNavController = Navigation.findNavController(this, R.id.navHostFragment);
         NavigationUI.setupWithNavController(mBinding.navView, mNavController);
-        if (savedInstanceState != null) {
-            isPlayerVisible = savedInstanceState.getBoolean(SAVE_INSTANCE_PLAYER_VISIBILITY, false);
-            setPlayerVisibility(isPlayerVisible);
-        }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(SAVE_INSTANCE_PLAYER_VISIBILITY, isPlayerVisible);
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
         App.eventBus.register(this);
+        setPlayerVisibility(PlayerService.isStartService);
     }
 
     @Override
@@ -65,14 +57,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void onUpdatePlayerVisibility(EventUpdatePlayerVisibility eventUpdatePlayerVisibility) {
-        isPlayerVisible = eventUpdatePlayerVisibility.isVisible();
-        setPlayerVisibility(isPlayerVisible);
+        setPlayerVisibility(eventUpdatePlayerVisibility.isVisible());
     }
 
     @Subscribe
     public void onPlayerUIUpdated(EventUpdateDurationAndCurrentPos eventUpdateDurationAndCurrentPos) {
-        isPlayerVisible = true;
-        setPlayerVisibility(isPlayerVisible);
+        setPlayerVisibility(true);
     }
 
     private void setPlayerVisibility(boolean isPlayerVisible) {
