@@ -23,6 +23,7 @@ import com.pavelprymak.propodcast.utils.player.PlayerErrorsListener;
 import com.pavelprymak.propodcast.utils.player.PlayerHelper;
 import com.pavelprymak.propodcast.utils.player.PlayerStateListener;
 import com.pavelprymak.propodcast.utils.player.UpdateByTimerHandler;
+import com.pavelprymak.propodcast.utils.widget.LastTrackPreferenceManager;
 import com.squareup.otto.Bus;
 
 import timber.log.Timber;
@@ -50,8 +51,10 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
 
     private PlayerHelper mPlayerHelper;
     private boolean mIsStartTrack = false;
+    public static boolean isTrackPlayNow = false;
     private UpdateByTimerHandler mUpdateUIPositionHandler;
     private Bus eventBus = App.eventBus;
+    private LastTrackPreferenceManager mLastTrackPreferenceManager;
 
 
     @Override
@@ -83,12 +86,14 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
                 }
             }
         };
+        mLastTrackPreferenceManager = new LastTrackPreferenceManager(getApplicationContext());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (mPlayerHelper != null) {
+            mLastTrackPreferenceManager.saveTrackCurrentPosition(mPlayerHelper.getCurrentResumePosition());
             mPlayerHelper.releasePlayer();
             mPlayerHelper = null;
         }
@@ -96,7 +101,10 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
             mUpdateUIPositionHandler.stopHandler();
             mUpdateUIPositionHandler = null;
         }
+        mLastTrackPreferenceManager = null;
         mIsStartTrack = false;
+        isTrackPlayNow = false;
+        //todo update widget
         Timber.d("onDestroy");
         if (wakeLock.isHeld()) {
             wakeLock.release();
@@ -136,6 +144,8 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
                     if (eventBus != null)
                         eventBus.post(new EventUpdateTrackImageAndTitle(trackTitle, trackImage));
                 }
+                mLastTrackPreferenceManager.saveTrackInfo(trackUrlStr, trackTitle, trackAuthor, trackImage);
+                //TODO update widget
                 mIsStartTrack = true;
                 break;
             }
@@ -143,6 +153,7 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
                 if (mIsStartTrack) {
                     if (mPlayerHelper != null) {
                         mPlayerHelper.pauseTrack();
+                        mLastTrackPreferenceManager.saveTrackCurrentPosition(mPlayerHelper.getCurrentResumePosition());
                     }
                     if (mUpdateUIPositionHandler != null) {
                         mUpdateUIPositionHandler.stopHandler();
@@ -226,6 +237,8 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
         if (mUpdateUIPositionHandler != null && mUpdateUIPositionHandler.isStopHandler()) {
             mUpdateUIPositionHandler.startHandler();
         }
+        isTrackPlayNow = true;
+        //Todo update widget
     }
 
     @Override
@@ -234,6 +247,8 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
             eventBus.post(new EventUpdateLoading(false));
             eventBus.post(new EventUpdatePlayPauseBtn(false));
         }
+        isTrackPlayNow = false;
+        //Todo update widget
     }
 
     @Override
@@ -241,6 +256,8 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
         if (eventBus != null) {
             eventBus.post(new EventUpdateLoading(false));
         }
+        isTrackPlayNow = false;
+        //Todo update widget
     }
 
     @Override
