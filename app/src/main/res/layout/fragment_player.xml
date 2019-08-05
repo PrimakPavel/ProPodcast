@@ -13,7 +13,6 @@
         tools:context=".presentation.screens.PlayerFragment">
 
 
-
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivPodcastLogo"
             android:layout_width="0dp"
