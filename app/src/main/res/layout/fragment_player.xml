@@ -12,6 +12,8 @@
         android:focusable="true"
         tools:context=".presentation.screens.PlayerFragment">
 
+
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivPodcastLogo"
             android:layout_width="0dp"
@@ -132,6 +134,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/error_connection"/>
         </FrameLayout>
+
+        <ImageView
+            android:id="@+id/topElement"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
