@@ -50,9 +50,7 @@
     <string name="error_connection">Connection error!</string>
     <string name="error_continue_last_track">You have no running tracks yet</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="appwidget_text">Title</string>
-    <string name="add_widget">Add widget</string>
+    <string name="fcm_notification_channel_id">ProPodcastFcmChannel</string>
+    <string name="fcm_notification_channel_name">ProPodcast FCM Channel</string>
 
 </resources>

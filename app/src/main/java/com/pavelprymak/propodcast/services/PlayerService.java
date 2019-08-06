@@ -64,7 +64,7 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
 
     private UpdateByTimerHandler mUpdateUIPositionHandler;
     private Bus eventBus = App.eventBus;
-    private LastTrackPreferenceManager mLastTrackPreferenceManager;
+    private final LastTrackPreferenceManager mLastTrackPreferenceManager = App.mLastTrackSettings;
 
 
     @Override
@@ -97,14 +97,15 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
                 }
             }
         };
-        mLastTrackPreferenceManager = new LastTrackPreferenceManager(getApplicationContext());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (mPlayerHelper != null) {
-            mLastTrackPreferenceManager.saveTrackCurrentPosition(mPlayerHelper.getCurrentResumePosition());
+            if (mLastTrackPreferenceManager != null) {
+                mLastTrackPreferenceManager.saveTrackCurrentPosition(mPlayerHelper.getCurrentResumePosition());
+            }
             mPlayerHelper.releasePlayer();
             mPlayerHelper = null;
         }
@@ -115,7 +116,6 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
         isStartService = false;
         isTrackPlayNow = false;
         WidgetUpdateManager.updateWidget(getApplicationContext());
-        mLastTrackPreferenceManager = null;
         Timber.d("onDestroy");
         if (wakeLock.isHeld()) {
             wakeLock.release();
@@ -141,7 +141,7 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
                 break;
             }
             case COMMAND_CONTINUE_LAST_TRACK: {
-                if (mLastTrackPreferenceManager.getTrackAudioUrl() != null) {
+                if (mLastTrackPreferenceManager != null && mLastTrackPreferenceManager.getTrackAudioUrl() != null) {
                     Uri trackUri = Uri.parse(mLastTrackPreferenceManager.getTrackAudioUrl());
                     startTrack(mLastTrackPreferenceManager.getTrackTitle(),
                             mLastTrackPreferenceManager.getTrackAuthor(),
@@ -154,7 +154,8 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
             case COMMAND_PAUSE: {
                 if (mPlayerHelper != null) {
                     mPlayerHelper.pauseTrack();
-                    mLastTrackPreferenceManager.saveTrackCurrentPosition(mPlayerHelper.getCurrentResumePosition());
+                    if (mLastTrackPreferenceManager != null)
+                        mLastTrackPreferenceManager.saveTrackCurrentPosition(mPlayerHelper.getCurrentResumePosition());
                 }
                 if (mUpdateUIPositionHandler != null) {
                     mUpdateUIPositionHandler.stopHandler();

@@ -24,7 +24,7 @@ import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_COMMAND_PL
 public class MainActivity extends AppCompatActivity {
     private NavController mNavController;
     private ActivityMainBinding mBinding;
-    private LastTrackPreferenceManager mLastTrackPreferenceManager;
+    private LastTrackPreferenceManager mLastTrackPreferenceManager = App.mLastTrackSettings;
 
 
     @Override
@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mNavController = Navigation.findNavController(this, R.id.navHostFragment);
         NavigationUI.setupWithNavController(mBinding.navView, mNavController);
-        mLastTrackPreferenceManager = new LastTrackPreferenceManager(getApplicationContext());
         mBinding.fabContinueLastTrack.setOnClickListener(v -> continueLastTrack());
     }
 
