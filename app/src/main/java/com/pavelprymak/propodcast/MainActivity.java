@@ -1,10 +1,12 @@
 package com.pavelprymak.propodcast;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -14,11 +16,15 @@ import com.pavelprymak.propodcast.databinding.ActivityMainBinding;
 import com.pavelprymak.propodcast.services.PlayerService;
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdateDurationAndCurrentPos;
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility;
+import com.pavelprymak.propodcast.utils.widget.LastTrackPreferenceManager;
 import com.squareup.otto.Subscribe;
+
+import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_COMMAND_PLAYER;
 
 public class MainActivity extends AppCompatActivity {
     private NavController mNavController;
     private ActivityMainBinding mBinding;
+    private LastTrackPreferenceManager mLastTrackPreferenceManager;
 
 
     @Override
@@ -28,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mNavController = Navigation.findNavController(this, R.id.navHostFragment);
         NavigationUI.setupWithNavController(mBinding.navView, mNavController);
+        mLastTrackPreferenceManager = new LastTrackPreferenceManager(getApplicationContext());
+        mBinding.fabContinueLastTrack.setOnClickListener(v -> continueLastTrack());
     }
 
 
@@ -36,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         App.eventBus.register(this);
         setPlayerVisibility(PlayerService.isStartService);
+        setFabVisibility(!PlayerService.isStartService && mLastTrackPreferenceManager.getTrackAudioUrl() != null);
     }
 
     @Override
@@ -58,11 +67,13 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onUpdatePlayerVisibility(EventUpdatePlayerVisibility eventUpdatePlayerVisibility) {
         setPlayerVisibility(eventUpdatePlayerVisibility.isVisible());
+        setFabVisibility(!eventUpdatePlayerVisibility.isVisible() && mLastTrackPreferenceManager.getTrackAudioUrl() != null);
     }
 
     @Subscribe
     public void onPlayerUIUpdated(EventUpdateDurationAndCurrentPos eventUpdateDurationAndCurrentPos) {
         setPlayerVisibility(true);
+        setFabVisibility(false);
     }
 
     private void setPlayerVisibility(boolean isPlayerVisible) {
@@ -73,11 +84,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setFabVisibility(boolean isFabVisible) {
+        if (isFabVisible) {
+            mBinding.fabContinueLastTrack.show();
+        } else {
+            mBinding.fabContinueLastTrack.hide();
+        }
+    }
+
     public void setNavViewVisibility(boolean isVisible) {
         if (isVisible) {
             mBinding.navView.setVisibility(View.VISIBLE);
         } else {
             mBinding.navView.setVisibility(View.GONE);
+        }
+    }
+
+    private void continueLastTrack() {
+        if (!PlayerService.isStartService) {
+            Intent serviceIntent = new Intent(getApplicationContext(), PlayerService.class);
+            serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_CONTINUE_LAST_TRACK);
+            ContextCompat.startForegroundService(this, serviceIntent);
         }
     }
 

@@ -53,39 +53,44 @@ public class PlayerAppWidget extends AppWidgetProvider {
             }
             views.setOnClickPendingIntent(R.id.ivStopBtn, stopServicePendingIntent);
         }
+
         //Continue or Play or Pause btn
         //Continue last track service player
-        if (!PlayerService.isStartService) {
-            Intent serviceIntent = new Intent(context, PlayerService.class);
-            serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_CONTINUE_LAST_TRACK);
-            PendingIntent stopServicePendingIntent = PendingIntent.getService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                stopServicePendingIntent = PendingIntent.getForegroundService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            }
-            views.setImageViewBitmap(R.id.ivPlayPauseBtn, BitmapFactory.decodeResource(context.getResources(), R.drawable.baseline_restore_black_36));
-            views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent);
-        } else {
-            if (PlayerService.isTrackPlayNow) {
-                //Pause service player
+        if (lastTrackPreferenceManager.getTrackAudioUrl() != null) {
+            if (!PlayerService.isStartService) {
                 Intent serviceIntent = new Intent(context, PlayerService.class);
-                serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_PAUSE);
+                serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_CONTINUE_LAST_TRACK);
                 PendingIntent stopServicePendingIntent = PendingIntent.getService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     stopServicePendingIntent = PendingIntent.getForegroundService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 }
-                views.setImageViewBitmap(R.id.ivPlayPauseBtn, BitmapFactory.decodeResource(context.getResources(), R.drawable.baseline_pause_black_36));
+                views.setImageViewBitmap(R.id.ivPlayPauseBtn, BitmapFactory.decodeResource(context.getResources(), R.drawable.baseline_restore_black_36));
                 views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent);
             } else {
-                //Play service player
-                Intent serviceIntent = new Intent(context, PlayerService.class);
-                serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_PLAY);
-                PendingIntent stopServicePendingIntent = PendingIntent.getService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    stopServicePendingIntent = PendingIntent.getForegroundService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                if (PlayerService.isTrackPlayNow) {
+                    //Pause service player
+                    Intent serviceIntent = new Intent(context, PlayerService.class);
+                    serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_PAUSE);
+                    PendingIntent stopServicePendingIntent = PendingIntent.getService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        stopServicePendingIntent = PendingIntent.getForegroundService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    }
+                    views.setImageViewBitmap(R.id.ivPlayPauseBtn, BitmapFactory.decodeResource(context.getResources(), R.drawable.baseline_pause_black_36));
+                    views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent);
+                } else {
+                    //Play service player
+                    Intent serviceIntent = new Intent(context, PlayerService.class);
+                    serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_PLAY);
+                    PendingIntent stopServicePendingIntent = PendingIntent.getService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        stopServicePendingIntent = PendingIntent.getForegroundService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    }
+                    views.setImageViewBitmap(R.id.ivPlayPauseBtn, BitmapFactory.decodeResource(context.getResources(), R.drawable.baseline_play_arrow_black_36));
+                    views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent);
                 }
-                views.setImageViewBitmap(R.id.ivPlayPauseBtn, BitmapFactory.decodeResource(context.getResources(), R.drawable.baseline_play_arrow_black_36));
-                views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent);
             }
+        } else {
+            views.setTextViewText(R.id.tvTitle, context.getString(R.string.error_continue_last_track));
         }
 
         // Instruct the widget manager to update the widget
