@@ -20,4 +20,10 @@
     <item name="image_percent" format="float" type="dimen">0.15</item>
 
     <item name="recommendation_image_percent" format="float" type="dimen">0.25</item>
+
+    <!-- APPWIDGET -->
+    <dimen name="widget_margin">2dp</dimen>
+    <dimen name="widget_min_height_size">110dp</dimen>
+    <dimen name="widget_min_width_size">250dp</dimen>
+    <dimen name="widget_logo_size">100dp</dimen>
 </resources>

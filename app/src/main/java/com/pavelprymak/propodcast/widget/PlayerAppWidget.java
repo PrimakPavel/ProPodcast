@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.widget.RemoteViews;
 
+import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.services.PlayerService;
 import com.pavelprymak.propodcast.utils.widget.LastTrackPreferenceManager;
@@ -17,13 +18,13 @@ import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_COMMAND_PL
 
 
 public class PlayerAppWidget extends AppWidgetProvider {
-
+    private static final int PENDING_MAIN_ACTIVITY_REQUEST_CODE = 10;
     private static final int PENDING_STOP_REQUEST_CODE = 12;
     private static final int PENDING_PLAY_PAUSE_REQUEST_CODE = 14;
 
 
     private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId, int[] appWidgetIds) {
+                                        int appWidgetId, int[] appWidgetIds) {
         LastTrackPreferenceManager lastTrackPreferenceManager = new LastTrackPreferenceManager(context);
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.player_app_widget);
@@ -37,6 +38,9 @@ public class PlayerAppWidget extends AppWidgetProvider {
         if (logoUrl != null) {
             Picasso.get().load(logoUrl)
                     .into(views, R.id.ivLogo, appWidgetIds);
+            Intent mainActivityIntent = new Intent(context, MainActivity.class);
+            PendingIntent mainActivityPendingIntent = PendingIntent.getActivity(context, PENDING_MAIN_ACTIVITY_REQUEST_CODE, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setOnClickPendingIntent(R.id.ivLogo, mainActivityPendingIntent);
         }
         //Author
         String trackAuthor = lastTrackPreferenceManager.getTrackAuthor();
