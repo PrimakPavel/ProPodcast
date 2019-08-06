@@ -16,6 +16,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivPodcastLogo"
             android:layout_width="0dp"
+            android:contentDescription="@string/content_description_podcast_logo"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="w,1:1"
@@ -49,6 +50,7 @@
             android:id="@+id/playPauseBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/content_description_play"
             android:background="?selectableItemBackground"
             android:padding="@dimen/small_margin"
             app:layout_constraintEnd_toStartOf="@+id/stopBtn"
@@ -59,6 +61,7 @@
             android:id="@+id/stopBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/content_description_close"
             android:background="?selectableItemBackground"
             android:padding="@dimen/small_margin"
             app:layout_constraintEnd_toEndOf="parent"
@@ -134,7 +137,7 @@
                 android:text="@string/error_connection"/>
         </FrameLayout>
 
-        <ImageView
+        <View
             android:id="@+id/topElement"
             android:layout_width="match_parent"
             android:layout_height="2dp"

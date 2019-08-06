@@ -15,14 +15,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class SearchDataSource extends PositionalDataSource<ResultsItem> {
-    private PagingStateBatch mPagingStateBatch;
-    private PodcastRepoRx mRepoRx;
+class SearchDataSource extends PositionalDataSource<ResultsItem> {
+    private final PagingStateBatch mPagingStateBatch;
+    private final PodcastRepoRx mRepoRx;
     private int mCurrentOffset = 0;
     private int mTotalCount;
-    private String mSearchQuery;
-    private String mLanguage;
-    private List<ResultsItem> mPrevLoadingList;
+    private final String mSearchQuery;
+    private final String mLanguage;
+    private final List<ResultsItem> mPrevLoadingList;
 
     SearchDataSource(PodcastRepoRx podcastRepo,
                      PagingStateBatch pagingStateBatch,

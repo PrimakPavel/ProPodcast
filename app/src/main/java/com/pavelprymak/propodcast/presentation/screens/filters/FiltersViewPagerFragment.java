@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.tabs.TabLayout;
 import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 import com.pavelprymak.propodcast.databinding.FragmentFiltersViewPagerBinding;
@@ -41,11 +42,13 @@ public class FiltersViewPagerFragment extends Fragment {
         FiltersPagerAdapter adapter = new FiltersPagerAdapter(getChildFragmentManager());
         mBinding.viewPagerFilters.setAdapter(adapter);
         mBinding.tabLayout.setupWithViewPager(mBinding.viewPagerFilters);
-        if (mBinding.tabLayout.getTabAt(0) != null) {
-            mBinding.tabLayout.getTabAt(0).setIcon(R.drawable.ic_baseline_category);
+        TabLayout.Tab genreTab = mBinding.tabLayout.getTabAt(0);
+        TabLayout.Tab regionTab = mBinding.tabLayout.getTabAt(1);
+        if (genreTab != null) {
+            genreTab.setIcon(R.drawable.ic_baseline_category);
         }
-        if (mBinding.tabLayout.getTabAt(1) != null) {
-            mBinding.tabLayout.getTabAt(1).setIcon(R.drawable.ic_baseline_region);
+        if (regionTab != null) {
+            regionTab.setIcon(R.drawable.ic_baseline_region);
         }
         mBinding.viewPagerFilters.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override

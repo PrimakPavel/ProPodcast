@@ -27,7 +27,6 @@
     <string name="episodes_label">episodes</string>
     <string name="more_label">More episodes ></string>
     <string name="recommendation_podcasts_label"><u>Recommendations:</u></string>
-    <string name="web_site_link">Visit website</string>
     <string name="publisher_label">Publisher: </string>
     <string name="country_label">Country: </string>
     <string name="episodes_count_label">EP total count: </string>
@@ -44,13 +43,25 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="restart">Restart</string>
-    <string name="rewind">Rewind</string>
-    <string name="fast_forward">Fast Forward</string>
     <string name="error_video_url">Sorry, video URL is Empty</string>
     <string name="error_connection">Connection error!</string>
     <string name="error_continue_last_track">You have no running tracks yet</string>
 
+    <!-- FCM-->
     <string name="fcm_notification_channel_id">ProPodcastFcmChannel</string>
     <string name="fcm_notification_channel_name">ProPodcast FCM Channel</string>
+    <!-- Icons descriptions-->
+    <string name="content_description_play">Play button</string>
+    <string name="content_description_podcast_logo">Podcast Logo</string>
+    <string name="content_description_episode_logo">Episode Logo</string>
+    <string name="content_description_favorite">Favorite button</string>
+    <string name="content_description_search_filter">Language search filter button</string>
+    <string name="content_description_item_more_options">More options</string>
+    <string name="content_description_item_selected">Selected item</string>
+    <string name="content_description_widget_top_image">Top image</string>
+    <string name="content_description_pause">Pause button</string>
+    <string name="content_description_restore">Restore button</string>
+    <string name="content_description_close">Close button</string>
+    <string name="content_description_stop">Stop button</string>
 
 </resources>

@@ -9,7 +9,7 @@ import timber.log.Timber;
 public class ExoAudioFocusListener implements AudioManager.OnAudioFocusChangeListener {
     private static final float MEDIA_VOLUME_DEFAULT = 1.0f;
     private static final float MEDIA_VOLUME_DUCK = 0.2f;
-    private SimpleExoPlayer player;
+    private final SimpleExoPlayer player;
 
     public ExoAudioFocusListener(SimpleExoPlayer player) {
         this.player = player;

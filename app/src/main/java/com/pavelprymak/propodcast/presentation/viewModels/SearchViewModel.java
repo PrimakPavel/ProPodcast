@@ -23,12 +23,12 @@ public class SearchViewModel extends ViewModel {
     private static final int RESULTS_ON_PAGE = 10;
 
     private LiveData<PagedList<ResultsItem>> mSearchPagingLiveData;
-    private MediatorLiveData<PagedList<ResultsItem>> mSearchData = new MediatorLiveData<>();
-    private PagingStateBatch mPagingStateBatch = new PagingStateBatch();
-    private PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
+    private final MediatorLiveData<PagedList<ResultsItem>> mSearchData = new MediatorLiveData<>();
+    private final PagingStateBatch mPagingStateBatch = new PagingStateBatch();
+    private final PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
     private String mSearchQuery;
     private String mLanguage;
-    private PagedList.Config mPagedListConfig = new PagedList.Config.Builder().setEnablePlaceholders(false)
+    private final PagedList.Config mPagedListConfig = new PagedList.Config.Builder().setEnablePlaceholders(false)
             .setPageSize(RESULTS_ON_PAGE / 2)
             .build();
 
@@ -47,7 +47,7 @@ public class SearchViewModel extends ViewModel {
                 .setFetchExecutor(App.appExecutors.networkIO())
                 .build();
 
-        mSearchData.addSource(mSearchPagingLiveData, resultsItems -> mSearchData.setValue(resultsItems));
+        mSearchData.addSource(mSearchPagingLiveData, mSearchData::setValue);
     }
 
     public int retryAfterErrorAndPrevLoadingListSize() {
@@ -68,7 +68,7 @@ public class SearchViewModel extends ViewModel {
                 .setFetchExecutor(App.appExecutors.networkIO())
                 .build();
 
-        mSearchData.addSource(mSearchPagingLiveData, resultsItems -> mSearchData.setValue(resultsItems));
+        mSearchData.addSource(mSearchPagingLiveData, mSearchData::setValue);
         if (prevLoadingList != null) {
             return prevLoadingList.size();
         } else return 0;
@@ -90,7 +90,7 @@ public class SearchViewModel extends ViewModel {
         return mPagingStateBatch.getIsEmptyListData();
     }
 
-    public void removeObservers(LifecycleOwner lifecycleOwner){
+    public void removeObservers(LifecycleOwner lifecycleOwner) {
         mPagingStateBatch.getError().removeObservers(lifecycleOwner);
         mPagingStateBatch.getLoading().removeObservers(lifecycleOwner);
         mPagingStateBatch.getIsEmptyListData().removeObservers(lifecycleOwner);

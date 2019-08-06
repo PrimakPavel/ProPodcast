@@ -15,7 +15,7 @@ import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 
 public class MyFCMService extends FirebaseMessagingService {
-    public static final int FCM_NOTIFICATION_ID = 111;
+    private static final int FCM_NOTIFICATION_ID = 111;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {

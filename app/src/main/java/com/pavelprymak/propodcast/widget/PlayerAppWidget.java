@@ -18,11 +18,11 @@ import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_COMMAND_PL
 
 public class PlayerAppWidget extends AppWidgetProvider {
 
-    public static final int PENDING_STOP_REQUEST_CODE = 12;
-    public static final int PENDING_PLAY_PAUSE_REQUEST_CODE = 14;
+    private static final int PENDING_STOP_REQUEST_CODE = 12;
+    private static final int PENDING_PLAY_PAUSE_REQUEST_CODE = 14;
 
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+    private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId, int[] appWidgetIds) {
         LastTrackPreferenceManager lastTrackPreferenceManager = new LastTrackPreferenceManager(context);
         // Construct the RemoteViews object
@@ -65,6 +65,7 @@ public class PlayerAppWidget extends AppWidgetProvider {
                     stopServicePendingIntent = PendingIntent.getForegroundService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 }
                 views.setImageViewBitmap(R.id.ivPlayPauseBtn, BitmapFactory.decodeResource(context.getResources(), R.drawable.baseline_restore_black_36));
+                views.setContentDescription(R.id.ivPlayPauseBtn, context.getString(R.string.content_description_restore));
                 views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent);
             } else {
                 if (PlayerService.isTrackPlayNow) {
@@ -76,6 +77,7 @@ public class PlayerAppWidget extends AppWidgetProvider {
                         stopServicePendingIntent = PendingIntent.getForegroundService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                     }
                     views.setImageViewBitmap(R.id.ivPlayPauseBtn, BitmapFactory.decodeResource(context.getResources(), R.drawable.baseline_pause_black_36));
+                    views.setContentDescription(R.id.ivPlayPauseBtn, context.getString(R.string.content_description_pause));
                     views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent);
                 } else {
                     //Play service player
@@ -86,6 +88,7 @@ public class PlayerAppWidget extends AppWidgetProvider {
                         stopServicePendingIntent = PendingIntent.getForegroundService(context, PENDING_PLAY_PAUSE_REQUEST_CODE, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                     }
                     views.setImageViewBitmap(R.id.ivPlayPauseBtn, BitmapFactory.decodeResource(context.getResources(), R.drawable.baseline_play_arrow_black_36));
+                    views.setContentDescription(R.id.ivPlayPauseBtn, context.getString(R.string.content_description_play));
                     views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent);
                 }
             }

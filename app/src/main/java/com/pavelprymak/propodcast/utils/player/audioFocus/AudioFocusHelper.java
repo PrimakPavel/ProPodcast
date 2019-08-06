@@ -9,8 +9,8 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 public class AudioFocusHelper {
-    private AudioManager mAudioManager;
-    private AudioManager.OnAudioFocusChangeListener mAudioFocusListener;
+    private final AudioManager mAudioManager;
+    private final AudioManager.OnAudioFocusChangeListener mAudioFocusListener;
     private AudioFocusRequest mAudioFocusRequest;
 
     public AudioFocusHelper(Context context, AudioManager.OnAudioFocusChangeListener audioFocusChangeListener) {

@@ -45,12 +45,12 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
     private FragmentBestPodcastsBinding mBinding;
     private BestPodcastsViewModel mBestPodcastsViewModel;
     private FavoritePodcastsViewModel mFavoritePodcastsViewModel;
-    private List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
+    private final List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
     private PodcastAdapter mAdapter;
     private NavController mNavController;
-    private Handler mDelayHandler = new Handler();
-    private SettingsPreferenceManager mSettings = App.mSettings;
-    private static final long SCROLL_DELAY = 500L;
+    private final Handler mDelayHandler = new Handler();
+    private final SettingsPreferenceManager mSettings = App.mSettings;
+    private static final long SCROLL_DELAY = 300L;
 
 
     @Override
@@ -61,8 +61,9 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
         }
         if (getActivity() != null) {
             mFavoritePodcastsViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
+            mBestPodcastsViewModel = ViewModelProviders.of(getActivity()).get(BestPodcastsViewModel.class);
         }
-        mBestPodcastsViewModel = ViewModelProviders.of(this).get(BestPodcastsViewModel.class);
+
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_best_podcasts, container, false);
         return mBinding.getRoot();
     }
@@ -107,7 +108,7 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
             mBinding.toolbar.inflateMenu(R.menu.filters_menu);
             mBinding.toolbar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_filters) {
-                    mNavController.navigate(R.id.filtersViewPagerFragment);
+                    mNavController.navigate(R.id.actionFromBestToFilters);
                     return true;
                 }
                 return false;
@@ -166,7 +167,7 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
     public void onPodcastItemClick(String podcastId) {
         Bundle args = new Bundle();
         args.putString(ARG_PODCAST_ID, podcastId);
-        mNavController.navigate(R.id.podcastDetailsFragment, args);
+        mNavController.navigate(R.id.actionFromBestToDetails, args);
     }
 
     @Override

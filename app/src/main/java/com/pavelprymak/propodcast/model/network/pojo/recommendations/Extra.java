@@ -1,8 +1,10 @@
 package com.pavelprymak.propodcast.model.network.pojo.recommendations;
 
+import androidx.annotation.NonNull;
+
 import com.squareup.moshi.Json;
 
-public class Extra {
+class Extra {
 
     @Json(name = "twitter_handle")
     private String twitterHandle;
@@ -137,6 +139,7 @@ public class Extra {
     }
 
     @Override
+    @NonNull
     public String toString() {
         return
                 "Extra{" +

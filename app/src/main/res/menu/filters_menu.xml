@@ -5,6 +5,7 @@
     <item
         android:id="@+id/action_filters"
         android:icon="@drawable/ic_baseline_filter_list"
+        android:contentDescription="@string/filters_title"
         app:showAsAction="always"
         android:title="@string/filters_title" />
 </menu>

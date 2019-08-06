@@ -16,6 +16,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivEpisodeLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/standard_margin"
+                android:contentDescription="@string/content_description_episode_logo"
+                app:layout_constraintEnd_toEndOf="@+id/tvEpisodeDuration"
+                app:layout_constraintStart_toStartOf="@+id/tvEpisodeDuration"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_play_circle" />
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivMoreOptions"
                 android:layout_width="wrap_content"
@@ -23,21 +35,13 @@
                 android:layout_marginTop="@dimen/small_margin"
                 android:background="?selectableItemBackground"
                 android:clickable="true"
+                android:contentDescription="@string/content_description_item_more_options"
+                android:elevation="4dp"
                 android:focusable="true"
                 android:padding="@dimen/standard_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_baseline_more_vert" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivEpisodeLogo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/standard_margin"
-                app:layout_constraintEnd_toEndOf="@+id/tvEpisodeDuration"
-                app:layout_constraintStart_toStartOf="@+id/tvEpisodeDuration"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_play_circle" />
 
             <TextView
                 android:id="@+id/tvEpisodeDuration"

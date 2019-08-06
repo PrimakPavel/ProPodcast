@@ -62,6 +62,7 @@
             android:layout_marginLeft="@dimen/fab_margin"
             android:layout_marginBottom="@dimen/fab_margin"
             android:clickable="true"
+            android:contentDescription="@string/content_description_restore"
             android:focusable="true"
             app:layout_constraintBottom_toTopOf="@+id/nav_view"
             app:layout_constraintStart_toStartOf="parent"

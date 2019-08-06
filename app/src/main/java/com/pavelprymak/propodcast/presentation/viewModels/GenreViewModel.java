@@ -22,10 +22,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class GenreViewModel extends AndroidViewModel {
-    private PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
-    private StatesBatch<List<GenresItem>> mGenresDataBatch = new StatesBatch<>();
-    private Context mContext;
-    private GenresItem mGenreAllItem;
+    private final PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
+    private final StatesBatch<List<GenresItem>> mGenresDataBatch = new StatesBatch<>();
+    private final Context mContext;
+    private final GenresItem mGenreAllItem;
 
     public GenreViewModel(@NonNull Application application) {
         super(application);
@@ -44,7 +44,7 @@ public class GenreViewModel extends AndroidViewModel {
                         genres.add(mGenreAllItem);
                         genres.addAll(genresResponse.getGenres());
                         mGenresDataBatch.postData(genres);
-                    }, errors -> mGenresDataBatch.postError(errors));
+                    }, mGenresDataBatch::postError);
         }
         return mGenresDataBatch;
     }

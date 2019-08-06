@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class LanguageViewModel extends ViewModel {
-    private MutableLiveData<List<String>> mLanguagesData = new MutableLiveData<>();
+    private final MutableLiveData<List<String>> mLanguagesData = new MutableLiveData<>();
 
     public LiveData<List<String>> getLanguages() {
         if (mLanguagesData.getValue() == null) {

@@ -18,12 +18,12 @@ import io.reactivex.schedulers.Schedulers;
 public class PodcastDataSource extends PositionalDataSource<PodcastItem> {
     public static final int ITEMS_ON_PAGE = 20;
     private static final int INVALID_PAGE_NUMBER = -1;
-    private PagingStateBatch mPagingStateBatch;
-    private PodcastRepoRx mRepoRx;
+    private final PagingStateBatch mPagingStateBatch;
+    private final PodcastRepoRx mRepoRx;
     private int mCurrentPage = 1;
-    private int mGenreId;
-    private String mRegion;
-    private List<PodcastItem> mPrevLoadingList;
+    private final int mGenreId;
+    private final String mRegion;
+    private final List<PodcastItem> mPrevLoadingList;
 
     PodcastDataSource(PodcastRepoRx podcastRepo,
                       PagingStateBatch pagingStateBatch,

@@ -1,7 +1,7 @@
 package com.pavelprymak.propodcast.utils.otto.player;
 
 public class EventUpdateLoading {
-    boolean isLoading;
+    private boolean isLoading;
 
     public EventUpdateLoading(boolean isLoading) {
         this.isLoading = isLoading;

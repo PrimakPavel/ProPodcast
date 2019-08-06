@@ -11,7 +11,7 @@ import java.util.List;
 
 public class FavoritePodcastsViewModel extends ViewModel {
     private LiveData<List<FavoritePodcastEntity>> mFavorites;
-    private DbRepo dbRepo = App.dbRepo;
+    private final DbRepo dbRepo = App.dbRepo;
 
     public LiveData<List<FavoritePodcastEntity>> getFavorites() {
         if (mFavorites == null) {

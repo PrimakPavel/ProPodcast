@@ -34,7 +34,7 @@ public class FavoritePodcastsFragment extends Fragment implements FavoritePodcas
     private FragmentFavoriteItemsBinding mBinding;
     private FavoritePodcastAdapter mAdapter;
     private FavoritePodcastsViewModel mFavoritesViewModel;
-    private List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
+    private final List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
     private NavController mNavController;
 
 
@@ -88,7 +88,7 @@ public class FavoritePodcastsFragment extends Fragment implements FavoritePodcas
         if (mNavController != null) {
             Bundle args = new Bundle();
             args.putString(ARG_PODCAST_ID, podcastId);
-            mNavController.navigate(R.id.podcastDetailsFragment, args);
+            mNavController.navigate(R.id.actionFromFavoritesToDetails, args);
         }
     }
 

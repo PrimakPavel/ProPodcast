@@ -1,10 +1,10 @@
 package com.pavelprymak.propodcast.utils.otto.player;
 
 public class EventStartTack {
-    String trackLink;
-    String trackTitle;
-    String imageUrl;
-    String trackAuthor;
+    private String trackLink;
+    private String trackTitle;
+    private String imageUrl;
+    private String trackAuthor;
 
     public EventStartTack(String trackLink, String trackTitle, String imageUrl, String trackAuthor) {
         this.trackLink = trackLink;

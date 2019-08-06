@@ -63,7 +63,7 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
     private PowerManager.WakeLock wakeLock;
 
     private UpdateByTimerHandler mUpdateUIPositionHandler;
-    private Bus eventBus = App.eventBus;
+    private final Bus eventBus = App.eventBus;
     private final LastTrackPreferenceManager mLastTrackPreferenceManager = App.mLastTrackSettings;
 
 
@@ -74,7 +74,7 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
         Timber.d("onCreate");
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "ExampleApp:Wakelock");
+                "ProPodcastApp:Wakelock");
         wakeLock.acquire();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)

@@ -40,7 +40,7 @@ public class PlayerHelper implements Player.EventListener {
     private static final long DEFAULT_RESUME_POSITION = C.TIME_UNSET;
     private static final float MAX_PERCENT = 100f;
     private SimpleExoPlayer mExoPlayer;
-    private Context mContext;
+    private final Context mContext;
     private String mTrackTitle;
     private String mTrackAuthor;
     private String mTrackImageUrl;
@@ -48,8 +48,8 @@ public class PlayerHelper implements Player.EventListener {
     private AudioFocusHelper mAudioFocusHelper;
     //MediaSessionHelper
     private MediaSessionHelper mMediaSessionHelper;
-    private PlayerStateListener mPlayerStateListener;
-    private PlayerErrorsListener mPlayerErrorsListener;
+    private final PlayerStateListener mPlayerStateListener;
+    private final PlayerErrorsListener mPlayerErrorsListener;
     private static final int DEFAULT_OLD_POSITION = -1;
     private long mOldPosition = DEFAULT_OLD_POSITION;
 
@@ -284,7 +284,7 @@ public class PlayerHelper implements Player.EventListener {
         return new DefaultDataSourceFactory(context, mTransferListener, buildHttpDataSourceFactory(userAgent));
     }
 
-    private TransferListener mTransferListener = new TransferListener() {
+    private final TransferListener mTransferListener = new TransferListener() {
 
         @Override
         public void onTransferInitializing(DataSource source, DataSpec dataSpec, boolean isNetwork) {

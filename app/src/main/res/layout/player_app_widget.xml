@@ -6,6 +6,7 @@
     android:padding="@dimen/widget_margin">
 
     <ImageView
+        android:contentDescription="@string/content_description_widget_top_image"
         android:id="@+id/topElement"
         android:layout_width="match_parent"
         android:layout_alignParentTop="true"
@@ -15,6 +16,7 @@
 
     <ImageView
         android:id="@+id/ivLogo"
+        android:contentDescription="@string/content_description_podcast_logo"
         android:layout_width="@dimen/widget_logo_size"
         android:layout_height="@dimen/widget_logo_size"
         android:layout_below="@+id/topElement"
@@ -40,6 +42,7 @@
 
     <ImageView
         android:id="@+id/ivPlayPauseBtn"
+        android:contentDescription="@string/content_description_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvTitle"
@@ -56,6 +59,7 @@
     <ImageView
         android:id="@+id/ivStopBtn"
         android:layout_width="wrap_content"
+        android:contentDescription="@string/content_description_stop"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvTitle"
         android:layout_alignParentEnd="true"

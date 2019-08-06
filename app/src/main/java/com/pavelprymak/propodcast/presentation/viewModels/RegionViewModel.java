@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RegionViewModel extends ViewModel {
-    private MutableLiveData<List<RegionItem>> mRegionData = new MutableLiveData<>();
+    private final MutableLiveData<List<RegionItem>> mRegionData = new MutableLiveData<>();
 
     public LiveData<List<RegionItem>> getRegions() {
         if (mRegionData.getValue() == null) {

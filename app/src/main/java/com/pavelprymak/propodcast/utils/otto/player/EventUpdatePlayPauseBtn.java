@@ -6,7 +6,7 @@ public class EventUpdatePlayPauseBtn {
         this.isPlay = isPlay;
     }
 
-    boolean isPlay;
+    private boolean isPlay;
 
 
 

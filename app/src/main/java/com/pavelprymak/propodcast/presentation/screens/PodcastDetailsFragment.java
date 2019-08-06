@@ -58,11 +58,11 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     private PodcastInfoViewModel mPodcastDataViewModel;
     private FavoritePodcastsViewModel mFavoritePodcastsViewModel;
     private FavoriteEpisodesViewModel mFavoriteEpisodesViewModel;
-    private List<FavoritePodcastEntity> mFavoritePodcasts = new ArrayList<>();
-    private List<FavoriteEpisodeEntity> mFavoriteEpisodes = new ArrayList<>();
-    private List<EpisodesItem> mEpisodes = new ArrayList<>();
+    private final List<FavoritePodcastEntity> mFavoritePodcasts = new ArrayList<>();
+    private final List<FavoriteEpisodeEntity> mFavoriteEpisodes = new ArrayList<>();
+    private final List<EpisodesItem> mEpisodes = new ArrayList<>();
     private PodcastResponse mPodcastResponse;
-    private List<PodcastItem> mRecommendations = new ArrayList<>();
+    private final List<PodcastItem> mRecommendations = new ArrayList<>();
 
 
     @Override
@@ -76,6 +76,9 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setNavViewVisibility(false);
+        }
         if (mPodcastId != null) {
             PodcastInfoViewModelFactory factory = new PodcastInfoViewModelFactory(mPodcastId);
             mPodcastDataViewModel = ViewModelProviders.of(this, factory).get(PodcastInfoViewModel.class);
@@ -85,7 +88,6 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
             mFavoriteEpisodesViewModel = ViewModelProviders.of(getActivity()).get(FavoriteEpisodesViewModel.class);
         }
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_podcast_details, container, false);
-        ((MainActivity) getActivity()).setNavViewVisibility(false);
         return mBinding.getRoot();
     }
 
@@ -238,14 +240,10 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
             mFavoritePodcastsViewModel.getFavoriteById(mPodcastId).observe(this, podcastEntity -> {
                 if (podcastEntity == null) {
                     mBinding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_border);
-                    mBinding.fabFavorite.setOnClickListener(v -> {
-                        mFavoritePodcastsViewModel.addToFavorite(createFavorite(podcastResponse));
-                    });
+                    mBinding.fabFavorite.setOnClickListener(v -> mFavoritePodcastsViewModel.addToFavorite(createFavorite(podcastResponse)));
                 } else {
                     mBinding.fabFavorite.setImageResource(R.drawable.ic_baseline_favorite);
-                    mBinding.fabFavorite.setOnClickListener(v -> {
-                        mFavoritePodcastsViewModel.removeFromFavorite(podcastEntity.getId());
-                    });
+                    mBinding.fabFavorite.setOnClickListener(v -> mFavoritePodcastsViewModel.removeFromFavorite(podcastEntity.getId()));
                 }
             });
         }

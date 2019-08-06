@@ -11,11 +11,19 @@
         android:label="@string/best_podcast_title"
         tools:layout="@layout/fragment_best_podcasts">
         <action
-            android:id="@+id/action_bestPodcastsFragment_to_podcastDetailsFragment"
-            app:destination="@id/podcastDetailsFragment" />
+            android:id="@+id/actionFromBestToDetails"
+            app:destination="@id/podcastDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
-            android:id="@+id/action_bestPodcastsFragment_to_filtersViewPagerFragment"
-            app:destination="@id/filtersViewPagerFragment" />
+            android:id="@+id/actionFromBestToFilters"
+            app:destination="@id/filtersViewPagerFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/favoritesViewPagerFragment"
@@ -23,8 +31,12 @@
         android:label="@string/favorite_items_title"
         tools:layout="@layout/fragment_favorite_pager">
         <action
-            android:id="@+id/action_favoritesPodcastsFragment_to_podcastDetailsFragment"
-            app:destination="@id/podcastDetailsFragment" />
+            android:id="@+id/actionFromFavoritesToDetails"
+            app:destination="@id/podcastDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -32,11 +44,19 @@
         android:label="@string/search_podcasts_title"
         tools:layout="@layout/fragment_search">
         <action
-            android:id="@+id/action_searchFragment_to_podcastDetailsFragment"
-            app:destination="@id/podcastDetailsFragment" />
+            android:id="@+id/actionFromSearchToDetails"
+            app:destination="@id/podcastDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
-            android:id="@+id/action_searchFragment_to_languageFilterFragment"
-            app:destination="@id/languageFilterFragment" />
+            android:id="@+id/actionFromSearchToLanguageFilter"
+            app:destination="@id/languageFilterFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/podcastDetailsFragment"

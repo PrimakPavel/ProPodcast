@@ -20,10 +20,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class PodcastInfoViewModel extends ViewModel {
-    private StatesBatch<PodcastResponse> mPodcastDataBatch = new StatesBatch<>();
-    private MutableLiveData<List<PodcastItem>> mRecommendData = new MutableLiveData<>();
-    private PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
-    private String mId;
+    private final StatesBatch<PodcastResponse> mPodcastDataBatch = new StatesBatch<>();
+    private final MutableLiveData<List<PodcastItem>> mRecommendData = new MutableLiveData<>();
+    private final PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
+    private final String mId;
 
     PodcastInfoViewModel(String mId) {
         this.mId = mId;
@@ -35,11 +35,7 @@ public class PodcastInfoViewModel extends ViewModel {
             Disposable disposable = mRepo.getPodcastById(mId, 0)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(podcastResponse -> {
-                        mPodcastDataBatch.postData(podcastResponse);
-                    }, error -> {
-                        mPodcastDataBatch.postError(error);
-                    });
+                    .subscribe(mPodcastDataBatch::postData, mPodcastDataBatch::postError);
         }
     }
 
@@ -60,9 +56,7 @@ public class PodcastInfoViewModel extends ViewModel {
                             podcastResponse.setEpisodes(currentEpisodesList);
                             mPodcastDataBatch.postData(podcastResponse);
                         }
-                    }, error -> {
-                        mPodcastDataBatch.postError(error);
-                    });
+                    }, mPodcastDataBatch::postError);
         }
 
     }
@@ -82,10 +76,7 @@ public class PodcastInfoViewModel extends ViewModel {
             Disposable disposable = mRepo.getPodcastRecommendations(mId)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(recommendations -> {
-                        mRecommendData.setValue(recommendations.getRecommendations());
-                    }, error -> {
-
+                    .subscribe(recommendations -> mRecommendData.setValue(recommendations.getRecommendations()), error -> {
                     });
         }
         return mRecommendData;

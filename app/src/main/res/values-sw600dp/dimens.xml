@@ -15,9 +15,6 @@
     <!-- text size-->
     <dimen name="standard_text_size">17sp</dimen>
     <dimen name="standard_title_text_size">20sp</dimen>
-    <dimen name="large_title_text_size">28sp</dimen>
-    <dimen name="small_text_size">14sp</dimen>
-    <dimen name="extra_small_text_size">12sp</dimen>
 
     <!-- Player UI-->
     <item name="image_percent" format="float" type="dimen">0.15</item>

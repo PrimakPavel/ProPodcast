@@ -13,7 +13,7 @@ import com.pavelprymak.propodcast.model.network.pojo.search.SearchPodcastRespons
 import io.reactivex.Single;
 
 public class PodcastRepoImpl implements PodcastRepoRx {
-    private PodcastApi mApi;
+    private final PodcastApi mApi;
     private static final String API_KEY = BuildConfig.API_KEY;
 
     public PodcastRepoImpl(PodcastApi api) {

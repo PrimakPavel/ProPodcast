@@ -22,14 +22,14 @@ import java.util.concurrent.Executor;
 import static com.pavelprymak.propodcast.presentation.paging.PodcastDataSource.ITEMS_ON_PAGE;
 
 public class BestPodcastsViewModel extends ViewModel {
-    public static final int INVALID_GENRE_ID = -1;
-    private PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
-    private Executor mExecutor = App.appExecutors.networkIO();
+    private static final int INVALID_GENRE_ID = -1;
+    private final PodcastRepoRx mRepo = new PodcastRepoImpl(PodcastApiController.getInstance().getPodcastApi());
+    private final Executor mExecutor = App.appExecutors.networkIO();
     private LiveData<PagedList<PodcastItem>> mPodcastPagingLiveData;
-    private MediatorLiveData<PagedList<PodcastItem>> mPodcastsData = new MediatorLiveData<>();
-    private PagingStateBatch mPagingStateBatch = new PagingStateBatch();
+    private final MediatorLiveData<PagedList<PodcastItem>> mPodcastsData = new MediatorLiveData<>();
+    private final PagingStateBatch mPagingStateBatch = new PagingStateBatch();
 
-    private PagedList.Config mPagedListConfig = new PagedList.Config.Builder()
+    private final PagedList.Config mPagedListConfig = new PagedList.Config.Builder()
             .setEnablePlaceholders(false)
             .setPageSize(ITEMS_ON_PAGE / 2)
             .build();
@@ -53,7 +53,7 @@ public class BestPodcastsViewModel extends ViewModel {
                     .setFetchExecutor(mExecutor)
                     .build();
 
-            mPodcastsData.addSource(mPodcastPagingLiveData, resultsItems -> mPodcastsData.setValue(resultsItems));
+            mPodcastsData.addSource(mPodcastPagingLiveData, mPodcastsData::setValue);
         }
     }
 
@@ -74,7 +74,7 @@ public class BestPodcastsViewModel extends ViewModel {
                 .setFetchExecutor(mExecutor)
                 .build();
 
-        mPodcastsData.addSource(mPodcastPagingLiveData, resultsItems -> mPodcastsData.setValue(resultsItems));
+        mPodcastsData.addSource(mPodcastPagingLiveData, mPodcastsData::setValue);
         if (prevLoadingList != null) {
             return prevLoadingList.size();
         } else return 0;
@@ -84,7 +84,7 @@ public class BestPodcastsViewModel extends ViewModel {
         return mPodcastsData;
     }
 
-    public void removeObservers(LifecycleOwner lifecycleOwner){
+    public void removeObservers(LifecycleOwner lifecycleOwner) {
         mPagingStateBatch.getError().removeObservers(lifecycleOwner);
         mPagingStateBatch.getLoading().removeObservers(lifecycleOwner);
         mPagingStateBatch.getIsEmptyListData().removeObservers(lifecycleOwner);

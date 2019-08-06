@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
@@ -21,7 +20,7 @@ import static com.pavelprymak.propodcast.App.CHANNEL_ID;
 
 
 public class MediaSessionNotificationsManager {
-    private Context mContext;
+    private final Context mContext;
     private NotificationManager mNotificationManager;
 
     public MediaSessionNotificationsManager(Context mContext) {

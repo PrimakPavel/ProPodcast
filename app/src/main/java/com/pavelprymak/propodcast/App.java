@@ -25,14 +25,14 @@ import timber.log.Timber;
 
 public class App extends MultiDexApplication {
     public static final String CHANNEL_ID = "ProPodcastChannel";
-    public static final String CHANNEL_NAME = "ProPodcast App Channel";
+    private static final String CHANNEL_NAME = "ProPodcast App Channel";
     public static AppExecutors appExecutors;
     public static FirebaseAnalytics mFirebaseAnalytics;
     public static DbRepo dbRepo;
-    public static Bus eventBus = new Bus();
+    public static final Bus eventBus = new Bus();
     public static SettingsPreferenceManager mSettings;
     public static LastTrackPreferenceManager mLastTrackSettings;
-    public static String fcmPushToken;
+    private static String fcmPushToken;
 
     @Override
     public void onCreate() {

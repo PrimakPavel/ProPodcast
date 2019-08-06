@@ -35,7 +35,6 @@ public class LanguageFilterFragment extends Fragment implements LanguageClickLis
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         if (getActivity() instanceof MainActivity) {
             if (!getResources().getBoolean(R.bool.isTablet)) {
                 ((MainActivity) getActivity()).setNavViewVisibility(false);
@@ -86,7 +85,7 @@ public class LanguageFilterFragment extends Fragment implements LanguageClickLis
     @Override
     public void onLanguageItemClick(String language) {
         App.mSettings.saveFilterLanguage(language);
-        if(getResources().getBoolean(R.bool.isTablet)){
+        if (getResources().getBoolean(R.bool.isTablet)) {
             App.eventBus.post(new EventUpdateLanguageFilter());
         }
     }

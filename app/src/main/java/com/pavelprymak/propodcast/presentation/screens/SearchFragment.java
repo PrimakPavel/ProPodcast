@@ -47,17 +47,21 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
     private SearchPodcastAdapter mAdapter;
     private FavoritePodcastsViewModel mFavoritePodcastsViewModel;
     private NavController mNavController;
-    private List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
-    private Handler mDelayHandler = new Handler();
+    private final List<FavoritePodcastEntity> mFavorites = new ArrayList<>();
+    private final Handler mDelayHandler = new Handler();
     private static final long SCROLL_DELAY = 300L;
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).setNavViewVisibility(true);
-        mFavoritePodcastsViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
-        mSearchViewModel = ViewModelProviders.of(getActivity()).get(SearchViewModel.class);
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setNavViewVisibility(true);
+        }
+        if (getActivity() != null) {
+            mFavoritePodcastsViewModel = ViewModelProviders.of(getActivity()).get(FavoritePodcastsViewModel.class);
+            mSearchViewModel = ViewModelProviders.of(getActivity()).get(SearchViewModel.class);
+        }
         // Inflate the layout for this fragment
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false);
         return mBinding.getRoot();
@@ -113,7 +117,7 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
         } else {
             mBinding.fabFilter.setOnClickListener(v -> {
                 KeyboardUtil.hideKeyboard(getActivity());
-                mNavController.navigate(R.id.languageFilterFragment);
+                mNavController.navigate(R.id.actionFromSearchToLanguageFilter);
             });
         }
         searchViewShowKeyboard();
@@ -160,7 +164,7 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
     public void onPodcastItemClick(String podcastId) {
         Bundle args = new Bundle();
         args.putString(ARG_PODCAST_ID, podcastId);
-        mNavController.navigate(R.id.podcastDetailsFragment, args);
+        mNavController.navigate(R.id.actionFromSearchToDetails, args);
     }
 
     @Override

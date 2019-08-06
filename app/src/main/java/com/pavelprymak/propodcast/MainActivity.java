@@ -24,7 +24,7 @@ import static com.pavelprymak.propodcast.services.PlayerService.EXTRA_COMMAND_PL
 public class MainActivity extends AppCompatActivity {
     private NavController mNavController;
     private ActivityMainBinding mBinding;
-    private LastTrackPreferenceManager mLastTrackPreferenceManager = App.mLastTrackSettings;
+    private final LastTrackPreferenceManager mLastTrackPreferenceManager = App.mLastTrackSettings;
 
 
     @Override
@@ -54,10 +54,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mNavController.popBackStack();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            mNavController.popBackStack();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

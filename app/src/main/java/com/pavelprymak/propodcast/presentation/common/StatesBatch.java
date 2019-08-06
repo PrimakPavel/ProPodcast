@@ -3,9 +3,9 @@ package com.pavelprymak.propodcast.presentation.common;
 import androidx.lifecycle.MutableLiveData;
 
 public class StatesBatch<T> {
-    private MutableLiveData<T> mData = new MutableLiveData<>();
-    private MutableLiveData<Throwable> mError = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mLoading = new MutableLiveData<>();
+    private final MutableLiveData<T> mData = new MutableLiveData<>();
+    private final MutableLiveData<Throwable> mError = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mLoading = new MutableLiveData<>();
 
     public void postData(T data) {
         postError(null);

@@ -26,7 +26,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private List<EpisodesItem> mEpisodes;
     private int mMaxEpisodesCount;
     private List<PodcastItem> mRecommendPodcasts;
-    private PodcastInfoClickListener mClickListener;
+    private final PodcastInfoClickListener mClickListener;
     private Context mContext;
     private static final int EPISODES_VH_ID = 1;
     private static final int RECOMMENDATION_VH_ID = 2;

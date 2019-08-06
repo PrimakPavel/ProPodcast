@@ -3,16 +3,19 @@
 
     <item
         android:id="@+id/bestPodcastsFragment"
+        android:contentDescription="@string/best_podcast_title"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/best_podcast_title" />
 
     <item
         android:id="@+id/favoritesViewPagerFragment"
+        android:contentDescription="@string/favorite_items_title"
         android:icon="@drawable/ic_baseline_favorite_black_24dp"
         android:title="@string/favorite_items_title" />
 
     <item
         android:id="@+id/searchFragment"
+        android:contentDescription="@string/search_podcasts_title"
         android:icon="@drawable/ic_baseline_find_in_page"
         android:title="@string/search_podcasts_title" />
 

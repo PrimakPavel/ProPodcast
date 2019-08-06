@@ -42,7 +42,6 @@ public class RegionFilterFragment extends Fragment implements RegionClickListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         mRegionViewModel = ViewModelProviders.of(this).get(RegionViewModel.class);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_region_filter, container, false);
         return mBinding.getRoot();

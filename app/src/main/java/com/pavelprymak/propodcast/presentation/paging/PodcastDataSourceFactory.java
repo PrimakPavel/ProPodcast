@@ -10,10 +10,10 @@ import com.pavelprymak.propodcast.presentation.common.PagingStateBatch;
 import java.util.List;
 
 public class PodcastDataSourceFactory extends DataSource.Factory<Integer, PodcastItem> {
-    private PagingStateBatch mPagingStateBatch;
-    private PodcastRepoRx mRepoRx;
-    private int mGenreId;
-    private String mRegion;
+    private final PagingStateBatch mPagingStateBatch;
+    private final PodcastRepoRx mRepoRx;
+    private final int mGenreId;
+    private final String mRegion;
     private List<PodcastItem> mPrevLoadingList;
 
     public PodcastDataSourceFactory(PodcastRepoRx repoRx,

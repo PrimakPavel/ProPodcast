@@ -5,11 +5,11 @@ import android.os.Handler;
 
 public abstract class UpdateByTimerHandler {
     private long delay = 1000L;
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
     // flag that should be set true if handler should stop
     private boolean mStopHandler = false;
 
-    private Runnable mRunnable = new Runnable() {
+    private final Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
             // do your stuff - don't create a new runnable here!
@@ -45,5 +45,5 @@ public abstract class UpdateByTimerHandler {
         return mStopHandler;
     }
 
-    public abstract void doOperation();
+    protected abstract void doOperation();
 }

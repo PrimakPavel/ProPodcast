@@ -26,7 +26,9 @@ public class FavoriteViewPagerFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((MainActivity) getActivity()).setNavViewVisibility(true);
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setNavViewVisibility(true);
+        }
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_favorite_pager, container, false);
         return mBinding.getRoot();
     }

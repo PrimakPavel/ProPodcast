@@ -3,7 +3,7 @@ package com.pavelprymak.propodcast.model.network.pojo.recommendations;
 import com.squareup.moshi.Json;
 
 
-public class LookingFor{
+class LookingFor{
 
 	@Json(name = "cross_promotion")
 	private boolean crossPromotion;

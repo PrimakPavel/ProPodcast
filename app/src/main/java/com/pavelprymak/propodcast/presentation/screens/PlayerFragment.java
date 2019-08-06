@@ -45,8 +45,8 @@ public class PlayerFragment extends Fragment implements PlayerUI {
     private static final String TAG_PAUSE = "tagPause";
     private static final String TAG_PLAY = "tagPlay";
     private static final String EMPTY_TITLE = "";
-    private static int SEEK_BAR_MAX_PROGRESS = 10000;
-    private static float MAX_PERCENT = 100f;
+    private static final int SEEK_BAR_MAX_PROGRESS = 10000;
+    private static final float MAX_PERCENT = 100f;
     private boolean mIsSeekBarTouch = false;
 
     @Override
@@ -216,9 +216,11 @@ public class PlayerFragment extends Fragment implements PlayerUI {
     public void setPlayStatus(boolean isPlay) {
         if (isPlay) {
             mBinding.playPauseBtn.setImageResource(R.drawable.ic_baseline_pause);
+            mBinding.playPauseBtn.setContentDescription(getString(R.string.content_description_pause));
             mBinding.playPauseBtn.setTag(TAG_PAUSE);
         } else {
             mBinding.playPauseBtn.setImageResource(R.drawable.ic_baseline_play);
+            mBinding.playPauseBtn.setContentDescription(getString(R.string.content_description_play));
             mBinding.playPauseBtn.setTag(TAG_PLAY);
         }
     }

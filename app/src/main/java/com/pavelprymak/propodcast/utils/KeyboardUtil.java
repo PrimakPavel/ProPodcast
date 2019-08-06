@@ -17,6 +17,7 @@ public class KeyboardUtil {
             }
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         } catch (Exception e) {
+            //ignore
         }
     }
 

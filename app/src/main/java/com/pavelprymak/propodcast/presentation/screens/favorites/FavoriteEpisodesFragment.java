@@ -36,7 +36,7 @@ import static com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper.sentFire
 public class FavoriteEpisodesFragment extends Fragment implements FavoriteEpisodeClickListener {
     private FragmentFavoriteItemsBinding mBinding;
     private FavoriteEpisodesViewModel mFavoritesViewModel;
-    private List<FavoriteEpisodeEntity> mFavorites = new ArrayList<>();
+    private final List<FavoriteEpisodeEntity> mFavorites = new ArrayList<>();
     private FavoriteEpisodeAdapter mAdapter;
 
 
