@@ -56,7 +56,7 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 
     class GenreViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ItemFilterGenreBinding binding;
-        private static final String EMPTY = "";
+        private final String EMPTY = mContext.getString(R.string.adapter_empty_string);
 
         GenreViewHolder(@NonNull ItemFilterGenreBinding genderBinding) {
             super(genderBinding.getRoot());

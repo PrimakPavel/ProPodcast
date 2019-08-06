@@ -34,8 +34,6 @@ import com.squareup.picasso.Target;
 
 import timber.log.Timber;
 
-import static com.pavelprymak.propodcast.App.CHANNEL_ID;
-
 public class PlayerService extends Service implements PlayerStateListener, PlayerErrorsListener {
     public static final String EXTRA_COMMAND_PLAYER = "extraCommandToPlayerService";
     private static final int NOTIFICATION_FOREGROUND_ID = 123;
@@ -74,12 +72,12 @@ public class PlayerService extends Service implements PlayerStateListener, Playe
         Timber.d("onCreate");
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "ProPodcastApp:Wakelock");
+                getString(R.string.player_service_wake_lock_tag));
         wakeLock.acquire();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+            Notification notification = new NotificationCompat.Builder(this, getString(R.string.player_notification_channel_id))
                     .setContentTitle(getString(R.string.app_name))
-                    .setContentText("Running...")
+                    .setContentText(getString(R.string.player_service_running))
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .build();
 

@@ -193,7 +193,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     class EpisodeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ItemEpisodeMoreBinding binding;
-        private static final String EMPTY = "";
+        private final String EMPTY = mContext.getString(R.string.adapter_empty_string);
 
         EpisodeViewHolder(@NonNull ItemEpisodeMoreBinding podcastBinding) {
             super(podcastBinding.getRoot());
@@ -233,7 +233,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
                 //Description
                 if (!TextUtils.isEmpty(episodeItem.getDescription())) {
-                    binding.container.tvDescription.setText(Html.fromHtml(episodeItem.getDescription().trim()));
+                    binding.container.tvDescription.setText(Html.fromHtml(episodeItem.getDescription().replaceAll("\n", "").trim()));
                 } else {
                     binding.container.tvDescription.setText(EMPTY);
                 }

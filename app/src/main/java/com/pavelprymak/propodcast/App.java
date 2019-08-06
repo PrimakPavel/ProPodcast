@@ -24,8 +24,6 @@ import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 public class App extends MultiDexApplication {
-    public static final String CHANNEL_ID = "ProPodcastChannel";
-    private static final String CHANNEL_NAME = "ProPodcast App Channel";
     public static AppExecutors appExecutors;
     public static FirebaseAnalytics mFirebaseAnalytics;
     public static DbRepo dbRepo;
@@ -65,8 +63,8 @@ public class App extends MultiDexApplication {
     private void createPlayerNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    CHANNEL_NAME,
+                    getString(R.string.player_notification_channel_id),
+                    getString(R.string.player_notification_channel_name),
                     NotificationManager.IMPORTANCE_DEFAULT
             );
             NotificationManager manager = getSystemService(NotificationManager.class);

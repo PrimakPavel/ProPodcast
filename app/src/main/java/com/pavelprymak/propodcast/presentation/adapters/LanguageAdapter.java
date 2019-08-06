@@ -57,7 +57,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langua
 
     class LanguageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ItemFilterLanguageBinding binding;
-        private static final String EMPTY = "";
+        private final String EMPTY = mContext.getString(R.string.adapter_empty_string);
 
         LanguageViewHolder(@NonNull ItemFilterLanguageBinding regionBinding) {
             super(regionBinding.getRoot());

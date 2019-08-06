@@ -58,7 +58,7 @@ public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionView
 
     class RegionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ItemFilterRegionBinding binding;
-        private static final String EMPTY = "";
+        private final String EMPTY = mContext.getString(R.string.adapter_empty_string);
 
         RegionViewHolder(@NonNull ItemFilterRegionBinding regionBinding) {
             super(regionBinding.getRoot());

@@ -15,6 +15,7 @@
 
 
     <string name="genres_all_title">All genres</string>
+    <string name="adapter_empty_string">N/D</string>
 
     <!--popup menu actions -->
     <string name="add_to_favorite">Add to favorite</string>
@@ -46,6 +47,10 @@
     <string name="error_video_url">Sorry, video URL is Empty</string>
     <string name="error_connection">Connection error!</string>
     <string name="error_continue_last_track">You have no running tracks yet</string>
+    <string name="player_notification_channel_id">ProPodcastPlayerChannel</string>
+    <string name="player_notification_channel_name">ProPodcast Player Channel</string>
+    <string name="player_service_running">Running..</string>
+    <string name="player_service_wake_lock_tag">ProPodcastApp:Wakelock</string>
 
     <!-- FCM-->
     <string name="fcm_notification_channel_id">ProPodcastFcmChannel</string>

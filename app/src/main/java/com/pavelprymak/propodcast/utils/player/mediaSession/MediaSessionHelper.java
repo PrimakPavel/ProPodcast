@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
+import androidx.annotation.NonNull;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.pavelprymak.propodcast.utils.player.PlayerHelper;
@@ -24,7 +25,7 @@ public class MediaSessionHelper {
     //Notification
     private MediaSessionNotificationsManager mMediaSessionNotificationsManager;
 
-    public MediaSessionHelper(Context context, PlayerHelper.MySessionCallback mySessionCallback) {
+    public MediaSessionHelper(@NonNull Context context, PlayerHelper.MySessionCallback mySessionCallback) {
         initializeMediaSession(context, mySessionCallback);
     }
 
@@ -32,7 +33,7 @@ public class MediaSessionHelper {
      * Initializes the Media Session to be enabled with media buttons, transport controls, callbacks
      * and media controller.
      */
-    private void initializeMediaSession(Context context, PlayerHelper.MySessionCallback mySessionCallback) {
+    private void initializeMediaSession(@NonNull Context context, PlayerHelper.MySessionCallback mySessionCallback) {
 
         // Create a MediaSessionCompat.
         mContext = context;

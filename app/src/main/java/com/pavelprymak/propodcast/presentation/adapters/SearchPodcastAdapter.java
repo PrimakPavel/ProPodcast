@@ -59,7 +59,7 @@ public class SearchPodcastAdapter extends PagedListAdapter<ResultsItem, SearchPo
 
     class PodcastViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ItemPodcastBinding binding;
-        private static final String EMPTY = "";
+        private final String EMPTY = mContext.getString(R.string.adapter_empty_string);
 
         PodcastViewHolder(@NonNull ItemPodcastBinding podcastBinding) {
             super(podcastBinding.getRoot());

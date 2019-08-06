@@ -56,7 +56,7 @@ public class FavoriteEpisodeAdapter extends RecyclerView.Adapter<FavoriteEpisode
 
     class FavoriteEpisodeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ItemEpisodeBinding binding;
-        private static final String EMPTY = "";
+        private final String EMPTY = mContext.getString(R.string.adapter_empty_string);
 
         FavoriteEpisodeViewHolder(@NonNull ItemEpisodeBinding episodesBinding) {
             super(episodesBinding.getRoot());
@@ -82,7 +82,7 @@ public class FavoriteEpisodeAdapter extends RecyclerView.Adapter<FavoriteEpisode
                 }
                 //Description
                 if (!TextUtils.isEmpty(episodeItem.getDescription())) {
-                    binding.tvDescription.setText(Html.fromHtml(episodeItem.getDescription().trim()));
+                    binding.tvDescription.setText(Html.fromHtml(episodeItem.getDescription().replaceAll("\n", "").trim()));
                 } else {
                     binding.tvDescription.setText(EMPTY);
                 }

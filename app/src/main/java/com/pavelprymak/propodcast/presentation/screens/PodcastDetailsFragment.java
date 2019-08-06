@@ -98,7 +98,7 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mNavController = Navigation.findNavController(view);
-        mBinding.appBarLayout.setExpanded(false);
+        mBinding.appBarLayout.setExpanded(false,false);
         prepareRecycler();
         if (mPodcastDataViewModel != null) {
             mPodcastDataViewModel.preparePodcastInfoData();
@@ -112,7 +112,6 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
                 if (throwable != null) {
                     Snackbar snackbar = Snackbar.make(view, R.string.error_connection, Snackbar.LENGTH_LONG);
                     snackbar.show();
-                    mBinding.appBarLayout.setExpanded(false);
                     if (throwable instanceof HttpException && getContext() != null) {
                         ApiErrorHandler.handleError(getContext(), (HttpException) throwable);
                     }
@@ -252,6 +251,7 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
                     mBinding.fabFavorite.setOnClickListener(v -> mFavoritePodcastsViewModel.removeFromFavorite(podcastEntity.getId()));
                 }
             });
+            mBinding.appBarLayout.setExpanded(false,false);
         }
     }
 

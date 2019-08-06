@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
 
@@ -16,19 +17,18 @@ import com.pavelprymak.propodcast.MainActivity;
 import com.pavelprymak.propodcast.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.pavelprymak.propodcast.App.CHANNEL_ID;
 
 
 public class MediaSessionNotificationsManager {
     private final Context mContext;
     private NotificationManager mNotificationManager;
 
-    public MediaSessionNotificationsManager(Context mContext) {
+    public MediaSessionNotificationsManager(@NonNull Context mContext) {
         this.mContext = mContext;
     }
 
     public void showNotification(PlaybackStateCompat state, MediaSessionCompat.Token mediaSessionToken, String recipeDescription) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, mContext.getString(R.string.player_notification_channel_id));
 
         int icon;
         String play_pause;
@@ -74,7 +74,7 @@ public class MediaSessionNotificationsManager {
     }
 
     public Notification getNotification(PlaybackStateCompat state, MediaSessionCompat.Token mediaSessionToken, String trackTitle, String trackAuthor, Bitmap logoBitmap) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, mContext.getString(R.string.player_notification_channel_id));
 
         int icon;
         String play_pause;
