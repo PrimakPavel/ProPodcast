@@ -29,6 +29,7 @@ import com.pavelprymak.propodcast.presentation.adapters.PodcastAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.PodcastClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.BestPodcastsViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel;
+import com.pavelprymak.propodcast.utils.ApiErrorHandler;
 import com.pavelprymak.propodcast.utils.SettingsPreferenceManager;
 import com.pavelprymak.propodcast.utils.ShareUtil;
 import com.pavelprymak.propodcast.utils.otto.filters.EventUpdateGenreFilter;
@@ -37,6 +38,8 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.HttpException;
 
 import static com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.ARG_PODCAST_ID;
 import static com.pavelprymak.propodcast.utils.PodcastItemToFavoriteConverter.createFavorite;
@@ -85,6 +88,9 @@ public class BestPodcastsFragment extends Fragment implements PodcastClickListen
         mBestPodcastsViewModel.getErrorData().observe(this, throwable -> {
             if (throwable != null) {
                 mBinding.retryBtn.setVisibility(View.VISIBLE);
+                if (throwable instanceof HttpException && getContext() != null) {
+                    ApiErrorHandler.handleError(getContext(), (HttpException) throwable);
+                }
             }
         });
         mBestPodcastsViewModel.getIsEmptyListData().observe(this, isEmptyList -> {

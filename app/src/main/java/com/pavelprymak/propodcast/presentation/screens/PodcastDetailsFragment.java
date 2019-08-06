@@ -36,6 +36,7 @@ import com.pavelprymak.propodcast.presentation.viewModels.FavoriteEpisodesViewMo
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModelFactory;
+import com.pavelprymak.propodcast.utils.ApiErrorHandler;
 import com.pavelprymak.propodcast.utils.ShareUtil;
 import com.pavelprymak.propodcast.utils.otto.player.EventStartTack;
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility;
@@ -43,6 +44,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.HttpException;
 
 import static com.pavelprymak.propodcast.utils.PodcastItemToFavoriteConverter.createFavorite;
 import static com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper.sentFirebaseAnalyticEpisodeData;
@@ -110,6 +113,9 @@ public class PodcastDetailsFragment extends Fragment implements PodcastInfoClick
                     Snackbar snackbar = Snackbar.make(view, R.string.error_connection, Snackbar.LENGTH_LONG);
                     snackbar.show();
                     mBinding.appBarLayout.setExpanded(false);
+                    if (throwable instanceof HttpException && getContext() != null) {
+                        ApiErrorHandler.handleError(getContext(), (HttpException) throwable);
+                    }
                 }
             });
             mPodcastDataViewModel.getRecommendData().observe(this, recommendationsItems -> {

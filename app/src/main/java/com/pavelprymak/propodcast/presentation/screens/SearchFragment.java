@@ -30,11 +30,14 @@ import com.pavelprymak.propodcast.presentation.adapters.SearchPodcastAdapter;
 import com.pavelprymak.propodcast.presentation.adapters.SearchPodcastClickListener;
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel;
 import com.pavelprymak.propodcast.presentation.viewModels.SearchViewModel;
+import com.pavelprymak.propodcast.utils.ApiErrorHandler;
 import com.pavelprymak.propodcast.utils.KeyboardUtil;
 import com.pavelprymak.propodcast.utils.ShareUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.HttpException;
 
 import static com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.ARG_PODCAST_ID;
 import static com.pavelprymak.propodcast.utils.KeyboardUtil.showInputMethod;
@@ -88,6 +91,9 @@ public class SearchFragment extends Fragment implements SearchPodcastClickListen
         mSearchViewModel.getErrorData().observe(this, throwable -> {
             if (throwable != null) {
                 mBinding.retryBtn.setVisibility(View.VISIBLE);
+                if (throwable instanceof HttpException && getContext() != null) {
+                    ApiErrorHandler.handleError(getContext(), (HttpException) throwable);
+                }
             }
         });
         mSearchViewModel.getIsEmptyListData().observe(this, this::showEmptyList);

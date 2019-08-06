@@ -27,9 +27,17 @@ public class Constants {
         public static final String SORT_RESENT_FIRST = "recent_first";
         public static final String SORT_OLDEST_FIRST = "oldest_first";
     }
-    public class SearchType{
+
+    public class SearchType {
         public static final String SEARCH_PODCASTS = "podcast";
         public static final String SEARCH_EPISODE = "episode";
+    }
+
+    public class ApiErrorCodes {
+        public static final int WRONG_API_KEY = 401;
+        public static final int WRONG_ITEM_ID = 404;
+        public static final int FREE_PLAN_QUOTA_LIMIT = 429;
+        public static final int SOMETHING_WRONG = 500;
     }
 
 }

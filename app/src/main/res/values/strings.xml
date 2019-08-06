@@ -64,4 +64,9 @@
     <string name="content_description_close">Close button</string>
     <string name="content_description_stop">Stop button</string>
 
+    <string name="api_wrong_api_key">Your Listen API KEY is wrong!</string>
+    <string name="api_quota_limit">Free plan quota limit</string>
+    <string name="api_item_id_error">Item ID is wrong!</string>
+    <string name="api_something_wrong">Something wrong on Listen API server!</string>
+
 </resources>
