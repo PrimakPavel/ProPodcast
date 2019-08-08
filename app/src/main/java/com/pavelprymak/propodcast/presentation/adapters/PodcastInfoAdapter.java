@@ -220,7 +220,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (episodeItem != null && mContext != null) {
 
                 //Episodes Duration
-                if ((episodeItem.getAudioLengthSec() > 0)) {
+                if ((episodeItem.getAudioLengthSec()!=null && episodeItem.getAudioLengthSec() > 0)) {
                     binding.container.tvEpisodeDuration.setText(DateFormatUtil.formatTimeHHmmss(episodeItem.getAudioLengthSec()));
                 } else {
                     binding.container.tvEpisodeDuration.setText(EMPTY);

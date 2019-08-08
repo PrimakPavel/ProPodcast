@@ -10,6 +10,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
 
@@ -73,7 +74,7 @@ public class MediaSessionNotificationsManager {
         mNotificationManager.notify(0, builder.build());
     }
 
-    public Notification getNotification(PlaybackStateCompat state, MediaSessionCompat.Token mediaSessionToken, String trackTitle, String trackAuthor, Bitmap logoBitmap) {
+    public Notification getNotification(PlaybackStateCompat state, MediaSessionCompat.Token mediaSessionToken, String trackTitle, String trackAuthor, @Nullable Bitmap logoBitmap) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, mContext.getString(R.string.player_notification_channel_id));
 
         int icon;

@@ -10,6 +10,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.pavelprymak.propodcast.utils.player.PlayerHelper;
@@ -81,7 +82,7 @@ public class MediaSessionHelper {
         }
     }
 
-    public Notification getNotification(String trackTitle, String trackAuthor, Bitmap logoBitmap) {
+    public Notification getNotification(String trackTitle, String trackAuthor, @Nullable Bitmap logoBitmap) {
         //SHOW NOTIFICATION
         if (mMediaSessionNotificationsManager != null && mMediaSession != null && mStateBuilder != null) {
             return mMediaSessionNotificationsManager.getNotification(mStateBuilder.build(), mMediaSession.getSessionToken(), trackTitle, trackAuthor, logoBitmap);

@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorBackground">
 
-        <androidx.recyclerview.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/podcastDataRecycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingTop="@dimen/standard_margin"
             android:paddingBottom="@dimen/standard_margin"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabFavorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,16 +29,16 @@
             android:contentDescription="@string/content_description_favorite"
             android:focusable="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:srcCompat="@drawable/ic_baseline_favorite_border" />
+            app:srcCompat="@drawable/ic_baseline_favorite_border"/>
 
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar_layout"
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?colorPrimary">
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
+        <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/collapsing_toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -49,11 +48,11 @@
                 app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/photo"
                         android:layout_width="@dimen/detail_expanded_photo_size"
                         android:layout_height="@dimen/detail_expanded_photo_size"
@@ -66,7 +65,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
-                    <TextView
+                <TextView
                         android:id="@+id/tvPublisher"
                         style="@style/AppTheme.TextCollapsingAppBar.Title"
                         android:layout_width="0dp"
@@ -79,9 +78,9 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/photo"
                         app:layout_constraintTop_toTopOf="@+id/photo"
-                        tools:text="Publisher" />
+                        tools:text="Publisher"/>
 
-                    <TextView
+                <TextView
                         android:id="@+id/tvCountry"
                         style="@style/AppTheme.TextCollapsingAppBar.Title"
                         android:layout_width="0dp"
@@ -93,9 +92,9 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/photo"
                         app:layout_constraintTop_toBottomOf="@+id/tvPublisher"
-                        tools:text="Country" />
+                        tools:text="Country"/>
 
-                    <TextView
+                <TextView
                         android:id="@+id/tvTotalEpisodes"
                         style="@style/AppTheme.TextCollapsingAppBar.Title"
                         android:layout_width="0dp"
@@ -107,9 +106,9 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/photo"
                         app:layout_constraintTop_toBottomOf="@+id/tvCountry"
-                        tools:text="8 episodes" />
+                        tools:text="8 episodes"/>
 
-                    <TextView
+                <TextView
                         android:id="@+id/tvDescription"
                         style="@style/AppTheme.TextCollapsingAppBar"
                         android:layout_width="match_parent"
@@ -123,21 +122,21 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/photo"
                         app:layout_constraintTop_toBottomOf="@+id/photo"
-                        tools:text="Some Description" />
+                        tools:text="Some Description"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/app_bar"
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/appBar"
                     android:layout_width="match_parent"
                     android:layout_height="?actionBarSize"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:layout_collapseMode="pin"
                     app:navigationIcon="@drawable/ic_baseline_arrow_back">
 
-                    <TextView
-                        android:id="@+id/tvTitle"
+                <TextView
+                        android:id="@+id/tvTitleAppBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/standard_margin"
@@ -147,20 +146,19 @@
                         android:textColor="@color/colorTextToolbar"
                         android:textSize="@dimen/standard_title_text_size"
                         android:textStyle="bold"
-                        tools:text="Title" />
-                </androidx.appcompat.widget.Toolbar>
+                        tools:text="Title"/>
+            </androidx.appcompat.widget.Toolbar>
 
 
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-        </com.google.android.material.appbar.AppBarLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <ProgressBar
+    <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="visible"/>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

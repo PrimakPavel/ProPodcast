@@ -7,10 +7,8 @@ import com.pavelprymak.propodcast.model.network.pojo.podcasts.BestPodcastsRespon
 import com.pavelprymak.propodcast.model.network.pojo.recommendations.RecommendationsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.regions.RegionsResponse;
 import com.pavelprymak.propodcast.model.network.pojo.search.SearchPodcastResponse;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import retrofit2.Response;
 
 import static org.junit.Assert.assertNotNull;
@@ -20,7 +18,7 @@ public class PodcastApiTest {
 
     @Before
     public void beforeRequests() {
-        api = PodcastApiController.getInstance().getPodcastApi();
+        api = PodcastApiController.INSTANCE.getPodcastApi();
     }
 
     @Test
@@ -46,7 +44,7 @@ public class PodcastApiTest {
 
     @Test
     public void getPodcastById() throws Exception {
-        Response<PodcastResponse> response = api.getPodcastById(BuildConfig.API_KEY, "2623fce10ba346a79c1656705d46492c", 0, Constants.SortType.SORT_RESENT_FIRST).execute();
+        Response<PodcastResponse> response = api.getPodcastById(BuildConfig.API_KEY, "2623fce10ba346a79c1656705d46492c", 0, SortType.SORT_RESENT_FIRST).execute();
         PodcastResponse podcastResponse = response.body();
         assertNotNull(podcastResponse);
     }
@@ -61,7 +59,7 @@ public class PodcastApiTest {
     @Test
     public void getPodcastSearch() throws Exception {
         int[] genres = new int[0];
-        Response<SearchPodcastResponse> response = api.searchPodcast(BuildConfig.API_KEY, "star wars",Constants.SearchType.SEARCH_PODCASTS,0, genres,"English").execute();
+        Response<SearchPodcastResponse> response = api.searchPodcast(BuildConfig.API_KEY, "star wars", SearchType.SEARCH_PODCASTS, 0, genres, "English").execute();
         SearchPodcastResponse search = response.body();
         assertNotNull(search);
     }

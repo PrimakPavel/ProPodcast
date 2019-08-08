@@ -20,8 +20,8 @@ public class AnalyticsHelper {
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, searchQuery);
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, filterLanguage);
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ANALYTIC_TYPE_SEARCH);
-        if (App.mFirebaseAnalytics != null)
-            App.mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
+        if (App.Companion.getMFirebaseAnalytics() != null)
+            App.Companion.getMFirebaseAnalytics().logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
     }
 
     public static void sentFirebaseAnalyticEpisodeData(EpisodesItem episodesItem) {
@@ -29,8 +29,8 @@ public class AnalyticsHelper {
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, episodesItem.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, episodesItem.getTitle());
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ANALYTIC_TYPE_EPISODE);
-        if (App.mFirebaseAnalytics != null)
-            App.mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        if (App.Companion.getMFirebaseAnalytics() != null)
+            App.Companion.getMFirebaseAnalytics().logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     public static void sentFirebaseAnalyticEpisodeData(FavoriteEpisodeEntity episodesItem) {
@@ -38,8 +38,8 @@ public class AnalyticsHelper {
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, episodesItem.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, episodesItem.getTitle());
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ANALYTIC_TYPE_EPISODE);
-        if (App.mFirebaseAnalytics != null)
-            App.mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        if (App.Companion.getMFirebaseAnalytics() != null)
+            App.Companion.getMFirebaseAnalytics().logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     public static void sentFirebaseAnalyticAddToFavorite(FavoritePodcastEntity podcast) {
@@ -47,15 +47,15 @@ public class AnalyticsHelper {
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, podcast.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, podcast.getTitle());
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ANALYTIC_TYPE_PODCAST_ADD_TO_FAVORITE);
-        if (App.mFirebaseAnalytics != null)
-            App.mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        if (App.Companion.getMFirebaseAnalytics() != null)
+            App.Companion.getMFirebaseAnalytics().logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     public static void sentFirebaseAnalyticRemoveFromFavorite(String podcastId) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, podcastId);
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, ANALYTIC_TYPE_PODCAST_REMOVE_FROM_FAVORITE);
-        if (App.mFirebaseAnalytics != null)
-            App.mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        if (App.Companion.getMFirebaseAnalytics() != null)
+            App.Companion.getMFirebaseAnalytics().logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 }

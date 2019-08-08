@@ -9,16 +9,19 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
+import com.pavelprymak.propodcast.services.COMMAND_CONTINUE_LAST_TRACK
+import com.pavelprymak.propodcast.services.EXTRA_COMMAND_PLAYER
 import com.pavelprymak.propodcast.services.PlayerService
-import com.pavelprymak.propodcast.services.PlayerService.EXTRA_COMMAND_PLAYER
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdateDurationAndCurrentPos
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility
+import com.pavelprymak.propodcast.utils.widget.LastTrackPreferenceManager
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
     lateinit var navController: NavController
-    private val mLastTrackPreferenceManager = App.mLastTrackSettings
+    private val mLastTrackPreferenceManager: LastTrackPreferenceManager by inject()
     private val eventBus = App.eventBus
 
 
@@ -65,33 +68,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setPlayerVisibility(isPlayerVisible: Boolean) {
-        if (isPlayerVisible) {
-            playerContainer.visibility = View.VISIBLE
-        } else {
-            playerContainer.visibility = View.GONE
-        }
+        if (isPlayerVisible) playerContainer.visibility = View.VISIBLE else playerContainer.visibility = View.GONE
     }
 
     private fun setFabVisibility(isFabVisible: Boolean) {
-        if (isFabVisible) {
-            fabContinueLastTrack.show()
-        } else {
-            fabContinueLastTrack.hide()
-        }
+        if (isFabVisible) fabContinueLastTrack.show() else fabContinueLastTrack.hide()
     }
 
     fun setNavViewVisibility(isVisible: Boolean) {
-        if (isVisible) {
-            navView.visibility = View.VISIBLE
-        } else {
-            navView.visibility = View.GONE
-        }
+        if (isVisible) navView.visibility = View.VISIBLE else navView.visibility = View.GONE
     }
 
     private fun continueLastTrack() {
         if (!PlayerService.isStartService) {
             val serviceIntent = Intent(applicationContext, PlayerService::class.java)
-            serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, PlayerService.COMMAND_CONTINUE_LAST_TRACK)
+            serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, COMMAND_CONTINUE_LAST_TRACK)
             ContextCompat.startForegroundService(this, serviceIntent)
         }
     }
