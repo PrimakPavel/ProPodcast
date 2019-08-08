@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <fragment
+    <fragment
             android:id="@+id/navHostFragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
@@ -19,11 +18,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navGraph="@navigation/main_graph" />
+            app:navGraph="@navigation/main_graph"/>
 
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/nav_view"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/navView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="0dp"
@@ -34,27 +33,27 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:menu="@menu/bottom_nav_menu" />
+            app:menu="@menu/bottom_nav_menu"/>
 
-        <FrameLayout
+    <FrameLayout
             android:id="@+id/playerContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:padding="@dimen/small_margin"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/nav_view"
+            app:layout_constraintBottom_toTopOf="@+id/navView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <fragment
+        <fragment
                 android:id="@+id/fragmentPlayer"
                 android:name="com.pavelprymak.propodcast.presentation.screens.PlayerFragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </FrameLayout>
+                android:layout_height="wrap_content"/>
+    </FrameLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabContinueLastTrack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,10 +63,8 @@
             android:clickable="true"
             android:contentDescription="@string/content_description_restore"
             android:focusable="true"
-            app:layout_constraintBottom_toTopOf="@+id/nav_view"
+            app:layout_constraintBottom_toTopOf="@+id/navView"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_baseline_restore_24px" />
+            app:srcCompat="@drawable/ic_baseline_restore_24px"/>
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>
