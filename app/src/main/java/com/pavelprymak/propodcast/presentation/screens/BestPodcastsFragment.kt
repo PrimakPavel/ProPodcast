@@ -20,7 +20,6 @@ import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem
 import com.pavelprymak.propodcast.presentation.adapters.PodcastAdapter
 import com.pavelprymak.propodcast.presentation.adapters.PodcastClickListener
-import com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.Companion.ARG_PODCAST_ID
 import com.pavelprymak.propodcast.presentation.viewModels.BestPodcastsViewModel
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel
 import com.pavelprymak.propodcast.utils.ApiErrorHandler

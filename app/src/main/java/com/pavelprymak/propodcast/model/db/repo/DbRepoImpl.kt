@@ -6,7 +6,7 @@ import com.pavelprymak.propodcast.model.db.AppDatabase
 import com.pavelprymak.propodcast.model.db.FavoriteEpisodeEntity
 import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity
 import com.pavelprymak.propodcast.utils.AppExecutors
-import com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper
+import com.pavelprymak.propodcast.utils.firebase.FirebaseAnalyticsHelper
 import java.util.concurrent.Executor
 
 class DbRepoImpl(db: AppDatabase, executors: AppExecutors) : DbRepo {
@@ -25,7 +25,7 @@ class DbRepoImpl(db: AppDatabase, executors: AppExecutors) : DbRepo {
 
     override fun insertPodcast(podcastEntity: FavoritePodcastEntity) {
         diskIO.execute { mDb.favoritePodcastDao().insertPodcast(podcastEntity) }
-        AnalyticsHelper.sentFirebaseAnalyticAddToFavorite(podcastEntity)
+        FirebaseAnalyticsHelper.sentAnalyticAddToFavorite(podcastEntity)
     }
 
     override fun updatePodcast(podcastEntity: FavoritePodcastEntity) {
@@ -34,7 +34,7 @@ class DbRepoImpl(db: AppDatabase, executors: AppExecutors) : DbRepo {
 
     override fun deletePodcastById(podcastId: String) {
         diskIO.execute { mDb.favoritePodcastDao().deletePodcast(podcastId) }
-        AnalyticsHelper.sentFirebaseAnalyticRemoveFromFavorite(podcastId)
+        FirebaseAnalyticsHelper.sentAnalyticRemoveFromFavorite(podcastId)
     }
 
     override fun getPodcastsCount(): LiveData<Int> {

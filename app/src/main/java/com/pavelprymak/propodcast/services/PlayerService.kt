@@ -24,7 +24,6 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import org.koin.android.ext.android.inject
 import timber.log.Timber
-import java.lang.Exception
 
 
 const val EXTRA_COMMAND_PLAYER = "extraCommandToPlayerService"
@@ -174,17 +173,11 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
         return START_STICKY
     }
 
-    private fun startTrack(
-        trackTitle: String?,
-        trackAuthor: String?,
-        trackImage: String?,
-        trackUri: Uri,
-        oldPosition: Long
-    ) {
+    private fun startTrack(title: String?, author: String?, image: String?, trackUri: Uri, oldPosition: Long) {
         mPlayerHelper?.apply {
-            this.trackTitle = trackTitle
-            this.trackImageUrl = trackImage
-            this.trackAuthor = trackAuthor
+            this.trackTitle = title
+            this.trackImageUrl = image
+            this.trackAuthor = author
             //update UI loading flag true
             mEventBus.post(EventUpdateLoading(true))
             mUpdateUIPositionHandler?.startHandler()
@@ -198,7 +191,7 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
                 initializePlayer(trackUri, oldPosition)
             }
             //update UI track image and title
-            mEventBus.post(EventUpdateTrackImageAndTitle(trackTitle, trackImage))
+            mEventBus.post(EventUpdateTrackImageAndTitle(trackTitle, image))
         }
     }
 
@@ -208,28 +201,27 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
 
     override fun stateChanged() {
         // Show foreground notification
-        mPlayerHelper?.let { playerHelper ->
-            if (playerHelper.mediaSessionHelper != null && playerHelper.trackImageUrl != null) {
-                Picasso.get().load(playerHelper.trackImageUrl).into(object : Target {
+        mPlayerHelper?.apply {
+            if (mediaSessionHelper != null && trackImageUrl != null) {
+                Picasso.get().load(trackImageUrl).into(object : Target {
                     override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
                     }
 
                     override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-                        val notification = playerHelper.mediaSessionHelper.getNotification(
-                            playerHelper.trackTitle,
-                            playerHelper.trackAuthor,
-                            BitmapFactory.decodeResource(applicationContext.resources, R.mipmap.ic_launcher)
-                        )
+                        val notification = mediaSessionHelper
+                            .getNotification(
+                                trackTitle,
+                                trackAuthor,
+                                BitmapFactory.decodeResource(applicationContext.resources, R.mipmap.ic_launcher)
+                            )
                         if (notification != null) {
                             startForeground(NOTIFICATION_FOREGROUND_ID, notification)
                         }
                     }
 
                     override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                        val notification = playerHelper.mediaSessionHelper.getNotification(
-                            playerHelper.trackTitle,
-                            playerHelper.trackAuthor,
-                            bitmap
+                        val notification = mediaSessionHelper.getNotification(
+                            trackTitle, trackAuthor, bitmap
                         )
                         if (notification != null) {
                             startForeground(NOTIFICATION_FOREGROUND_ID, notification)

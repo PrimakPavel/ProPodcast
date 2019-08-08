@@ -20,7 +20,6 @@ import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity
 import com.pavelprymak.propodcast.model.network.pojo.search.ResultsItem
 import com.pavelprymak.propodcast.presentation.adapters.SearchPodcastAdapter
 import com.pavelprymak.propodcast.presentation.adapters.SearchPodcastClickListener
-import com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.Companion.ARG_PODCAST_ID
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel
 import com.pavelprymak.propodcast.presentation.viewModels.SearchViewModel
 import com.pavelprymak.propodcast.utils.ApiErrorHandler
@@ -29,7 +28,7 @@ import com.pavelprymak.propodcast.utils.KeyboardUtil.showInputMethod
 import com.pavelprymak.propodcast.utils.PodcastItemToFavoriteConverter.createFavorite
 import com.pavelprymak.propodcast.utils.SettingsPreferenceManager
 import com.pavelprymak.propodcast.utils.ShareUtil
-import com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper.sentFirebaseAnalyticSearchQueryData
+import com.pavelprymak.propodcast.utils.firebase.FirebaseAnalyticsHelper.sentAnalyticSearchQueryData
 import kotlinx.android.synthetic.main.fragment_search.*
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
@@ -94,7 +93,7 @@ class SearchFragment : Fragment(), SearchPodcastClickListener {
                 val filterLanguage = mSettingsPref.filterLanguage
                 mSearchViewModel.prepareSearchRequest(query, filterLanguage)
                 KeyboardUtil.hideKeyboard(activity)
-                sentFirebaseAnalyticSearchQueryData(query, filterLanguage)
+                sentAnalyticSearchQueryData(query, filterLanguage)
                 return true
             }
 

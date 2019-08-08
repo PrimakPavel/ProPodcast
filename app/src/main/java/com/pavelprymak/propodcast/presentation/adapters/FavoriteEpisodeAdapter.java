@@ -70,7 +70,7 @@ public class FavoriteEpisodeAdapter extends RecyclerView.Adapter<FavoriteEpisode
 
                 //Episodes Duration
                 if ((episodeItem.getAudioLengthSec() > 0)) {
-                    binding.tvEpisodeDuration.setText(DateFormatUtil.formatTimeHHmmss(episodeItem.getAudioLengthSec()));
+                    binding.tvEpisodeDuration.setText(DateFormatUtil.INSTANCE.formatTimeHHmmss(episodeItem.getAudioLengthSec()));
                 } else {
                     binding.tvEpisodeDuration.setText(EMPTY);
                 }
@@ -91,7 +91,7 @@ public class FavoriteEpisodeAdapter extends RecyclerView.Adapter<FavoriteEpisode
                 if (episodeItem.getPubDateMs() > 0L) {
                     Date publishDate = new Date(episodeItem.getPubDateMs());
                     binding.tvPublishedDate.setText(R.string.published_date_label);
-                    binding.tvPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
+                    binding.tvPublishedDate.append(DateFormatUtil.INSTANCE.getPUBLISH_DATE_FORMAT().format(publishDate));
                 }
 
                 binding.ivMoreOptions.setOnClickListener(v -> {

@@ -113,7 +113,7 @@ public class PodcastAdapter extends PagedListAdapter<PodcastItem, PodcastAdapter
                 if (podcastItem.getLatestPubDateMs() > 0L) {
                     Date publishDate = new Date(podcastItem.getLatestPubDateMs());
                     binding.tvLastPublishedDate.setText(R.string.last_published_date_label);
-                    binding.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
+                    binding.tvLastPublishedDate.append(DateFormatUtil.INSTANCE.getPUBLISH_DATE_FORMAT().format(publishDate));
                 }
 
                 binding.ivMoreOptions.setOnClickListener(v -> {

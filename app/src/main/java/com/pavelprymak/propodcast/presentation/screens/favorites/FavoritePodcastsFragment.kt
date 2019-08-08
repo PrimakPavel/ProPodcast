@@ -14,7 +14,7 @@ import com.pavelprymak.propodcast.R
 import com.pavelprymak.propodcast.model.db.FavoritePodcastEntity
 import com.pavelprymak.propodcast.presentation.adapters.FavoritePodcastAdapter
 import com.pavelprymak.propodcast.presentation.adapters.FavoritePodcastClickListener
-import com.pavelprymak.propodcast.presentation.screens.PodcastDetailsFragment.Companion.ARG_PODCAST_ID
+import com.pavelprymak.propodcast.presentation.screens.ARG_PODCAST_ID
 import com.pavelprymak.propodcast.presentation.viewModels.FavoritePodcastsViewModel
 import com.pavelprymak.propodcast.utils.ShareUtil
 import kotlinx.android.synthetic.main.fragment_favorite_items.*

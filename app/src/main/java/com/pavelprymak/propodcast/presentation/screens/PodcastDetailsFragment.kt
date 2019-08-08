@@ -30,7 +30,7 @@ import com.pavelprymak.propodcast.presentation.viewModels.PodcastInfoViewModel
 import com.pavelprymak.propodcast.utils.ApiErrorHandler
 import com.pavelprymak.propodcast.utils.PodcastItemToFavoriteConverter.createFavorite
 import com.pavelprymak.propodcast.utils.ShareUtil
-import com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper.sentFirebaseAnalyticEpisodeData
+import com.pavelprymak.propodcast.utils.firebase.FirebaseAnalyticsHelper.sentAnalyticEpisodeData
 import com.pavelprymak.propodcast.utils.otto.player.EventStartTack
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility
 import com.squareup.picasso.Picasso
@@ -40,6 +40,8 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import retrofit2.HttpException
 import java.util.*
 
+
+const val ARG_PODCAST_ID = "argPodcastId"
 
 class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
     private val mPodcastDataViewModel: PodcastInfoViewModel by viewModel()
@@ -143,7 +145,7 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
     }
 
     override fun onEpisodeItemClick(episodesItem: EpisodesItem) {
-        sentFirebaseAnalyticEpisodeData(episodesItem)
+        sentAnalyticEpisodeData(episodesItem)
         App.eventBus.post(
             EventStartTack(
                 episodesItem.audio,
@@ -291,9 +293,5 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
                 popupMenu.show()
             }
         }
-    }
-
-    companion object {
-        val ARG_PODCAST_ID = "argPodcastId"
     }
 }

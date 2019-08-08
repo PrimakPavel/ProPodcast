@@ -167,7 +167,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if (podcastItem.getLatestPubDateMs() > 0L) {
                     Date publishDate = new Date(podcastItem.getLatestPubDateMs());
                     binding.tvLastPublishedDate.setText(R.string.last_published_date_label);
-                    binding.tvLastPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
+                    binding.tvLastPublishedDate.append(DateFormatUtil.INSTANCE.getPUBLISH_DATE_FORMAT().format(publishDate));
                 }
 
                 binding.ivMoreOptions.setOnClickListener(v -> {
@@ -221,7 +221,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 //Episodes Duration
                 if ((episodeItem.getAudioLengthSec()!=null && episodeItem.getAudioLengthSec() > 0)) {
-                    binding.container.tvEpisodeDuration.setText(DateFormatUtil.formatTimeHHmmss(episodeItem.getAudioLengthSec()));
+                    binding.container.tvEpisodeDuration.setText(DateFormatUtil.INSTANCE.formatTimeHHmmss(episodeItem.getAudioLengthSec()));
                 } else {
                     binding.container.tvEpisodeDuration.setText(EMPTY);
                 }
@@ -242,7 +242,7 @@ public class PodcastInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if (episodeItem.getPubDateMs() > 0L) {
                     Date publishDate = new Date(episodeItem.getPubDateMs());
                     binding.container.tvPublishedDate.setText(R.string.published_date_label);
-                    binding.container.tvPublishedDate.append(DateFormatUtil.PUBLISH_DATE_FORMAT.format(publishDate));
+                    binding.container.tvPublishedDate.append(DateFormatUtil.INSTANCE.getPUBLISH_DATE_FORMAT().format(publishDate));
                 }
                 binding.container.ivMoreOptions.setOnClickListener(v -> {
                     if (mClickListener != null)

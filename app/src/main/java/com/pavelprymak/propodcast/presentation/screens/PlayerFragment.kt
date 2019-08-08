@@ -144,7 +144,7 @@ class PlayerFragment : Fragment(), PlayerUI {
     }
 
     override fun startTrackAction(trackLink: String?, trackTitle: String?, imageUrl: String?, trackAuthor: String?) {
-        if (context != null) {
+        if (context != null && trackLink != null) {
             val serviceIntent = Intent(context, PlayerService::class.java)
             serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, COMMAND_START_TRACK)
             serviceIntent.putExtra(EXTRA_TRACK_URL, trackLink)

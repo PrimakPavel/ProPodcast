@@ -17,7 +17,7 @@ import com.pavelprymak.propodcast.presentation.adapters.FavoriteEpisodeClickList
 import com.pavelprymak.propodcast.presentation.viewModels.FavoriteEpisodesViewModel
 import com.pavelprymak.propodcast.utils.DateFormatUtil
 import com.pavelprymak.propodcast.utils.ShareUtil
-import com.pavelprymak.propodcast.utils.firebase.AnalyticsHelper.sentFirebaseAnalyticEpisodeData
+import com.pavelprymak.propodcast.utils.firebase.FirebaseAnalyticsHelper.sentAnalyticEpisodeData
 import com.pavelprymak.propodcast.utils.otto.player.EventStartTack
 import com.pavelprymak.propodcast.utils.otto.player.EventUpdatePlayerVisibility
 import kotlinx.android.synthetic.main.fragment_favorite_items.*
@@ -51,7 +51,7 @@ class FavoriteEpisodesFragment : Fragment(), FavoriteEpisodeClickListener {
     }
 
     override fun onEpisodeItemClick(episodesItem: FavoriteEpisodeEntity) {
-        sentFirebaseAnalyticEpisodeData(episodesItem)
+        sentAnalyticEpisodeData(episodesItem)
         val publishDate = Date(episodesItem.pubDateMs)
         App.eventBus.post(
             EventStartTack(
