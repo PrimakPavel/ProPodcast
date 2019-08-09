@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         navController = Navigation.findNavController(this, R.id.navHostFragment)
         NavigationUI.setupWithNavController(navView, navController)
-        fabContinueLastTrack.setOnClickListener { view -> continueLastTrack() }
+        fabContinueLastTrack.setOnClickListener { continueLastTrack() }
     }
 
 

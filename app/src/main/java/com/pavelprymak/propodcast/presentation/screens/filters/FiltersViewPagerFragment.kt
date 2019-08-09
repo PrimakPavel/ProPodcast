@@ -40,9 +40,7 @@ class FiltersViewPagerFragment : Fragment() {
             }
         })
         // Back btn init
-        toolbar.setNavigationOnClickListener { v ->
-            activity?.onBackPressed()
-        }
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed()}
         if (resources.getBoolean(R.bool.isTablet)) {
             toolbar.visibility = View.GONE
         }

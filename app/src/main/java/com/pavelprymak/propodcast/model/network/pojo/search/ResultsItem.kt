@@ -54,7 +54,7 @@ data class ResultsItem(
     var latestPubDateMs: Long = 0,
 
     @Json(name = "id")
-    var id: String? = null,
+    var id: String = "",
 
     @Json(name = "email")
     var email: String? = null

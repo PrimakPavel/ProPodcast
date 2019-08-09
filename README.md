@@ -5,8 +5,10 @@ This app uses Listen Rest API (See documentation: https://www.listennotes.com/ap
 You should define API_KEY in ($rootDir/app/api.properties)
 
 ## Libraries
+- Kotlin
 - Livecycle(LiveData,ViewModel)
-- DataBinding
+- Koin
+- Synthetic
 - Room
 - ExoPlayer
 - Navigation(Jetpack)

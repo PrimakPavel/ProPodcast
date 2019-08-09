@@ -73,11 +73,11 @@ class FavoritePodcastsFragment : Fragment(), FavoritePodcastClickListener {
         }
     }
 
-    override fun onPodcastMoreOptionsClick(podcastId: String, link: String, v: View) {
+    override fun onPodcastMoreOptionsClick(podcastId: String, link: String?, v: View) {
         showPopupMenu(v, link, podcastId)
     }
 
-    private fun showPopupMenu(v: View, shareLink: String, podcastId: String) {
+    private fun showPopupMenu(v: View, shareLink: String?, podcastId: String) {
         context?.let { context ->
 
             val popupMenu = PopupMenu(context, v)

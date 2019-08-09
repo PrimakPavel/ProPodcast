@@ -34,8 +34,8 @@ android {
             throw new InvalidUserDataException("You should define API_KEY in (app/api.properties)\n" + exception.getMessage())
         }
     }
-    dataBinding {
-        enabled = true
+    androidExtensions {
+        experimental = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

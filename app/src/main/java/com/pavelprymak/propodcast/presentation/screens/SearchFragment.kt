@@ -106,7 +106,7 @@ class SearchFragment : Fragment(), SearchPodcastClickListener {
         })
         if (resources.getBoolean(R.bool.isTablet)) fabFilter.hide()
         else {
-            fabFilter.setOnClickListener { v ->
+            fabFilter.setOnClickListener {
                 KeyboardUtil.hideKeyboard(activity)
                 mNavController.navigate(R.id.actionFromSearchToLanguageFilter)
             }
@@ -153,7 +153,7 @@ class SearchFragment : Fragment(), SearchPodcastClickListener {
 
     private fun showPopupMenu(v: View, podcastItem: ResultsItem) {
         context?.let { context ->
-            podcastItem.id?.let { podcastId ->
+            podcastItem.id.let { podcastId ->
                 val popupMenu = PopupMenu(context, v)
                 popupMenu.inflate(R.menu.podcast_popup_menu)
                 val menuItem = popupMenu.menu.findItem(R.id.action_favorite)

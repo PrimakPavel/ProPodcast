@@ -51,9 +51,7 @@ class LanguageFilterFragment : Fragment(), LanguageClickListener {
                 }
             }
         })
-        toolbar.setNavigationOnClickListener { v ->
-            activity?.onBackPressed()
-        }
+        toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
         if (resources.getBoolean(R.bool.isTablet)) {
             toolbar.navigationIcon = null
         }

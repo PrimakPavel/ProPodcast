@@ -1,6 +1,5 @@
 package com.pavelprymak.propodcast.presentation.screens
 
-
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -152,7 +151,7 @@ class BestPodcastsFragment : Fragment(), PodcastClickListener {
 
     private fun showPopupMenu(v: View, podcastItem: PodcastItem) {
         context?.let { context ->
-            podcastItem.id?.let { podcastId ->
+            podcastItem.id.let { podcastId ->
                 val popupMenu = PopupMenu(context, v)
                 popupMenu.inflate(R.menu.podcast_popup_menu)
                 val menuItem = popupMenu.menu.findItem(R.id.action_favorite)

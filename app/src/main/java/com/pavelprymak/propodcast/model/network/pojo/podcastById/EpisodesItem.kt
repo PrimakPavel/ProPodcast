@@ -19,7 +19,7 @@ data class EpisodesItem(
     var listennotesEditUrl: String? = null,
 
     @Json(name = "audio_length_sec")
-    var audioLengthSec: Int? = null,
+    var audioLengthSec: Int = 0,
 
     @Json(name = "description")
     var description: String? = null,

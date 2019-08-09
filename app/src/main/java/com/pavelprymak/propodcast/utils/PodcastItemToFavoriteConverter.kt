@@ -10,7 +10,7 @@ import com.pavelprymak.propodcast.model.network.pojo.search.ResultsItem
 object PodcastItemToFavoriteConverter {
     fun createFavorite(podcastItem: PodcastItem): FavoritePodcastEntity {
         val favoritePodcastEntity = FavoritePodcastEntity()
-        favoritePodcastEntity.id = podcastItem.id ?: ""
+        favoritePodcastEntity.id = podcastItem.id
         favoritePodcastEntity.image = podcastItem.image
         favoritePodcastEntity.country = podcastItem.country
         favoritePodcastEntity.description = podcastItem.description?.trim { it <= ' ' }
@@ -54,7 +54,7 @@ object PodcastItemToFavoriteConverter {
 
     fun createFavorite(podcastItem: ResultsItem): FavoritePodcastEntity {
         val favoritePodcastEntity = FavoritePodcastEntity()
-        favoritePodcastEntity.id = podcastItem.id ?: ""
+        favoritePodcastEntity.id = podcastItem.id
         favoritePodcastEntity.image = podcastItem.image
         favoritePodcastEntity.description = podcastItem.descriptionOriginal?.trim { it <= ' ' }
         favoritePodcastEntity.publisher = podcastItem.publisherOriginal?.trim { it <= ' ' }

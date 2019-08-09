@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/recommendContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <FrameLayout
+    <FrameLayout
             android:id="@+id/recommendationLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
             tools:visibility="visible">
 
-            <TextView
+        <TextView
                 style="@style/AppTheme.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -24,16 +25,16 @@
                 android:layout_marginTop="@dimen/standard_margin"
                 android:layout_marginEnd="@dimen/standard_margin"
                 android:layout_marginRight="@dimen/standard_margin"
-                android:text="@string/recommendation_podcasts_label" />
+                android:text="@string/recommendation_podcasts_label"/>
 
-        </FrameLayout>
+    </FrameLayout>
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivPodcastLogo"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -43,24 +44,24 @@
                 app:layout_constraintDimensionRatio="w,1:1"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
 
-            <View
+        <View
                 android:layout_width="0dp"
                 android:layout_height="@dimen/standard_margin"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ivPodcastLogo" />
+                app:layout_constraintTop_toBottomOf="@+id/ivPodcastLogo"/>
 
 
-            <androidx.constraintlayout.widget.Guideline
+        <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="@dimen/recommendation_image_percent" />
+                app:layout_constraintGuide_percent="@dimen/recommendation_image_percent"/>
 
-            <TextView
+        <TextView
                 android:id="@+id/tvEpisodesCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -71,9 +72,9 @@
                 android:textSize="@dimen/standard_text_size"
                 app:layout_constraintBottom_toBottomOf="@+id/ivPodcastLogo"
                 app:layout_constraintEnd_toEndOf="@+id/ivPodcastLogo"
-                tools:text="20 episodes" />
+                tools:text="20 episodes"/>
 
-            <androidx.appcompat.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivMoreOptions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -85,16 +86,16 @@
                 android:padding="@dimen/standard_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_more_vert" />
+                app:srcCompat="@drawable/ic_baseline_more_vert"/>
 
-            <androidx.constraintlayout.widget.Barrier
+        <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/barrier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="left"
-                app:constraint_referenced_ids="ivMoreOptions" />
+                app:constraint_referenced_ids="ivMoreOptions"/>
 
-            <TextView
+        <TextView
                 android:id="@+id/tvTitle"
                 style="@style/AppTheme.Title"
                 android:layout_width="0dp"
@@ -105,9 +106,9 @@
                 app:layout_constraintEnd_toEndOf="@+id/barrier"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Podcast Title " />
+                tools:text="Podcast Title "/>
 
-            <TextView
+        <TextView
                 android:id="@+id/tvPublisher"
                 style="@style/AppTheme.Body"
                 android:layout_width="0dp"
@@ -120,9 +121,9 @@
                 app:layout_constraintEnd_toEndOf="@+id/barrier"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitle"
-                tools:text="Publisher" />
+                tools:text="Publisher"/>
 
-            <TextView
+        <TextView
                 android:id="@+id/tvCountryLanguage"
                 style="@style/AppTheme.Body"
                 android:layout_width="0dp"
@@ -134,9 +135,9 @@
                 app:layout_constraintEnd_toEndOf="@+id/barrier"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/tvPublisher"
-                tools:text="USA (English)" />
+                tools:text="USA (English)"/>
 
-            <TextView
+        <TextView
                 android:id="@+id/tvLastPublishedDate"
                 style="@style/AppTheme.Body"
                 android:layout_width="0dp"
@@ -147,9 +148,8 @@
                 app:layout_constraintEnd_toEndOf="@+id/barrier"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/tvCountryLanguage"
-                tools:text="Last Published: 10/02/19" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                tools:text="Last Published: 10/02/19"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </LinearLayout>
+</LinearLayout>
 
-</layout>

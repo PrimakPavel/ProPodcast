@@ -217,7 +217,7 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
 
     private fun showPodcastPopupMenu(v: View, podcastItem: PodcastItem) {
         context?.let { context ->
-            podcastItem.id?.let { podcastId ->
+            podcastItem.id.let { podcastId ->
                 val popupMenu = PopupMenu(context, v)
                 popupMenu.inflate(R.menu.podcast_popup_menu)
                 val menuItem = popupMenu.menu.findItem(R.id.action_favorite)

@@ -64,7 +64,7 @@ class FavoriteEpisodesFragment : Fragment(), FavoriteEpisodeClickListener {
         App.eventBus.post(EventUpdatePlayerVisibility(true))
     }
 
-    override fun onEpisodeMoreOptionsClick(episodeId: String, link: String, v: View) {
+    override fun onEpisodeMoreOptionsClick(episodeId: String, link: String?, v: View) {
         showPopupMenu(v, link, episodeId)
     }
 
@@ -81,7 +81,7 @@ class FavoriteEpisodesFragment : Fragment(), FavoriteEpisodeClickListener {
         recyclerFavorites.adapter = mAdapter
     }
 
-    private fun showPopupMenu(v: View, shareLink: String, episodeId: String) {
+    private fun showPopupMenu(v: View, shareLink: String?, episodeId: String) {
         context?.let {context->
             val popupMenu = PopupMenu(context, v)
             popupMenu.inflate(R.menu.podcast_popup_menu)
