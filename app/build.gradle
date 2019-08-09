@@ -120,6 +120,7 @@ dependencies {
     // Check for v11.4.2 or higher
     implementation 'com.google.firebase:firebase-core:17.0.1'
 
+
     // (Recommended) Add Analytics
     implementation 'com.google.firebase:firebase-analytics:17.0.1'
 
