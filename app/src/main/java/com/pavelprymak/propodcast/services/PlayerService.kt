@@ -25,7 +25,6 @@ import com.squareup.picasso.Target
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
-
 const val EXTRA_COMMAND_PLAYER = "extraCommandToPlayerService"
 private const val NOTIFICATION_FOREGROUND_ID = 123
 
@@ -43,7 +42,6 @@ const val EXTRA_TRACK_SEEK_PROGRESS_IN_PERSENTS = "extraTrackSeekPosition"
 const val COMMAND_UPDATE_UI = "commandUpdateUI"
 
 class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
-
     private var mPlayerHelper: PlayerHelper? = null
     private var wakeLock: PowerManager.WakeLock? = null
 
@@ -68,13 +66,10 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
 
     override fun onCreate() {
         super.onCreate()
-        isStartService = true
         Timber.d("onCreate")
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock = powerManager.newWakeLock(
-            PowerManager.PARTIAL_WAKE_LOCK,
-            getString(R.string.player_service_wake_lock_tag)
-        )
+        wakeLock =
+            powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getString(R.string.player_service_wake_lock_tag))
         wakeLock?.acquire()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notification = NotificationCompat.Builder(this, getString(R.string.player_notification_channel_id))
@@ -82,7 +77,6 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
                 .setContentText(getString(R.string.player_service_running))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .build()
-
             startForeground(NOTIFICATION_FOREGROUND_ID, notification)
         }
         Timber.d("Wakelock acquired")
@@ -95,20 +89,20 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
                 }
             }
         }
+        isStartService = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mPlayerHelper?.apply {
-            mLastTrackPref.saveTrackCurrentPosition(currentResumePosition)
-            releasePlayer()
-        }
-        mPlayerHelper = null
-        mUpdateUIPositionHandler?.stopHandler()
-        mUpdateUIPositionHandler = null
-
         isStartService = false
         isTrackPlayNow = false
+        mPlayerHelper?.let { playerHelper ->
+            mLastTrackPref.saveTrackCurrentPosition(playerHelper.currentResumePosition)
+            playerHelper.releasePlayer()
+            mPlayerHelper = null
+        }
+        mUpdateUIPositionHandler?.stopHandler()
+        mUpdateUIPositionHandler = null
         WidgetUpdateManager.updateWidget(applicationContext)
         Timber.d("onDestroy")
         if (wakeLock?.isHeld == true) {
@@ -128,12 +122,14 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
                 val trackUrlStr = intent.getStringExtra(EXTRA_TRACK_URL)
                 val trackAuthor = intent.getStringExtra(EXTRA_TRACK_AUTHOR)
                 val trackImage = intent.getStringExtra(EXTRA_TRACK_IMAGE_URL)
-                val trackUri = Uri.parse(trackUrlStr)
-                startTrack(trackTitle, trackAuthor, trackImage, trackUri, 0)
-                mLastTrackPref.saveTrackInfo(trackUrlStr, trackTitle, trackAuthor, trackImage)
+                if (!trackUrlStr.isNullOrEmpty()) {
+                    val trackUri = Uri.parse(trackUrlStr)
+                    startTrack(trackTitle, trackAuthor, trackImage, trackUri, 0)
+                    mLastTrackPref.saveTrackInfo(trackUrlStr, trackTitle, trackAuthor, trackImage)
+                }
             }
             COMMAND_CONTINUE_LAST_TRACK -> {
-                if (mLastTrackPref.trackAudioUrl != null) {
+                if (!mLastTrackPref.trackAudioUrl.isNullOrEmpty()) {
                     val trackUri = Uri.parse(mLastTrackPref.trackAudioUrl)
                     startTrack(
                         mLastTrackPref.trackTitle,
@@ -150,7 +146,6 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
                     mLastTrackPref.saveTrackCurrentPosition(currentResumePosition)
                 }
                 mUpdateUIPositionHandler?.stopHandler()
-
             }
             COMMAND_PLAY -> {
                 mPlayerHelper?.playTrack()
@@ -159,7 +154,6 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
             COMMAND_SEEK_TO_POSITION -> {
                 val progressInPercents = intent.getFloatExtra(EXTRA_TRACK_SEEK_PROGRESS_IN_PERSENTS, 0f)
                 mPlayerHelper?.seekToPosition(progressInPercents)
-
             }
             COMMAND_UPDATE_UI -> {
                 if (mPlayerHelper != null) {
@@ -178,9 +172,6 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
             this.trackTitle = title
             this.trackImageUrl = image
             this.trackAuthor = author
-            //update UI loading flag true
-            mEventBus.post(EventUpdateLoading(true))
-            mUpdateUIPositionHandler?.startHandler()
             //clear position data and stop
             stopCurrentTrack()
             clearResumePosition()
@@ -190,6 +181,10 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
             } else {
                 initializePlayer(trackUri, oldPosition)
             }
+
+            mUpdateUIPositionHandler?.startHandler()
+            //update UI loading flag true
+            mEventBus.post(EventUpdateLoading(true))
             //update UI track image and title
             mEventBus.post(EventUpdateTrackImageAndTitle(trackTitle, image))
         }
@@ -237,25 +232,25 @@ class PlayerService : Service(), PlayerStateListener, PlayerErrorsListener {
     }
 
     override fun isReadyAndPlay() {
+        isTrackPlayNow = true
         mEventBus.post(EventUpdateLoading(false))
         mEventBus.post(EventUpdatePlayPauseBtn(true))
         if (mUpdateUIPositionHandler?.isStopHandler == true) {
             mUpdateUIPositionHandler?.startHandler()
         }
-        isTrackPlayNow = true
         WidgetUpdateManager.updateWidget(applicationContext)
     }
 
     override fun isReadyAndPause() {
+        isTrackPlayNow = false
         mEventBus.post(EventUpdateLoading(false))
         mEventBus.post(EventUpdatePlayPauseBtn(false))
-        isTrackPlayNow = false
         WidgetUpdateManager.updateWidget(applicationContext)
     }
 
     override fun isEnded() {
-        mEventBus.post(EventUpdateLoading(false))
         isTrackPlayNow = false
+        mEventBus.post(EventUpdateLoading(false))
         WidgetUpdateManager.updateWidget(applicationContext)
     }
 

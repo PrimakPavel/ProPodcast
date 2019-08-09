@@ -14,7 +14,6 @@ import com.pavelprymak.propodcast.utils.AppExecutors
 import java.util.concurrent.Executor
 
 private const val RESULTS_ON_PAGE = 10
-
 class SearchViewModel(private val mRepo: PodcastRepoRx, executors: AppExecutors) : ViewModel() {
     private val mExecutor: Executor = executors.networkIO()
 
@@ -28,17 +27,13 @@ class SearchViewModel(private val mRepo: PodcastRepoRx, executors: AppExecutors)
         .setPageSize(RESULTS_ON_PAGE / 2)
         .build()
 
-    val searchResultsObserver: LiveData<PagedList<ResultsItem>>
-        get() = mSearchData
+    fun getSearchResultsObserver(): LiveData<PagedList<ResultsItem>>{
+        return mSearchData
+    }
 
-    val loadData: LiveData<Boolean>
-        get() = mPagingStateBatch.loading
-
-    val errorData: LiveData<Throwable>
-        get() = mPagingStateBatch.error
-
-    val isEmptyListData: LiveData<Boolean>
-        get() = mPagingStateBatch.isEmptyListData
+    fun getPagingStateBatch(): PagingStateBatch {
+        return mPagingStateBatch
+    }
 
     fun prepareSearchRequest(searchQuery: String, language: String) {
         mSearchQuery = searchQuery

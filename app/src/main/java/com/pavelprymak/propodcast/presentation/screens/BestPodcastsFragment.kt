@@ -35,6 +35,8 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 import retrofit2.HttpException
 import java.util.*
 
+private const val SCROLL_DELAY = 300L
+
 class BestPodcastsFragment : Fragment(), PodcastClickListener {
     private val mBestPodcastsViewModel: BestPodcastsViewModel by sharedViewModel()
     private val mFavoritePodcastsViewModel: FavoritePodcastsViewModel by sharedViewModel()
@@ -57,26 +59,30 @@ class BestPodcastsFragment : Fragment(), PodcastClickListener {
         super.onViewCreated(view, savedInstanceState)
         mNavController = Navigation.findNavController(view)
         prepareRecycler()
+        val fragment = this
         mBestPodcastsViewModel.prepareBestPodcasts(mSettings.filterGenre, mSettings.filterRegion)
-        mBestPodcastsViewModel.bestPodcastsObserver.observe(this, Observer { podcastItems ->
-            retryBtn.visibility = View.GONE
-            mAdapter = PodcastAdapter(this)
-            recyclerBestPodcasts.adapter = mAdapter
-            mAdapter?.submitList(podcastItems)
-        })
-        mBestPodcastsViewModel.loadData.observe(this, Observer<Boolean> { this.showProgressBar(it) })
-        mBestPodcastsViewModel.errorData.observe(this, Observer { throwable ->
-            throwable?.let {
-                retryBtn.visibility = View.VISIBLE
-                if (throwable is HttpException && context != null) {
-                    ApiErrorHandler.handleError(context!!, throwable)
+            .observe(this, Observer { podcastItems ->
+                retryBtn.visibility = View.GONE
+                mAdapter = PodcastAdapter(this)
+                recyclerBestPodcasts.adapter = mAdapter
+                mAdapter?.submitList(podcastItems)
+            })
+        with(mBestPodcastsViewModel.getPagingStateBatch()) {
+            loading.observe(fragment, Observer<Boolean> { showProgressBar(it) })
+            error.observe(fragment, Observer { throwable ->
+                throwable?.let {
+                    retryBtn.visibility = View.VISIBLE
+                    if (throwable is HttpException && context != null) {
+                        ApiErrorHandler.handleError(context!!, throwable)
+                    }
                 }
-            }
-        })
-        mBestPodcastsViewModel.isEmptyListData.observe(this, Observer { isEmptyList ->
-            if (isEmptyList) errorMessage.visibility = View.VISIBLE else errorMessage.visibility = View.GONE
-        })
-        retryBtn.setOnClickListener { v ->
+            })
+            isEmptyListData.observe(fragment, Observer { isEmptyList ->
+                if (isEmptyList) errorMessage.visibility = View.VISIBLE else errorMessage.visibility = View.GONE
+            })
+        }
+
+        retryBtn.setOnClickListener {
             val size = mBestPodcastsViewModel.retryAfterErrorAndPrevLoadingListSize()
             mDelayHandler.postDelayed({ recyclerBestPodcasts.scrollToPosition(size - 1) }, SCROLL_DELAY)
         }
@@ -95,7 +101,6 @@ class BestPodcastsFragment : Fragment(), PodcastClickListener {
                 } else false
             }
         }
-
     }
 
     override fun onDestroyView() {
@@ -114,7 +119,6 @@ class BestPodcastsFragment : Fragment(), PodcastClickListener {
         App.eventBus.register(this)
     }
 
-
     @Subscribe
     fun onGenreFilterUpdate(eventUpdateGenreFilter: EventUpdateGenreFilter) {
         mBestPodcastsViewModel.prepareBestPodcasts(mSettings.filterGenre, mSettings.filterRegion)
@@ -128,7 +132,6 @@ class BestPodcastsFragment : Fragment(), PodcastClickListener {
     private fun showProgressBar(isShow: Boolean?) {
         if (isShow == true) progressBar.visibility = View.VISIBLE else progressBar.visibility = View.GONE
     }
-
 
     private fun prepareRecycler() {
         mAdapter = PodcastAdapter(this)
@@ -179,12 +182,6 @@ class BestPodcastsFragment : Fragment(), PodcastClickListener {
                     }
                 popupMenu.show()
             }
-
         }
     }
-
-    companion object {
-        private val SCROLL_DELAY = 300L
-    }
-
 }

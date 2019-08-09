@@ -36,8 +36,8 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import retrofit2.HttpException
 import java.util.*
 
-
 private const val SCROLL_DELAY = 300L
+
 class SearchFragment : Fragment(), SearchPodcastClickListener {
     private val mSearchViewModel: SearchViewModel by viewModel()
     private val mFavoritePodcastsViewModel: FavoritePodcastsViewModel by sharedViewModel()
@@ -60,30 +60,33 @@ class SearchFragment : Fragment(), SearchPodcastClickListener {
         super.onViewCreated(view, savedInstanceState)
         mNavController = Navigation.findNavController(view)
         prepareRecycler()
+        val fragment = this
         mFavoritePodcastsViewModel.favorites.observe(this, Observer { favoritePodcastEntities ->
             mFavorites.clear()
             if (favoritePodcastEntities != null) {
                 mFavorites.addAll(favoritePodcastEntities)
             }
         })
-        mSearchViewModel.searchResultsObserver.observe(this, Observer { resultsItems ->
+        mSearchViewModel.getSearchResultsObserver().observe(this, Observer { resultsItems ->
             retryBtn.visibility = View.GONE
             mAdapter = SearchPodcastAdapter(this)
             searchRecycler.adapter = mAdapter
             mAdapter?.submitList(resultsItems)
         })
-        mSearchViewModel.loadData.observe(this, Observer<Boolean> { this.showProgressBar(it) })
-        mSearchViewModel.errorData.observe(this, Observer { throwable ->
-            throwable?.let {
-                retryBtn.visibility = View.VISIBLE
-                if (throwable is HttpException && context != null) {
-                    ApiErrorHandler.handleError(context!!, throwable)
+        with(mSearchViewModel.getPagingStateBatch()) {
+            loading.observe(fragment, Observer<Boolean> { showProgressBar(it) })
+            error.observe(fragment, Observer { throwable ->
+                throwable?.let {
+                    retryBtn.visibility = View.VISIBLE
+                    if (throwable is HttpException && context != null) {
+                        ApiErrorHandler.handleError(context!!, throwable)
+                    }
                 }
-            }
-        })
-        mSearchViewModel.isEmptyListData.observe(this, Observer<Boolean> { this.showEmptyList(it) })
+            })
+            isEmptyListData.observe(fragment, Observer<Boolean> { showEmptyList(it) })
+        }
 
-        retryBtn.setOnClickListener { v ->
+        retryBtn.setOnClickListener {
             val size = mSearchViewModel.retryAfterErrorAndPrevLoadingListSize()
             mDelayHandler.postDelayed({ searchRecycler.scrollToPosition(size - 1) }, SCROLL_DELAY)
         }
@@ -101,9 +104,8 @@ class SearchFragment : Fragment(), SearchPodcastClickListener {
                 return false
             }
         })
-        if (resources.getBoolean(R.bool.isTablet)) {
-            fabFilter.hide()
-        } else {
+        if (resources.getBoolean(R.bool.isTablet)) fabFilter.hide()
+        else {
             fabFilter.setOnClickListener { v ->
                 KeyboardUtil.hideKeyboard(activity)
                 mNavController.navigate(R.id.actionFromSearchToLanguageFilter)
@@ -111,7 +113,6 @@ class SearchFragment : Fragment(), SearchPodcastClickListener {
         }
         searchViewShowKeyboard()
     }
-
 
     private fun searchViewShowKeyboard() {
         val searchText = searchView.findViewById<SearchView.SearchAutoComplete>(R.id.search_src_text)
@@ -158,25 +159,22 @@ class SearchFragment : Fragment(), SearchPodcastClickListener {
                 val menuItem = popupMenu.menu.findItem(R.id.action_favorite)
                 val isFavorite = mFavoritePodcastsViewModel.isFavorite(mFavorites, podcastId)
                 if (isFavorite) menuItem.setTitle(R.string.remove_from_favorite) else menuItem.setTitle(R.string.add_to_favorite)
-                popupMenu
-                    .setOnMenuItemClickListener { item ->
-                        when (item.itemId) {
-                            R.id.action_favorite -> {
-                                if (isFavorite) mFavoritePodcastsViewModel.removeFromFavorite(podcastId) else mFavoritePodcastsViewModel.addToFavorite(
-                                    createFavorite(podcastItem)
-                                )
-                                true
-                            }
-                            R.id.action_share -> {
-                                ShareUtil.shareData(activity, podcastItem.listennotesUrl)
-                                true
-                            }
-                            else -> false
+                popupMenu.setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.action_favorite -> {
+                            if (isFavorite) mFavoritePodcastsViewModel.removeFromFavorite(podcastId)
+                            else mFavoritePodcastsViewModel.addToFavorite(createFavorite(podcastItem))
+                            true
                         }
+                        R.id.action_share -> {
+                            ShareUtil.shareData(activity, podcastItem.listennotesUrl)
+                            true
+                        }
+                        else -> false
                     }
+                }
                 popupMenu.show()
             }
-
         }
     }
 }

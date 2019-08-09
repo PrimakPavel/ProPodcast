@@ -29,7 +29,7 @@ class FavoritePodcastsViewModel(private val dbRepo: DbRepo) : ViewModel() {
     }
 
     fun isFavorite(favorites: List<FavoritePodcastEntity>?, podcastId: String): Boolean {
-        if (favorites != null && favorites.isNotEmpty()) {
+        if (!favorites.isNullOrEmpty()) {
             for ((id) in favorites) {
                 if (id == podcastId) return true
             }

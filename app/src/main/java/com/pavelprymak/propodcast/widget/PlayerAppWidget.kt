@@ -42,13 +42,11 @@ class PlayerAppWidget : AppWidgetProvider() {
         // Construct the RemoteViews object
         val views = RemoteViews(context.packageName, R.layout.player_app_widget)
         //title
-        val trackTitle = lastTrackPreferenceManager.trackTitle
-        if (trackTitle != null) {
-            views.setTextViewText(R.id.tvTitle, trackTitle)
+        lastTrackPreferenceManager.trackTitle?.let { title ->
+            views.setTextViewText(R.id.tvTitle, title)
         }
         //logo
-        val logoUrl = lastTrackPreferenceManager.trackLogo
-        if (logoUrl != null) {
+        lastTrackPreferenceManager.trackLogo?.let { logoUrl ->
             Picasso.get().load(logoUrl)
                 .into(views, R.id.ivLogo, appWidgetIds)
             val mainActivityIntent = Intent(context, MainActivity::class.java)
@@ -61,25 +59,32 @@ class PlayerAppWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.ivLogo, mainActivityPendingIntent)
         }
         //Author
-        val trackAuthor = lastTrackPreferenceManager.trackAuthor
-        if (trackAuthor != null) {
-            views.setTextViewText(R.id.tvAuthor, trackAuthor)
+        lastTrackPreferenceManager.trackAuthor?.let { author ->
+            views.setTextViewText(R.id.tvAuthor, author)
         }
-        //Stop service btn
-        stopBtnPrepare(context, views)
-
-        //Continue or Play or Pause btn
-        //Continue last track service player
         if (lastTrackPreferenceManager.trackAudioUrl != null) {
+            //Stop service btn prepare
+            stopBtnPrepare(context, views)
+            //Restore or Play or Pause btn prepare
             if (!PlayerService.isStartService) {
-                restoreBtn(context, views)
+                //Restore service player
+                configPlayPauseRestoreBtn(
+                    context, views, COMMAND_CONTINUE_LAST_TRACK,
+                    R.drawable.baseline_restore_black_36, R.string.content_description_restore
+                )
             } else {
                 if (PlayerService.isTrackPlayNow) {
                     //Pause service player
-                    pauseBtn(context, views)
+                    configPlayPauseRestoreBtn(
+                        context, views, COMMAND_PAUSE,
+                        R.drawable.baseline_pause_black_36, R.string.content_description_pause
+                    )
                 } else {
                     //Play service player
-                    playBtn(context, views)
+                    configPlayPauseRestoreBtn(
+                        context, views, COMMAND_PLAY,
+                        R.drawable.baseline_play_arrow_black_36, R.string.content_description_play
+                    )
                 }
             }
         } else {
@@ -89,17 +94,19 @@ class PlayerAppWidget : AppWidgetProvider() {
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }
 
-    private fun restoreBtn(context: Context, views: RemoteViews) {
+    private fun configPlayPauseRestoreBtn(
+        context: Context, views: RemoteViews, playerCommandType: String, iconRes: Int, contentDescriptionRes: Int
+    ) {
         val serviceIntent = Intent(context, PlayerService::class.java)
-        serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, COMMAND_CONTINUE_LAST_TRACK)
-        var stopServicePendingIntent = PendingIntent.getService(
+        serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, playerCommandType)
+        var commandServicePendingIntent = PendingIntent.getService(
             context,
             PENDING_PLAY_PAUSE_REQUEST_CODE,
             serviceIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            stopServicePendingIntent = PendingIntent.getForegroundService(
+            commandServicePendingIntent = PendingIntent.getForegroundService(
                 context,
                 PENDING_PLAY_PAUSE_REQUEST_CODE,
                 serviceIntent,
@@ -108,69 +115,13 @@ class PlayerAppWidget : AppWidgetProvider() {
         }
         views.setImageViewBitmap(
             R.id.ivPlayPauseBtn,
-            BitmapFactory.decodeResource(context.resources, R.drawable.baseline_restore_black_36)
+            BitmapFactory.decodeResource(context.resources, iconRes)
         )
         views.setContentDescription(
             R.id.ivPlayPauseBtn,
-            context.getString(R.string.content_description_restore)
+            context.getString(contentDescriptionRes)
         )
-        views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent)
-    }
-
-    private fun playBtn(context: Context, views: RemoteViews) {
-        val serviceIntent = Intent(context, PlayerService::class.java)
-        serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, COMMAND_PLAY)
-        var stopServicePendingIntent = PendingIntent.getService(
-            context,
-            PENDING_PLAY_PAUSE_REQUEST_CODE,
-            serviceIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            stopServicePendingIntent = PendingIntent.getForegroundService(
-                context,
-                PENDING_PLAY_PAUSE_REQUEST_CODE,
-                serviceIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
-        views.setImageViewBitmap(
-            R.id.ivPlayPauseBtn,
-            BitmapFactory.decodeResource(context.resources, R.drawable.baseline_play_arrow_black_36)
-        )
-        views.setContentDescription(
-            R.id.ivPlayPauseBtn,
-            context.getString(R.string.content_description_play)
-        )
-        views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent)
-    }
-
-    private fun pauseBtn(context: Context, views: RemoteViews) {
-        val serviceIntent = Intent(context, PlayerService::class.java)
-        serviceIntent.putExtra(EXTRA_COMMAND_PLAYER, COMMAND_PAUSE)
-        var stopServicePendingIntent = PendingIntent.getService(
-            context,
-            PENDING_PLAY_PAUSE_REQUEST_CODE,
-            serviceIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            stopServicePendingIntent = PendingIntent.getForegroundService(
-                context,
-                PENDING_PLAY_PAUSE_REQUEST_CODE,
-                serviceIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
-        views.setImageViewBitmap(
-            R.id.ivPlayPauseBtn,
-            BitmapFactory.decodeResource(context.resources, R.drawable.baseline_pause_black_36)
-        )
-        views.setContentDescription(
-            R.id.ivPlayPauseBtn,
-            context.getString(R.string.content_description_pause)
-        )
-        views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, stopServicePendingIntent)
+        views.setOnClickPendingIntent(R.id.ivPlayPauseBtn, commandServicePendingIntent)
     }
 
     private fun stopBtnPrepare(context: Context, views: RemoteViews) {

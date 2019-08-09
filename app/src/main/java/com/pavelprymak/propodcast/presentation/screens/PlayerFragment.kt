@@ -20,6 +20,11 @@ import com.squareup.otto.Subscribe
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_player.*
 
+private const val TAG_PAUSE = "tagPause"
+private const val TAG_PLAY = "tagPlay"
+private const val SEEK_BAR_MAX_PROGRESS = 10000
+private const val MAX_PERCENT = 100f
+
 class PlayerFragment : Fragment(), PlayerUI {
     private var mIsSeekBarTouch = false
 
@@ -136,9 +141,9 @@ class PlayerFragment : Fragment(), PlayerUI {
     }
 
     override fun stopAction() {
-        if (context != null) {
+        context?.let { context ->
             val serviceIntent = Intent(context, PlayerService::class.java)
-            context!!.stopService(serviceIntent)
+            context.stopService(serviceIntent)
         }
         App.eventBus.post(EventUpdatePlayerVisibility(false))
     }
@@ -185,11 +190,7 @@ class PlayerFragment : Fragment(), PlayerUI {
     }
 
     override fun setLoadingStatus(isLoading: Boolean) {
-        if (isLoading) {
-            progressBarPlayer.visibility = View.VISIBLE
-        } else {
-            progressBarPlayer.visibility = View.GONE
-        }
+        if (isLoading) progressBarPlayer.visibility = View.VISIBLE else progressBarPlayer.visibility = View.GONE
     }
 
     override fun setPlayerErrors(errorMessage: String) {
@@ -218,11 +219,7 @@ class PlayerFragment : Fragment(), PlayerUI {
     }
 
     override fun setTrackTitle(trackTitle: String?) {
-        if (!trackTitle.isNullOrEmpty())
-            tvTitle.text = trackTitle
-        else {
-            tvTitle.text = EMPTY_TITLE
-        }
+        if (!trackTitle.isNullOrEmpty()) tvTitle.text = trackTitle else tvTitle.setText(R.string.adapter_empty_string)
     }
 
     override fun setTrackImage(imageUrl: String?) {
@@ -232,13 +229,5 @@ class PlayerFragment : Fragment(), PlayerUI {
                 .placeholder(R.drawable.image_placeholder)
                 .into(ivPodcastLogo)
         }
-    }
-
-    companion object {
-        private val TAG_PAUSE = "tagPause"
-        private val TAG_PLAY = "tagPlay"
-        private val EMPTY_TITLE = ""
-        private val SEEK_BAR_MAX_PROGRESS = 10000
-        private val MAX_PERCENT = 100f
     }
 }

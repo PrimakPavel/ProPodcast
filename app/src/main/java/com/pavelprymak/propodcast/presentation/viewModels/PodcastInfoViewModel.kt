@@ -1,11 +1,10 @@
 package com.pavelprymak.propodcast.presentation.viewModels
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.pavelprymak.propodcast.model.network.pojo.podcastById.EpisodesItem
 import com.pavelprymak.propodcast.model.network.pojo.podcastById.PodcastResponse
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem
+import com.pavelprymak.propodcast.model.network.pojo.recommendations.RecommendationsResponse
 import com.pavelprymak.propodcast.model.network.repo.PodcastRepoRx
 import com.pavelprymak.propodcast.presentation.common.SimpleViewModel
 import com.pavelprymak.propodcast.presentation.common.StatesBatch
@@ -14,69 +13,81 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class PodcastInfoViewModel(private val mRepo: PodcastRepoRx) : SimpleViewModel() {
-    val podcastDataBatch = StatesBatch<PodcastResponse>()
-    private val mRecommendData = MutableLiveData<List<PodcastItem>>()
+    private val mPodcastDataBatch = StatesBatch<PodcastResponse>()
+    private val mRecommendDataBatch = StatesBatch<List<PodcastItem>?>()
     private var mId = ""
 
     fun setItemId(mId: String) {
         this.mId = mId
     }
 
-    fun getRecommendData(): LiveData<List<PodcastItem>> {
+    fun prepareRecommendData(): StatesBatch<List<PodcastItem>?> {
         if (mId.isEmpty()) throw IllegalArgumentException()
-        if (mRecommendData.value == null || mRecommendData.value?.isEmpty() == true) {
+        if (mRecommendDataBatch.data.value == null) {
             mRepo.getPodcastRecommendations(mId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { recommendations -> mRecommendData.setValue(recommendations.recommendations) },
-                    { error -> })
+                .map { recommendResponse: RecommendationsResponse -> recommendResponse.recommendations }
+                .bindToStatesBatch(mRecommendDataBatch)
                 .untilDestroy()
         }
-        return mRecommendData
+        return mRecommendDataBatch
     }
 
-    fun preparePodcastInfoData() {
+    fun preparePodcastInfoData(): StatesBatch<PodcastResponse> {
         if (mId.isEmpty()) throw IllegalArgumentException()
-        if (podcastDataBatch.data.value == null) {
-            podcastDataBatch.postLoading(true)
+        if (mPodcastDataBatch.data.value == null) {
+            mPodcastDataBatch.postLoading(true)
             mRepo.getPodcastById(mId, 0)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .bindToStatesBatch(podcastDataBatch)
+                .bindToStatesBatch(mPodcastDataBatch)
                 .untilDestroy()
         }
+        return mPodcastDataBatch
     }
 
     fun loadMoreEpisodes() {
         if (mId.isEmpty()) throw IllegalArgumentException()
-        podcastDataBatch.data.value?.let { currentPodcastResponse ->
-            currentPodcastResponse.episodes?.let { episodes ->
-                if (episodes.size < currentPodcastResponse.totalEpisodes) {
-                    podcastDataBatch.postLoading(true)
-                    mRepo.getPodcastById(mId, currentPodcastResponse.nextEpisodePubDate)
+        mPodcastDataBatch.data.value?.let { prevPodcastResponse ->
+            prevPodcastResponse.episodes?.let { prevEpisodes ->
+                if (prevEpisodes.size < prevPodcastResponse.totalEpisodes) {
+                    mPodcastDataBatch.postLoading(true)
+                    mRepo.getPodcastById(mId, prevPodcastResponse.nextEpisodePubDate)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ podcastResponse ->
-                            if (podcastResponse != null) {
-                                //concat episodes lists (current and new)
-                                val currentEpisodesList: ArrayList<EpisodesItem> = episodes as ArrayList<EpisodesItem>
-                                podcastResponse.episodes?.let {
-                                    currentEpisodesList.addAll(it)
-                                }
-                                podcastResponse.episodes = currentEpisodesList
-                                podcastDataBatch.postData(podcastResponse)
-                            }
-                        }, { error -> podcastDataBatch.postError(error) })
+                        //concat episodes lists (current and new)
+                        .map { podcastInfo: PodcastResponse ->
+                            concatPrevWithCurrentEpisodes(
+                                podcastInfo,
+                                prevEpisodes
+                            )
+                        }
+                        .bindToStatesBatch(mPodcastDataBatch)
                         .untilDestroy()
                 }
             }
         }
     }
 
+    private fun concatPrevWithCurrentEpisodes(
+        podcastInfo: PodcastResponse,
+        episodes: List<EpisodesItem>
+    ): PodcastResponse {
+        val prevEpisodesList: ArrayList<EpisodesItem> = episodes as ArrayList<EpisodesItem>
+        podcastInfo.episodes?.let { currentEpisodes ->
+            prevEpisodesList.addAll(currentEpisodes)
+        }
+        podcastInfo.episodes = prevEpisodesList
+        return podcastInfo
+    }
+
     fun removePodcastDataBatchObservers(lifecycleOwner: LifecycleOwner) {
-        podcastDataBatch.data.removeObservers(lifecycleOwner)
-        podcastDataBatch.loading.removeObservers(lifecycleOwner)
-        podcastDataBatch.error.removeObservers(lifecycleOwner)
+        mPodcastDataBatch.data.removeObservers(lifecycleOwner)
+        mPodcastDataBatch.loading.removeObservers(lifecycleOwner)
+        mPodcastDataBatch.error.removeObservers(lifecycleOwner)
+        mRecommendDataBatch.data.removeObservers(lifecycleOwner)
+        mRecommendDataBatch.loading.removeObservers(lifecycleOwner)
+        mRecommendDataBatch.error.removeObservers(lifecycleOwner)
     }
 }

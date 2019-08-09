@@ -25,7 +25,7 @@ class PodcastDataSource internal constructor(
     private var mCurrentPage = 1
 
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<PodcastItem>) {
-        if (mPrevLoadingList != null && mPrevLoadingList.isNotEmpty()) {
+        if (!mPrevLoadingList.isNullOrEmpty()) {
             mCurrentPage = mPrevLoadingList.size / ITEMS_ON_PAGE + 1
             callback.onResult(mPrevLoadingList, 0)
             return
@@ -43,10 +43,10 @@ class PodcastDataSource internal constructor(
 
                 override fun onSuccess(podcastResponse: BestPodcastsResponse) {
                     mPagingStateBatch.postLoading(false)
-                    if (podcastResponse.isHasNext) {
-                        mCurrentPage = podcastResponse.nextPageNumber
+                    mCurrentPage = if (podcastResponse.isHasNext) {
+                        podcastResponse.nextPageNumber
                     } else {
-                        mCurrentPage = INVALID_PAGE_NUMBER
+                        INVALID_PAGE_NUMBER
                     }
                     mPagingStateBatch.postIsEmptyList(podcastResponse.total == 0)
                     podcastResponse.podcasts?.let { callback.onResult(it, 0) }
@@ -60,7 +60,7 @@ class PodcastDataSource internal constructor(
             })
     }
 
-    override fun loadRange( params: LoadRangeParams, callback: LoadRangeCallback<PodcastItem>) {
+    override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<PodcastItem>) {
         if (mCurrentPage == INVALID_PAGE_NUMBER) {
             return
         }
@@ -77,10 +77,10 @@ class PodcastDataSource internal constructor(
 
                 override fun onSuccess(podcastResponse: BestPodcastsResponse) {
                     mPagingStateBatch.postLoading(false)
-                    if (podcastResponse.isHasNext) {
-                        mCurrentPage = podcastResponse.nextPageNumber
+                    mCurrentPage = if (podcastResponse.isHasNext) {
+                        podcastResponse.nextPageNumber
                     } else {
-                        mCurrentPage = INVALID_PAGE_NUMBER
+                        INVALID_PAGE_NUMBER
                     }
                     podcastResponse.podcasts?.let { callback.onResult(it) }
                 }

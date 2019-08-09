@@ -48,11 +48,9 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
     private val mFavoritePodcastsViewModel: FavoritePodcastsViewModel by sharedViewModel()
     private val mFavoriteEpisodesViewModel: FavoriteEpisodesViewModel by sharedViewModel()
     private lateinit var mNavController: NavController
-
     private var mPodcastId: String? = null
 
     private var mAdapter: PodcastInfoAdapter? = null
-
     private val mFavoritePodcasts = ArrayList<FavoritePodcastEntity>()
     private val mFavoriteEpisodes = ArrayList<FavoriteEpisodeEntity>()
     private val mEpisodes = ArrayList<EpisodesItem>()
@@ -62,18 +60,14 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let { arg ->
-            mPodcastId = arg.getString(ARG_PODCAST_ID)
-        }
+        arguments?.let { arg -> mPodcastId = arg.getString(ARG_PODCAST_ID) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (activity is MainActivity) {
             (activity as MainActivity).setNavViewVisibility(false)
         }
-        mPodcastId?.let { id ->
-            mPodcastDataViewModel.setItemId(id)
-        }
+        mPodcastId?.let { id -> mPodcastDataViewModel.setItemId(id) }
         return inflater.inflate(R.layout.fragment_podcast_details, container, false)
     }
 
@@ -82,36 +76,33 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
         mNavController = Navigation.findNavController(view)
         appBarLayout.setExpanded(false, false)
         prepareRecycler()
-        mPodcastDataViewModel.preparePodcastInfoData()
-        mPodcastDataViewModel.podcastDataBatch.data.observe(
-            this,
-            Observer<PodcastResponse> { podcastInfo -> podcastInfo?.let { showData(it) } })
-        mPodcastDataViewModel.podcastDataBatch.loading.observe(this, Observer<Boolean> { isLoading ->
-            if (isLoading != null) {
-                progressBarVisibility(isLoading)
-            }
-        })
-        mPodcastDataViewModel.podcastDataBatch.error.observe(this, Observer<Throwable> { throwable ->
-            throwable?.let {
-                val snackbar = Snackbar.make(view, R.string.error_connection, Snackbar.LENGTH_LONG)
-                snackbar.show()
-                if (throwable is HttpException && context != null) {
-                    ApiErrorHandler.handleError(context!!, throwable)
+        val fragment = this
+        with(mPodcastDataViewModel.preparePodcastInfoData()) {
+            data.observe(fragment,
+                Observer<PodcastResponse> { podcastInfo -> podcastInfo?.let { showData(podcastInfo) } })
+            loading.observe(fragment, Observer<Boolean> { isLoading ->
+                isLoading?.let { progressBarVisibility(isLoading) }
+            })
+            error.observe(fragment, Observer<Throwable> { throwable ->
+                throwable?.let {
+                    val snackbar = Snackbar.make(view, R.string.error_connection, Snackbar.LENGTH_LONG)
+                    snackbar.show()
+                    if (throwable is HttpException && context != null) {
+                        ApiErrorHandler.handleError(context!!, throwable)
+                    }
                 }
-            }
-        })
-
-        mPodcastDataViewModel.getRecommendData().observe(this, Observer { recommendationsItems ->
-            recommendationsItems?.let {
-                mRecommendations.clear()
-                mRecommendations.addAll(recommendationsItems)
-                mAdapter?.updateLists(mEpisodes, mRecommendations)
-            }
-        })
-
-        appBar.setNavigationOnClickListener { v ->
-            activity?.onBackPressed()
+            })
         }
+        with(mPodcastDataViewModel.prepareRecommendData()) {
+            data.observe(fragment, Observer { recommendationsItems ->
+                recommendationsItems?.let {
+                    mRecommendations.clear()
+                    mRecommendations.addAll(recommendationsItems)
+                    mAdapter?.updateLists(mEpisodes, mRecommendations)
+                }
+            })
+        }
+        appBar.setNavigationOnClickListener { activity?.onBackPressed() }
 
         mFavoritePodcastsViewModel.favorites.observe(this, Observer { favoritePodcastEntities ->
             mFavoritePodcasts.clear()
@@ -131,7 +122,6 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         mPodcastDataViewModel.removePodcastDataBatchObservers(this)
-        mPodcastDataViewModel.getRecommendData().removeObservers(this)
         mFavoriteEpisodesViewModel.favorites.removeObservers(this)
         mFavoritePodcastsViewModel.favorites.removeObservers(this)
     }
@@ -147,12 +137,7 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
     override fun onEpisodeItemClick(episodesItem: EpisodesItem) {
         sentAnalyticEpisodeData(episodesItem)
         App.eventBus.post(
-            EventStartTack(
-                episodesItem.audio,
-                episodesItem.title,
-                episodesItem.thumbnail,
-                mPodcastResponse?.publisher
-            )
+            EventStartTack(episodesItem.audio, episodesItem.title, episodesItem.thumbnail, mPodcastResponse?.publisher)
         )
         App.eventBus.post(EventUpdatePlayerVisibility(true))
     }
@@ -218,22 +203,15 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
             mFavoritePodcastsViewModel.getFavoriteById(podcastId).observe(this, Observer { podcastEntity ->
                 if (podcastEntity == null) {
                     fabFavorite.setImageResource(R.drawable.ic_baseline_favorite_border)
-                    fabFavorite.setOnClickListener { v ->
-                        mFavoritePodcastsViewModel.addToFavorite(
-                            createFavorite(podcastResponse)
-                        )
+                    fabFavorite.setOnClickListener {
+                        mFavoritePodcastsViewModel.addToFavorite(createFavorite(podcastResponse))
                     }
                 } else {
                     fabFavorite.setImageResource(R.drawable.ic_baseline_favorite)
-                    fabFavorite.setOnClickListener { v ->
-                        mFavoritePodcastsViewModel.removeFromFavorite(
-                            podcastEntity.id
-                        )
-                    }
+                    fabFavorite.setOnClickListener { mFavoritePodcastsViewModel.removeFromFavorite(podcastEntity.id) }
                 }
             })
         }
-
         appBarLayout.setExpanded(false, false)
     }
 
@@ -245,22 +223,20 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
                 val menuItem = popupMenu.menu.findItem(R.id.action_favorite)
                 val isFavorite = mFavoritePodcastsViewModel.isFavorite(mFavoritePodcasts, podcastId)
                 if (isFavorite) menuItem.setTitle(R.string.remove_from_favorite) else menuItem.setTitle(R.string.add_to_favorite)
-                popupMenu
-                    .setOnMenuItemClickListener { item ->
-                        when (item.itemId) {
-                            R.id.action_favorite -> {
-                                if (isFavorite) mFavoritePodcastsViewModel.removeFromFavorite(podcastId) else mFavoritePodcastsViewModel.addToFavorite(
-                                    createFavorite(podcastItem)
-                                )
-                                true
-                            }
-                            R.id.action_share -> {
-                                ShareUtil.shareData(activity, podcastItem.listennotesUrl)
-                                true
-                            }
-                            else -> false
+                popupMenu.setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.action_favorite -> {
+                            if (isFavorite) mFavoritePodcastsViewModel.removeFromFavorite(podcastId)
+                            else mFavoritePodcastsViewModel.addToFavorite(createFavorite(podcastItem))
+                            true
                         }
+                        R.id.action_share -> {
+                            ShareUtil.shareData(activity, podcastItem.listennotesUrl)
+                            true
+                        }
+                        else -> false
                     }
+                }
                 popupMenu.show()
             }
         }
@@ -274,22 +250,20 @@ class PodcastDetailsFragment : Fragment(), PodcastInfoClickListener {
                 val menuItem = popupMenu.menu.findItem(R.id.action_favorite)
                 val isFavorite = mFavoriteEpisodesViewModel.isFavorite(mFavoriteEpisodes, episodeId)
                 if (isFavorite) menuItem.setTitle(R.string.remove_from_favorite) else menuItem.setTitle(R.string.add_to_favorite)
-                popupMenu
-                    .setOnMenuItemClickListener { item ->
-                        when (item.itemId) {
-                            R.id.action_favorite -> {
-                                if (isFavorite) mFavoriteEpisodesViewModel.removeFromFavorite(episodeId) else mFavoriteEpisodesViewModel.addToFavorite(
-                                    createFavorite(episodesItem)
-                                )
-                                true
-                            }
-                            R.id.action_share -> {
-                                ShareUtil.shareData(activity, episodesItem.listennotesUrl)
-                                true
-                            }
-                            else -> false
+                popupMenu.setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.action_favorite -> {
+                            if (isFavorite) mFavoriteEpisodesViewModel.removeFromFavorite(episodeId)
+                            else mFavoriteEpisodesViewModel.addToFavorite(createFavorite(episodesItem))
+                            true
                         }
+                        R.id.action_share -> {
+                            ShareUtil.shareData(activity, episodesItem.listennotesUrl)
+                            true
+                        }
+                        else -> false
                     }
+                }
                 popupMenu.show()
             }
         }

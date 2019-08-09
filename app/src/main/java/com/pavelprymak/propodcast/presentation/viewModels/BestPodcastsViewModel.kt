@@ -1,6 +1,9 @@
 package com.pavelprymak.propodcast.presentation.viewModels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.pavelprymak.propodcast.model.network.pojo.podcasts.PodcastItem
@@ -12,7 +15,6 @@ import com.pavelprymak.propodcast.utils.AppExecutors
 import java.util.concurrent.Executor
 
 private const val INVALID_GENRE_ID = -1
-
 class BestPodcastsViewModel(private val mRepo: PodcastRepoRx, executors: AppExecutors) : ViewModel() {
     private val mExecutor: Executor = executors.networkIO()
     private var mPodcastPagingLiveData: LiveData<PagedList<PodcastItem>>? = null
@@ -27,19 +29,11 @@ class BestPodcastsViewModel(private val mRepo: PodcastRepoRx, executors: AppExec
     private var mGenreId = INVALID_GENRE_ID
     private var mRegion: String? = null
 
-    val bestPodcastsObserver: LiveData<PagedList<PodcastItem>>
-        get() = mPodcastsData
+    fun getPagingStateBatch(): PagingStateBatch {
+        return mPagingStateBatch
+    }
 
-    val loadData: MutableLiveData<Boolean>
-        get() = mPagingStateBatch.loading
-
-    val errorData: MutableLiveData<Throwable>
-        get() = mPagingStateBatch.error
-
-    val isEmptyListData: MutableLiveData<Boolean>
-        get() = mPagingStateBatch.isEmptyListData
-
-    fun prepareBestPodcasts(genreId: Int, region: String) {
+    fun prepareBestPodcasts(genreId: Int, region: String): LiveData<PagedList<PodcastItem>> {
         if (genreId != mGenreId || region != mRegion || mPodcastsData.value == null) {
             mGenreId = genreId
             mRegion = region
@@ -57,6 +51,7 @@ class BestPodcastsViewModel(private val mRepo: PodcastRepoRx, executors: AppExec
                 mPodcastsData.addSource(podcastPagingLiveData) { mPodcastsData.setValue(it) }
             }
         }
+        return mPodcastsData
     }
 
     fun retryAfterErrorAndPrevLoadingListSize(): Int {

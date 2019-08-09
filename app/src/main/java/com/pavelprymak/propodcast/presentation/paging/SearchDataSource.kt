@@ -23,7 +23,7 @@ internal class SearchDataSource(
     private var mTotalCount: Int = 0
 
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<ResultsItem>) {
-        if (mPrevLoadingList != null && mPrevLoadingList.isNotEmpty()) {
+        if (!mPrevLoadingList.isNullOrEmpty()) {
             callback.onResult(mPrevLoadingList, 0)
             mCurrentOffset = mPrevLoadingList.size
             mTotalCount = mPrevLoadingList.size
@@ -37,7 +37,6 @@ internal class SearchDataSource(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<SearchPodcastResponse> {
                 override fun onSubscribe(d: Disposable) {
-
                 }
 
                 override fun onSuccess(searchPodcastResponse: SearchPodcastResponse) {

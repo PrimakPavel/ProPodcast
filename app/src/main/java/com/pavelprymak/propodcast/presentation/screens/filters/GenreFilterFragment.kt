@@ -36,18 +36,21 @@ class GenreFilterFragment : Fragment(), GenreClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareRecycler()
-        mGenreViewModel.genresBatch.data.observe(this, Observer { genresItems ->
-            genresItems?.let {
-                val selectedGenreId = mSettingsPref.filterGenre
-                mAdapter?.updateList(genresItems, selectedGenreId)
-                if (selectedGenreId != ALL_GENRE) {
-                    val selectedItemPosition = mAdapter?.getPositionByGenreId(selectedGenreId)
-                    recyclerGenres.smoothScrollToPosition(selectedItemPosition ?: 0)
+        val fragment = this
+        with(mGenreViewModel.getGenresBatch()) {
+            data.observe(fragment, Observer { genresItems ->
+                genresItems?.let {
+                    val selectedGenreId = mSettingsPref.filterGenre
+                    mAdapter?.updateList(genresItems, selectedGenreId)
+                    if (selectedGenreId != ALL_GENRE) {
+                        val selectedItemPosition = mAdapter?.getPositionByGenreId(selectedGenreId)
+                        recyclerGenres.smoothScrollToPosition(selectedItemPosition ?: 0)
+                    }
                 }
-            }
-        })
-        mGenreViewModel.genresBatch.loading.observe(this, Observer<Boolean> { this.showLoading(it) })
-        mGenreViewModel.genresBatch.error.observe(this, Observer { error -> showError(error, view) })
+            })
+            loading.observe(fragment, Observer<Boolean> { showLoading(it) })
+            error.observe(fragment, Observer { error -> showError(error, view) })
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {
